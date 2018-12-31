@@ -1,15 +1,18 @@
+@TestOn("vm")
+
+import "package:test/test.dart";
 import 'package:laksaDart/src/crypto/schnorr.dart' as crypto;
 
 main() {
-  for (int i = 0; i < 10000; i++) {
-    String prvKey = crypto.generatePrivateKey();
-    String pubKey = crypto.getPubKeyFromPrivateKey(prvKey);
-    String address = crypto.getAddressFromPrivateKey(prvKey);
-    if (prvKey.length != 64) {
-      print({'prvLength': prvKey.length});
-      break;
-    } else {
-      print({'prvKey': prvKey, 'pubKey': pubKey, 'address': address});
+  test('test with 1000 keypairs', () {
+    for (int i = 0; i < 1000; i++) {
+      String prvKey = crypto.generatePrivateKey();
+      String pubKey = crypto.getPubKeyFromPrivateKey(prvKey);
+      String address = crypto.getAddressFromPrivateKey(prvKey);
+
+      expect(prvKey.length, equals(64));
+      expect(pubKey.length, equals(66));
+      expect(address.length, equals(40));
     }
-  }
+  });
 }

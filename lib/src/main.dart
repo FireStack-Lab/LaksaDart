@@ -3,25 +3,26 @@ import 'dart:convert';
 import 'dart:async';
 // import 'dart:typed_data';
 // import 'package:crypto/crypto.dart';
+
+import 'package:http/http.dart' as http;
 import 'package:laksaDart/src/utils/numbers.dart' as numbers;
 import 'package:laksaDart/src/crypto/dartRandom.dart';
 import 'package:laksaDart/src/account/wallet.dart';
 import 'package:laksaDart/src/account/account.dart';
 
+import 'package:laksaDart/src/provider/Http.dart';
+import 'package:laksaDart/src/provider/net.dart';
+
 main() async {
-  var wallet = new Wallet();
-
-  wallet
-    ..create()
-    ..create()
-    ..create()
-    ..add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930')
-    ..setDefaultAccount('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a');
-  var encryptedAcc = await wallet.encryptAccount(
-      '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a', '111');
-
-  wallet.remove('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a');
-
-  print(wallet.defaultAccount);
-  // ..encryptAccount('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930', '111');
+  var provider = new HttpProvider('https://staging-api.aws.zilliqa.com');
+  provider.middleware.response.use((Map data) {
+    if (data['error'] != null) {
+      return data['error'];
+    } else if (data['result'] != null) {
+      return data['result'];
+    }
+  }, match: '*');
+  // provider.middleware.response.use((Map data) => data['result'], match: '*');
+  var result = await provider.send(new RPCMethod().GetNetworkId, '');
+  print(result);
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -7,6 +6,7 @@ import './Base.dart';
 import './net.dart';
 
 class HttpProvider extends BaseProvider implements RPCRequest {
+  // TODO: implement the request timeout
   final int timeout = 120000;
   final String cache = 'no-cache';
   final String mode = 'cors';

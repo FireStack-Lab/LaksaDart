@@ -69,11 +69,14 @@ class HttpProvider extends BaseProvider implements RPCRequest {
         .post(this.url,
             headers: this.headers, body: json.encode(request['payload']))
         .whenComplete(client.close);
+
     Map<String, dynamic> body = json.decode(response.body);
+
     // response.statusCode;
     if (response.statusCode >= 400) throw Future.error('connection error');
     var newMapEntry = MapEntry('req', response.request);
     body.addEntries([newMapEntry]);
+
     return handler(body);
   }
 }

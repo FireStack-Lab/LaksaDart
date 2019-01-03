@@ -8,6 +8,7 @@ environment:
   sdk: '>=1.8.0 <3.0.0'
 
 dependencies:
+  angel_validate: ^2.0.1
   pointycastle: '^1.0.0-rc4'
   convert: '^2.1.1'
   meta: '^1.1.6'

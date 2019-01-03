@@ -1,35 +1,44 @@
-import './abstracts.dart' show BaseWallet;
+import 'package:laksaDart/src/core/ZilliqaModule.dart';
+import 'package:laksaDart/src/messenger/Messenger.dart';
+import './api.dart' show BaseWallet;
 import './account.dart';
 
-class Wallet implements BaseWallet<List<String>> {
+class Wallet
+    implements BaseWallet<List<String>>, ZilliqaModule<Messenger, void> {
   List<String> get accounts => List.from(this.toMap.keys);
   int get length => accounts.length;
   String defaultAccount;
-
+  Messenger messenger;
   Map<String, Account> toMap = new Map<String, Account>();
 
   // factory
   Wallet();
+  void setMessenger(Messenger messenger) {
+    this.messenger = messenger;
+  }
 
   // add to wallet
-  void add(dynamic obj) {
+  Account add(dynamic obj) {
     if (obj is Account) {
       MapEntry<String, Account> entry =
           new MapEntry(obj.address.toString(), obj);
       this.toMap.addEntries([entry]);
       this.getDefaultAccount();
+      return this.getAccount(obj.address.toString());
     } else if (obj is String) {
-      Account acc = new Account(obj);
+      Account acc = new Account(obj, this.messenger);
       String address = acc.address.toString();
       MapEntry<String, Account> entryNew = new MapEntry(address, acc);
       this.toMap.addEntries([entryNew]);
       this.getDefaultAccount();
+      return this.getAccount(address.toString());
     }
   }
 
-  void create() {
+  Account create() {
     var acc = new Account().create();
     this.add(acc);
+    return acc;
   }
 
   void remove(String addr) {

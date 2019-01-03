@@ -45,6 +45,50 @@ class RPCMethod {
 
   // Account-related methods
   static final GetBalance = 'GetBalance';
+
+  Map get Mapping => {
+        GetNetworkId: 'GetNetworkId',
+        GetBlockchainInfo: 'GetBlockchainInfo',
+        GetShardingStructure: 'GetShardingStructure',
+        GetDSBlock: 'GetDsBlock',
+        GetLatestDSBlock: 'GetLatestDsBlock',
+        GetNumDSBlocks: 'GetNumDSBlocks',
+        GetDSBlockRate: 'GetDSBlockRate',
+        DSBlockListing: 'DSBlockListing',
+        GetTxBlock: 'GetTxBlock',
+        GetLatestTxBlock: 'GetLatestTxBlock',
+        GetNumTxBlocks: 'GetNumTxBlocks',
+        GetTxBlockRate: 'GetTxBlockRate',
+        TxBlockListing: 'TxBlockListing',
+        GetNumTransactions: 'GetNumTransactions',
+        GetTransactionRate: 'GetTransactionRate',
+        GetCurrentMiniEpoch: 'GetCurrentMiniEpoch',
+        GetCurrentDSEpoch: 'GetCurrentDSEpoch',
+        GetPrevDifficulty: 'GetPrevDifficulty',
+        GetPrevDSDifficulty: 'GetPrevDSDifficulty',
+        // GetBlockTransactionCount : 'GetBlockTransactionCount',
+
+        // Transaction-related methods
+        CreateTransaction: 'CreateTransaction',
+        GetTransaction: 'GetTransaction',
+        // GetTransactionReceipt : 'GetTransactionReceipt',
+        GetRecentTransactions: 'GetRecentTransactions',
+        GetNumTxnsTxEpoch: 'GetNumTxnsTxEpoch',
+        GetNumTxnsDSEpoch: 'GetNumTxnsDSEpoch',
+        GetMinimumGasPrice: 'GetMinimumGasPrice',
+        // GetGasEstimate : 'GetGasEstimate',
+
+        // Contract-related methods
+        GetSmartContractCode: 'GetSmartContractCode',
+        GetSmartContractInit: 'GetSmartContractInit',
+        GetSmartContractState: 'GetSmartContractState',
+        GetContractAddressFromTransactionID:
+            'GetContractAddressFromTransactionID',
+        // GetStorageAt : 'GetStorageAt',
+
+        // Account-related methods
+        GetBalance: 'GetBalance',
+      };
 }
 
 class RPCErrorCode {

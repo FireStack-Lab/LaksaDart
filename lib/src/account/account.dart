@@ -2,19 +2,26 @@ import 'dart:convert';
 import 'package:laksaDart/src/crypto/schnorr.dart' as crypto;
 import 'package:laksaDart/src/crypto/keystore/api.dart';
 import 'package:laksaDart/src/utils/numbers.dart' as numbers;
-import './abstracts.dart' show BaseAccount;
+import 'package:laksaDart/src/core/ZilliqaModule.dart';
+import 'package:laksaDart/src/messenger/Messenger.dart';
+import 'package:laksaDart/src/provider/Middleware.dart';
+import 'package:laksaDart/src/provider/net.dart';
+import './api.dart' show BaseAccount;
 import './address.dart';
 
 // Account instance with keystore encrypt/decrypt
-class Account implements BaseAccount, KeyStore {
+class Account implements BaseAccount, KeyStore, ZilliqaModule<Messenger, void> {
   // static privatekey checker
   static final RegExp isPrivateKey =
       new RegExp(r"^(0x)?[0-9a-f]{64}", caseSensitive: false);
 
+  Messenger messenger;
   // account model
   String privateKey;
   String publicKey;
   ZilAddress address;
+  String balance = '0';
+  int nonce = 0;
 
   // transalte privateKey to Big Int
   BigInt get privateKeyBigInt => Account._privateKeyToBigInt(this.privateKey);
@@ -32,10 +39,11 @@ class Account implements BaseAccount, KeyStore {
   bool get isEncrypted => this.checkEncrypted();
 
   //constructor
-  Account([String prv]) {
-    this.privateKey = prv;
-    this.publicKey = this.getPublicKey(prv);
-    this.address = this.getAddress(prv);
+  Account([String privateKey, Messenger messenger]) {
+    this.privateKey = privateKey;
+    this.publicKey = this.getPublicKey(privateKey);
+    this.address = this.getAddress(privateKey);
+    this.messenger = messenger;
   }
 
   static fromFile(String keyStore, String passphrase) async {
@@ -57,6 +65,10 @@ class Account implements BaseAccount, KeyStore {
     } catch (e) {
       throw e;
     }
+  }
+
+  void setMessenger(Messenger messenger) {
+    this.messenger = messenger;
   }
 
   // import account from hex string
@@ -101,6 +113,22 @@ class Account implements BaseAccount, KeyStore {
     }
     this.privateKey = await decrypt(json.decode(this.privateKey), passphrase);
     // return this;
+  }
+
+  Future<void> updateBalance() async {
+    RPCMiddleWare res = await this
+        .messenger
+        .send(RPCMethod.GetBalance, this.address.toString());
+    if (res.error == null && res.result != null) {
+      var balanceMap = res.result.toMap();
+      if (balanceMap != null) {
+        this.balance = balanceMap['balance'];
+        this.nonce = balanceMap['nonce'];
+      }
+    } else {
+      this.balance = '0';
+      this.nonce = 0;
+    }
   }
 
   // keystore getter

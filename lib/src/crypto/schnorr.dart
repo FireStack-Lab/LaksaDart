@@ -78,6 +78,8 @@ String getAddressFromPublicKey(String publicKey) {
   return sha256.convert(numbers.hexToBytes(publicKey)).toString().substring(24);
 }
 
+bool verifyPrivateKey(String privateKey) {}
+
 /**
  * @function {hash}
  * @param  {type} BigInt q        {description}
@@ -90,6 +92,7 @@ BigInt hash(BigInt q, List<int> pubkey, List<int> msg) {
       msg.length; // 33 q + 33 pubkey + variable msgLen
 
   var Q = numbers.intToBytes(q);
+
   List<int> B = new List(totalLength);
 
   B.fillRange(0, totalLength, 0);
@@ -224,12 +227,13 @@ dynamic trySign(List<int> msg, BigInt k, BigInt privKey, List<int> pubKey) {
 SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   BigInt prv = numbers.bytesToInt(privKey);
   DRBG drbg = getDRBG(msg);
-  int len = params.n.bitLength;
+  int len = numbers.intToBytes(params.n).length;
 
-  var sig;
+  var sig = null;
 
-  while (!(sig is SchnorrSignature)) {
+  while (sig == null) {
     var k = numbers.hexToInt(drbg.generate(len));
+    print(k.toRadixString(16));
     sig = trySign(msg, k, prv, pubKey);
   }
   return sig;
@@ -272,13 +276,16 @@ bool verify(List<int> msg, BigInt sigR, BigInt sigS, List<int> key) {
 
   ECPoint kpub = params.curve.decodePoint(key);
 
-  //   Todo: implementation with curve.validate
+  //   TODO: implementation with curve.validate
   //   if (!curve.validate(kpub)) {
   //     throw new Error('Invalid public key')
   //   }
+  //
 
   ECPoint l = kpub * (sig.r);
+
   ECPoint r = params.G * (sig.s);
+
   ECPoint Q = l + r;
 
   if (Q.isInfinity) {
@@ -286,6 +293,7 @@ bool verify(List<int> msg, BigInt sigR, BigInt sigS, List<int> key) {
   }
 
   BigInt compressedQ = numbers.bytesToInt(Q.getEncoded());
+
   BigInt r1 = hash(compressedQ, key, msg) % (params.n);
 
   if (isZero(r1)) {

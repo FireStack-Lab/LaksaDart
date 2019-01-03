@@ -44,7 +44,13 @@ class SuccessMiddleware {
 
   @override
   String toString() {
-    return resultString.toString();
+    return resultString != null
+        ? resultString.toString()
+        : resultMap != null
+            ? resultMap.toString()
+            : resultList != null
+                ? resultList.toString()
+                : raw != null ? raw.toString() : raw;
   }
 
   Map toMap() {

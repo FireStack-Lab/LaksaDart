@@ -1,10 +1,11 @@
 class RPCMethod {
   // Network-related methods
   static final GetNetworkId = 'GetNetworkId';
-  // GetClientVersion = 'GetClientVersion';
-  // GetProtocolVersion = 'GetProtocolVersion';
+  static final GetClientVersion = 'GetClientVersion';
+  static final GetProtocolVersion = 'GetProtocolVersion';
 
   // Blockchain-related methods
+  static final GetBalance = 'GetBalance';
   static final GetBlockchainInfo = 'GetBlockchainInfo';
   static final GetShardingStructure = 'GetShardingStructure';
   static final GetDSBlock = 'GetDsBlock';
@@ -44,10 +45,11 @@ class RPCMethod {
   // GetStorageAt = 'GetStorageAt';
 
   // Account-related methods
-  static final GetBalance = 'GetBalance';
 
   Map get Mapping => {
         GetNetworkId: 'GetNetworkId',
+        GetClientVersion: 'GetClientVersion',
+        GetProtocolVersion: 'GetProtocolVersion',
         GetBlockchainInfo: 'GetBlockchainInfo',
         GetShardingStructure: 'GetShardingStructure',
         GetDSBlock: 'GetDsBlock',

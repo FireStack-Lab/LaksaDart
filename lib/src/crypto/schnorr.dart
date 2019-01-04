@@ -162,7 +162,8 @@ SchnorrSignature toSignature(List<int> serialised) {
  *
  * @returns {Signature | null =>}
  */
-dynamic trySign(List<int> msg, BigInt k, BigInt privKey, List<int> pubKey) {
+SchnorrSignature trySign(
+    List<int> msg, BigInt k, BigInt privKey, List<int> pubKey) {
   bool isZero(BigInt test) =>
       test.compareTo(BigInt.from(0)) != 0 ? false : true;
   bool isGteCurve(BigInt test) => test.compareTo(params.n) > 1 ? true : false;

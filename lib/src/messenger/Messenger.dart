@@ -9,6 +9,9 @@ class Messenger {
   String get nodeUrl => this.nodeProvider.url;
   String get scillaUrl => this.scillaProvider.url;
 
+  Function middleware = (data) => new RPCMiddleWare(data);
+  String middlewareApply = '*';
+
   Messenger({HttpProvider nodeProvider, HttpProvider scillaProvider}) {
     this.nodeProvider = nodeProvider is HttpProvider ? nodeProvider : null;
     this.scillaProvider =
@@ -21,13 +24,18 @@ class Messenger {
     new Messenger(scillaProvider: provider);
   }
 
-  Future send(String method, String params) async {
-    // set middleware
-    this
-        .nodeProvider
-        .middleware
-        .response
-        .use((data) => new RPCMiddleWare(data), match: '*');
+  void setMiddleware(Function middware, {String match}) {
+    this.middleware = middware;
+    this.middlewareApply = match;
+  }
+
+  void useMiddleware(Function middleware, {String match}) {
+    this.nodeProvider.middleware.response.use(middleware, match: match);
+  }
+
+  Future send(String method, [dynamic params]) async {
+    // use middleware
+    this.useMiddleware(this.middleware, match: this.middlewareApply);
 
     var methodMap = new RPCMethod().Mapping;
     if (methodMap[method] == null) {

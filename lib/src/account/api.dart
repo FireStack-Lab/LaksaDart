@@ -3,15 +3,9 @@ abstract class BaseAccount {
 }
 
 abstract class BaseWallet<E> {
-  //todo
-  // Messenger messenger;
-  // Account signer;
   E get accounts;
   int get length;
+  String defaultAccount;
 }
 
-abstract class Signer {
-  // todo
-  // updateBalance
-  // sign
-}
+abstract class Signer {}

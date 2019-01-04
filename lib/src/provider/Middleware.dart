@@ -89,9 +89,9 @@ class RPCMiddleWare
     }
   }
 
-  @override
-  toString() =>
-      this.result != null ? this.result.toString() : this.error.toString();
+  // @override
+  // toString() =>
+  //     this.result != null ? this.result.toString() : this.error.toString();
 
   Map get raw => {
         'jsonrpc': jsonrpc,

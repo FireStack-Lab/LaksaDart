@@ -10,7 +10,12 @@ import './api.dart' show BaseAccount;
 import './address.dart';
 
 // Account instance with keystore encrypt/decrypt
-class Account implements BaseAccount, KeyStore, ZilliqaModule<Messenger, void> {
+class Account
+    implements
+        BaseAccount,
+        KeyStore,
+        ZilliqaModule<Messenger, void>,
+        AccountState {
   // static privatekey checker
   static final RegExp isPrivateKey =
       new RegExp(r"^(0x)?[0-9a-f]{64}", caseSensitive: false);
@@ -23,6 +28,7 @@ class Account implements BaseAccount, KeyStore, ZilliqaModule<Messenger, void> {
   String balance = '0';
   int nonce = 0;
 
+  bool isFound;
   // transalte privateKey to Big Int
   BigInt get privateKeyBigInt => Account._privateKeyToBigInt(this.privateKey);
 
@@ -43,7 +49,7 @@ class Account implements BaseAccount, KeyStore, ZilliqaModule<Messenger, void> {
     this.privateKey = privateKey;
     this.publicKey = this.getPublicKey(privateKey);
     this.address = this.getAddress(privateKey);
-    this.messenger = messenger;
+    this.setMessenger(messenger);
   }
 
   static fromFile(String keyStore, String passphrase) async {
@@ -54,6 +60,7 @@ class Account implements BaseAccount, KeyStore, ZilliqaModule<Messenger, void> {
   Future<String> toFile(String passphrase,
       [Map<String, dynamic> options]) async {
     await this.encryptAccount(passphrase, options);
+
     return json.encode(this.keyStoreMap);
   }
 
@@ -112,6 +119,7 @@ class Account implements BaseAccount, KeyStore, ZilliqaModule<Messenger, void> {
       return null;
     }
     this.privateKey = await decrypt(json.decode(this.privateKey), passphrase);
+
     // return this;
   }
 
@@ -124,10 +132,12 @@ class Account implements BaseAccount, KeyStore, ZilliqaModule<Messenger, void> {
       if (balanceMap != null) {
         this.balance = balanceMap['balance'];
         this.nonce = balanceMap['nonce'];
+        this.isFound = true;
       }
     } else {
       this.balance = '0';
       this.nonce = 0;
+      this.isFound = false;
     }
   }
 

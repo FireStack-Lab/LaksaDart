@@ -32,7 +32,8 @@ class Wallet
       this.toMap.addEntries([entryNew]);
       this.getDefaultAccount();
       return this.getAccount(address.toString());
-    }
+    } else
+      return null;
   }
 
   Account create() {

@@ -28,23 +28,24 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     this.client = new http.Client();
   }
 
-  Map<String, dynamic> buildPayload(String method, String params) {
+  Map<String, dynamic> buildPayload(String method, [dynamic params]) {
     return {
       'url': this.url,
       'payload': {
         'id': 1,
         'jsonrpc': '2.0',
         'method': method,
-        'params': [params]
+        'params': params != null ? [params] : []
       }
     };
   }
 
-  Future<dynamic> send(String method, String params) async {
+  Future<dynamic> send(String method, [dynamic params]) async {
     var middleware = this.getMiddleware(method);
     var reqMiddleware = this.composeMiddleware(middleware.first);
     var resMiddleware = this.composeMiddleware(middleware.last);
     var req = reqMiddleware(this.buildPayload(method, params));
+
     return this.performRPC(req, resMiddleware);
   }
 
@@ -76,7 +77,6 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     if (response.statusCode >= 400) throw Future.error('connection error');
     var newMapEntry = MapEntry('req', response.request);
     body.addEntries([newMapEntry]);
-
     return handler(body);
   }
 }

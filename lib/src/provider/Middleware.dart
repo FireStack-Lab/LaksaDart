@@ -1,7 +1,8 @@
+// import 'package:http/http.dart';
 import 'net.dart';
 import 'dart:convert';
 
-class ErrorMiddleware implements RPCError<dynamic> {
+class ErrorMiddleware implements RPCError {
   RPCErrorCode code;
   String message;
   dynamic data;
@@ -26,7 +27,7 @@ class ErrorMiddleware implements RPCError<dynamic> {
   }
 }
 
-class SuccessMiddleware {
+class SuccessMiddleware implements RPCResult {
   String resultString;
   Map<String, dynamic> resultMap;
   List<dynamic> resultList;
@@ -68,7 +69,6 @@ class RPCMiddleWare
   final id = '1';
   SuccessMiddleware result;
   ErrorMiddleware error;
-  RPCResponseBody body;
   var req;
 
   RPCMiddleWare.success(dynamic resultData) {
@@ -77,7 +77,7 @@ class RPCMiddleWare
   RPCMiddleWare.error(dynamic errorData) {
     error = new ErrorMiddleware(errorData);
   }
-  RPCMiddleWare(Map data) {
+  RPCMiddleWare(Map<String, dynamic> data) {
     if (data['result'] != null) {
       this.result = RPCMiddleWare.success(data['result']).result;
     }

@@ -1,4 +1,6 @@
-final Map<String, String> MiddlewareType = {'REQ': 'REQ', 'RES': 'RES'};
+// final Map<String, String> MiddlewareType = {'REQ': 'REQ', 'RES': 'RES'};
+
+enum MiddlewareType { REQ, RES }
 
 class UseMiddleware {
   dynamic use;
@@ -9,31 +11,46 @@ class Middleware {
   UseMiddleware response = new UseMiddleware();
 }
 
-class BaseProvider {
+abstract class ReqMiddleware<I> {
+  I reqMiddleware;
+}
+
+abstract class ResMiddleware<O> {
+  O resMiddleware;
+}
+
+typedef Transformer<I, O> = O Function(I payload);
+
+abstract class MiddlewarePair<R, S> {}
+
+class BaseProvider
+    implements
+        ReqMiddleware<Map<dynamic, List<Transformer>>>,
+        ResMiddleware<Map<dynamic, List<Transformer>>> {
   String url;
-  Map reqMiddleware;
-  Map resMiddleware;
+  Map<dynamic, List<Transformer>> reqMiddleware;
+  Map<dynamic, List<Transformer>> resMiddleware;
 
   Middleware middleware = new Middleware();
 
   BaseProvider(Map reqMiddleware, Map resMiddleware) {
     this.reqMiddleware = reqMiddleware is Map ? reqMiddleware : {'*': []};
     this.resMiddleware = resMiddleware is Map ? resMiddleware : {'*': []};
-    this.middleware.request.use = (Function fn, {String match: '*'}) =>
-        this._pushMiddleware(fn, MiddlewareType['REQ'], match);
-    this.middleware.response.use = (Function fn, {String match: '*'}) =>
-        this._pushMiddleware(fn, MiddlewareType['RES'], match);
+    this.middleware.request.use = (Transformer fn, {String match: '*'}) =>
+        this._pushMiddleware(fn, MiddlewareType.REQ, match);
+    this.middleware.response.use = (Transformer fn, {String match: '*'}) =>
+        this._pushMiddleware(fn, MiddlewareType.RES, match);
   }
 
-  void _pushMiddleware(Function fn, String type, String match) {
-    if (type == MiddlewareType['REQ'] && type == MiddlewareType['RES']) {
+  void _pushMiddleware(Transformer fn, MiddlewareType type, String match) {
+    if (type == MiddlewareType.REQ && type == MiddlewareType.RES) {
       throw 'Please specify the type of middleware being added';
     }
 
-    if (type == MiddlewareType['REQ']) {
+    if (type == MiddlewareType.REQ) {
       var current =
           this.reqMiddleware[match] != null ? this.reqMiddleware[match] : [];
-      var matchers = List.from(current);
+      List<Transformer> matchers = List.from(current);
       matchers.add(fn);
       this
           .reqMiddleware
@@ -41,7 +58,7 @@ class BaseProvider {
     } else {
       var current =
           this.resMiddleware[match] != null ? this.resMiddleware[match] : [];
-      var matchers = List.from(current);
+      List<Transformer> matchers = List.from(current);
       matchers.add(fn);
       this
           .resMiddleware
@@ -49,9 +66,9 @@ class BaseProvider {
     }
   }
 
-  List<List<dynamic>> getMiddleware(method) {
-    var reqFns = [];
-    var resFns = [];
+  List<List<Transformer>> getMiddleware(String method) {
+    List<Transformer> reqFns = [];
+    List<Transformer> resFns = [];
 
     for (var ent in this.reqMiddleware.entries) {
       var key = ent.key;

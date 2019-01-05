@@ -188,8 +188,15 @@ abstract class RPCResponseBody<R, E> extends RPCResponseBase {
   E error;
 }
 
-abstract class RPCError<E> {
+abstract class RPCError {
   RPCErrorCode code;
   String message;
-  E data;
+  dynamic data;
+}
+
+abstract class RPCResult {
+  String resultString;
+  Map<String, dynamic> resultMap;
+  List<dynamic> resultList;
+  dynamic raw;
 }

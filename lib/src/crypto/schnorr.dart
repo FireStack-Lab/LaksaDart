@@ -11,6 +11,7 @@ import "package:pointycastle/ecc/curves/secp256k1.dart";
 import 'dartRandom.dart';
 import 'signature.dart';
 import '../utils/numbers.dart' as numbers;
+import '../utils/transaction.dart';
 import 'hmac-drbg.dart';
 
 final PUBKEY_COMPRESSED_SIZE_BYTES = 33;
@@ -234,7 +235,6 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
 
   while (sig == null) {
     var k = numbers.hexToInt(drbg.generate(len));
-    print(k.toRadixString(16));
     sig = trySign(msg, k, prv, pubKey);
   }
   return sig;
@@ -311,4 +311,41 @@ List<int> randomBytes(int byteLength) {
 
 String randomHex(int hexLength) {
   return numbers.bytesToHex(randomBytes(hexLength ~/ 2));
+}
+
+typedef SignedTransaction = Map<String, dynamic> Function(
+    String privateKey, Map txnDetails);
+/**
+ * @function signTransaction
+ * @param  {PrivateKey} privateKey        {privatekey}
+ * @param  {Transaction} transactionObject {transaction object}
+ * @return {Transaction} {signed transaction}
+ */
+Map<String, dynamic> SchnorrSign(
+    String privateKey, Map<String, dynamic> txnDetails) {
+  var pubKey = getPubKeyFromPrivateKey(privateKey);
+
+  Map<String, dynamic> txn = {
+    'version': txnDetails['version'],
+    'nonce': txnDetails['nonce'],
+    'toAddr': txnDetails['toAddr'],
+    'amount': txnDetails['amount'],
+    'pubKey': pubKey,
+    'gasPrice': txnDetails['gasPrice'],
+    'gasLimit': txnDetails['gasLimit'],
+    'code': txnDetails['code'] != null ? txnDetails['code'] : '',
+    'data': txnDetails['data'] != null ? txnDetails['data'] : ''
+  };
+
+  Uint8List encodedTx = encodeTransactionProto(txn);
+
+  SchnorrSignature signature = sign(
+      encodedTx, numbers.hexToBytes(privateKey), numbers.hexToBytes(pubKey));
+
+  txn.addEntries([new MapEntry('signature', signature.signature)]);
+  if (verify(encodedTx, signature.r, signature.s, numbers.hexToBytes(pubKey))) {
+    return txn;
+  } else {
+    throw 'Signature verify failure';
+  }
 }

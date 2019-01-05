@@ -6,6 +6,7 @@ import 'package:laksaDart/src/core/ZilliqaModule.dart';
 import 'package:laksaDart/src/messenger/Messenger.dart';
 import 'package:laksaDart/src/provider/Middleware.dart';
 import 'package:laksaDart/src/provider/net.dart';
+import 'package:laksaDart/src/transaction/transaction.dart';
 import './api.dart' show BaseAccount;
 import './address.dart';
 
@@ -124,7 +125,7 @@ class Account
   }
 
   Future<void> updateBalance() async {
-    RPCMiddleWare res = await this
+    RPCResponseBody<SuccessMiddleware, ErrorMiddleware> res = await this
         .messenger
         .send(RPCMethod.GetBalance, this.address.toString());
     if (res.error == null && res.result != null) {
@@ -222,5 +223,38 @@ class Account
       return true;
     } else
       return false;
+  }
+
+  /**
+   * @function {signTransactionWithPassword} {sign plain object with password}
+   * @param  {Transaction} txnObj {transaction object}
+   * @param  {string} password          {password string}
+   * @return {object} {signed transaction object}
+   */
+  Future<Transaction> signTransaction(Transaction txnObj,
+      {String passphrase}) async {
+    if (this.isEncrypted) {
+      await this.decryptAccount(passphrase);
+      await this.updateBalance();
+      txnObj.txParams.update('nonce', (found) => this.nonce + 1,
+          ifAbsent: () => this.nonce + 1);
+      var signed = crypto.SchnorrSign(this.privateKey, txnObj.txParams);
+
+      await this.encryptAccount(passphrase);
+      return txnObj.map((Map obj) {
+        return obj.addAll(signed);
+      });
+    } else {
+      await this.updateBalance();
+      Map<String, dynamic> newTxMap = Map.from(txnObj.txParams);
+      newTxMap.update('nonce', (found) => this.nonce + 1,
+          ifAbsent: () => this.nonce + 1);
+      var signed = crypto.SchnorrSign(this.privateKey, newTxMap);
+
+      return txnObj.map((Map obj) {
+        obj.addAll(signed);
+        return obj;
+      });
+    }
   }
 }

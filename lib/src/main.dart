@@ -16,6 +16,8 @@ import 'package:laksaDart/src/provider/Http.dart';
 import 'package:laksaDart/src/provider/net.dart';
 import 'package:laksaDart/src/provider/Middleware.dart';
 import 'package:laksaDart/src/messenger/Messenger.dart';
+import 'package:laksaDart/src/transaction/transaction.dart';
+
 import 'Laksa.dart' show Laksa;
 
 main() async {
@@ -26,12 +28,26 @@ main() async {
   // var result = await provider.send(RPCMethod.GetNetworkId, '');
   // var messenger = new Messenger(nodeProvider: provider);
 
-  // var result = await messenger.send(
-  //     RPCMethod.GetBalance, '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a');
-
   Laksa laksa = new Laksa('https://api.zilliqa.com');
 
-  var res = await laksa.blockchain
-      .getBalance(address: '9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a');
-  print(res.result);
+  var acc = laksa.wallet
+      .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
+
+  var mGasPrice = await laksa.blockchain.getMinimumGasPrice();
+
+  // await acc.updateBalance();
+  // print(acc.balance);
+
+  Transaction txn = laksa.transactions.newTx({
+    'version': 1,
+    'toAddr': '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+    'amount': BigInt.from(123),
+    'gasPrice': BigInt.from(num.parse(mGasPrice.result.toString())),
+    'gasLimit': 1,
+  });
+
+  var signed = await acc.signTransaction(txn);
+
+  var sent = await signed.sendTransaction();
+  print(sent.transaction.TranID);
 }

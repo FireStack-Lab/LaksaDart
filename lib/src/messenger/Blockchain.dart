@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:laksaDart/src/provider/net.dart';
 import 'package:laksaDart/src/core/ZilliqaModule.dart';
 import 'package:laksaDart/src/provider/Middleware.dart';
+import 'package:laksaDart/src/transaction/transaction.dart';
+import 'package:laksaDart/src/transaction/api.dart';
 import 'Messenger.dart';
 
 class Blockchain implements ZilliqaModule<Messenger, void> {
@@ -10,97 +13,119 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     this.messenger = messenger;
   }
 
-  Future getBalance({String address}) async {
-    // this.messenger.setMiddleware((data) => new RPCMiddleWare(data).raw,
-    //     match: RPCMethod.GetBalance);
+  Future<RPCMiddleWare> getBalance({String address}) async {
+    this.messenger.setMiddleware((data) => new RPCMiddleWare(data).raw,
+        match: RPCMethod.GetBalance);
     return await this.messenger.send(RPCMethod.GetBalance, address);
   }
 
-  Future getBlockchainInfo() async {
+  Future<RPCMiddleWare> getBlockchainInfo() async {
     return await this.messenger.send(RPCMethod.GetBlockchainInfo);
   }
 
-  Future getDSBlock({int blockNum}) async {
+  Future<RPCMiddleWare> getDSBlock({int blockNum}) async {
     return await this.messenger.send(RPCMethod.GetDSBlock, blockNum.toString());
   }
 
-  Future getLatestDSBlock() async {
+  Future<RPCMiddleWare> getLatestDSBlock() async {
     return await this.messenger.send(RPCMethod.GetLatestDSBlock);
   }
 
-  Future getNumDSBlocks() async {
+  Future<RPCMiddleWare> getNumDSBlocks() async {
     return await this.messenger.send(RPCMethod.GetNumDSBlocks);
   }
 
-  Future getDSBlockRate() async {
+  Future<RPCMiddleWare> getDSBlockRate() async {
     return await this.messenger.send(RPCMethod.GetDSBlockRate);
   }
 
-  Future getDSBlockListing({int max}) async {
+  Future<RPCMiddleWare> getDSBlockListing({int max}) async {
     return await this.messenger.send(RPCMethod.DSBlockListing, max);
   }
 
-  Future getTxBlock({int blockNum}) async {
+  Future<RPCMiddleWare> getTxBlock({int blockNum}) async {
     return await this.messenger.send(RPCMethod.GetTxBlock, blockNum.toString());
   }
 
-  Future getLatestTxBlock() async {
+  Future<RPCMiddleWare> getLatestTxBlock() async {
     return await this.messenger.send(RPCMethod.GetLatestTxBlock);
   }
 
-  Future getNumTxBlocks() async {
+  Future<RPCMiddleWare> getNumTxBlocks() async {
     return await this.messenger.send(RPCMethod.GetNumTxBlocks);
   }
 
-  Future getTxBlockRate() async {
+  Future<RPCMiddleWare> getTxBlockRate() async {
     return await this.messenger.send(RPCMethod.GetTxBlockRate);
   }
 
-  Future getTxBlockListing({int max}) async {
+  Future<RPCMiddleWare> getTxBlockListing({int max}) async {
     return await this.messenger.send(RPCMethod.TxBlockListing, max);
   }
 
-  Future getNumTransactions() async {
+  Future<RPCMiddleWare> getNumTransactions() async {
     return await this.messenger.send(RPCMethod.GetNumTransactions);
   }
 
-  Future getTransactionRate() async {
+  Future<RPCMiddleWare> getTransactionRate() async {
     return await this.messenger.send(RPCMethod.GetTransactionRate);
   }
 
-  Future getCurrentMiniEpoch() async {
+  Future<RPCMiddleWare> getCurrentMiniEpoch() async {
     return await this.messenger.send(RPCMethod.GetCurrentMiniEpoch);
   }
 
-  Future getCurrentDSEpoch() async {
+  Future<RPCMiddleWare> getCurrentDSEpoch() async {
     return await this.messenger.send(RPCMethod.GetCurrentDSEpoch);
   }
 
-  Future getPrevDifficulty() async {
+  Future<RPCMiddleWare> getPrevDifficulty() async {
     return await this.messenger.send(RPCMethod.GetPrevDifficulty);
   }
 
-  Future getPrevDSDifficulty() async {
+  Future<RPCMiddleWare> getPrevDSDifficulty() async {
     return await this.messenger.send(RPCMethod.GetPrevDSDifficulty);
   }
 
-  Future getRecentTransactions() async {
+  Future<RPCMiddleWare> getRecentTransactions() async {
     return await this.messenger.send(RPCMethod.GetRecentTransactions);
   }
 
-  Future getNumTxnsTxEpoch({int epoch}) async {
+  Future<RPCMiddleWare> getNumTxnsTxEpoch({int epoch}) async {
     return await this.messenger.send(RPCMethod.GetNumTxnsTxEpoch, epoch);
   }
 
-  Future getNumTxnsDSEpoch({int epoch}) async {
+  Future<RPCMiddleWare> getNumTxnsDSEpoch({int epoch}) async {
     return await this.messenger.send(RPCMethod.GetNumTxnsDSEpoch, epoch);
   }
 
-  Future getMinimumGasPrice() async {
+  Future<RPCMiddleWare> getMinimumGasPrice() async {
     return await this.messenger.send(RPCMethod.GetMinimumGasPrice);
   }
 
   // TODO: getTransaction
   // TODO: completeTransaction
   // TODO: createTransaction
+  Future<TransactionSent> createTransaction(Transaction transaction) async {
+    try {
+      var res = await this
+          .messenger
+          .send(RPCMethod.CreateTransaction, transaction.toPayload);
+      if (res.result != null) {
+        var result = res.result.toMap();
+        var TranID = result['TranID'];
+        if (TranID == null) {
+          throw 'Transaction fail';
+        } else {
+          transaction.TranID = TranID;
+          transaction.status = TxStatus.Pending;
+          return new TransactionSent(transaction, result);
+        }
+      } else if (res.error != null) {
+        throw res.error.message;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -33,9 +33,8 @@ class Messenger {
     this.nodeProvider.middleware.response.use(middleware, match: match);
   }
 
-  Future send(String method, [dynamic params]) async {
+  Future<RPCMiddleWare> send(String method, [dynamic params]) async {
     // use middleware
-    this.useMiddleware(this.middleware, match: this.middlewareApply);
 
     var methodMap = new RPCMethod().Mapping;
     if (methodMap[method] == null) {

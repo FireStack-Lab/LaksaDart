@@ -8,6 +8,8 @@ class SchnorrSignature implements Signature {
 
   String toString() => "(${r.toString()},${s.toString()})";
 
+  String get signature => "${r.toRadixString(16)}" + "${s.toRadixString(16)}";
+
   bool operator ==(other) {
     if (other == null) return false;
     if (other is! SchnorrSignature) return false;

@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
-import './Base.dart';
-import './net.dart';
+import 'Base.dart';
+import 'net.dart';
+import 'Middleware.dart';
+
+typedef MiddleWareFn = dynamic Function(List<dynamic> list);
 
 class HttpProvider extends BaseProvider implements RPCRequest {
   // TODO: implement the request timeout
@@ -21,11 +24,8 @@ class HttpProvider extends BaseProvider implements RPCRequest {
   RPCRequestPayload payload;
   RPCRequestOptions options;
 
-  http.Client client;
-
   HttpProvider(url, [req, res]) : super(req, res) {
     this.url = url;
-    this.client = new http.Client();
   }
 
   Map<String, dynamic> buildPayload(String method, [dynamic params]) {
@@ -40,16 +40,18 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     };
   }
 
-  Future<dynamic> send(String method, [dynamic params]) async {
-    var middleware = this.getMiddleware(method);
-    var reqMiddleware = this.composeMiddleware(middleware.first);
-    var resMiddleware = this.composeMiddleware(middleware.last);
+  Future<RPCMiddleWare> send(String method, [dynamic params]) async {
+    List<List<Transformer>> middleware = this.getMiddleware(method);
+    Transformer reqMiddleware = this.composeMiddleware(middleware.first);
+    Transformer resMiddleware = this.composeMiddleware(middleware.last);
     var req = reqMiddleware(this.buildPayload(method, params));
-
-    return this.performRPC(req, resMiddleware);
+    var url = this.url;
+    var headers = this.headers;
+    RPCMiddleWare result = await performRPC(url, headers, req);
+    return resMiddleware(result);
   }
 
-  dynamic composeMiddleware(Iterable<dynamic> middwareList) {
+  dynamic composeMiddleware(List<Transformer> middwareList) {
     if (middwareList.length == 0) {
       return (dynamic arg) => arg;
     }
@@ -63,20 +65,22 @@ class HttpProvider extends BaseProvider implements RPCRequest {
           .reduce((a, b) => (dynamic any) => a(b(any)));
     }
   }
+}
 
-  Future<dynamic> performRPC(dynamic request, dynamic handler) async {
-    var response = await this
-        .client
-        .post(this.url,
-            headers: this.headers, body: json.encode(request['payload']))
-        .whenComplete(client.close);
+Future<RPCMiddleWare> performRPC(
+    String url, Map headers, Map<String, dynamic> request) async {
+  Client client = new Client();
 
-    Map<String, dynamic> body = json.decode(response.body);
+  var response = await client
+      .post(url, headers: headers, body: json.encode(request['payload']))
+      .whenComplete(client.close);
 
-    // response.statusCode;
-    if (response.statusCode >= 400) throw Future.error('connection error');
-    var newMapEntry = MapEntry('req', response.request);
-    body.addEntries([newMapEntry]);
-    return handler(body);
-  }
+  Map<String, dynamic> body = json.decode(response.body);
+
+  // response.statusCode;
+  if (response.statusCode >= 400) throw Future.error('connection error');
+  var newMapEntry = MapEntry('req', response.request);
+  body.addEntries([newMapEntry]);
+
+  return new RPCMiddleWare(body);
 }

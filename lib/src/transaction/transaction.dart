@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:laksaDart/src/provider/net.dart';
 import 'package:laksaDart/src/messenger/Messenger.dart';
+import 'util.dart';
 import 'api.dart';
 
 class TransactionSent {
@@ -43,7 +44,7 @@ class Transaction implements BaseTransaction {
 
   // getter toPayload
   Map<String, dynamic> get toPayload => {
-        'version': this.version,
+        'version': this.getVersion(),
         'toAddr': this.toAddr,
         'nonce': this.nonce,
         'pubKey': this.pubKey,
@@ -125,7 +126,7 @@ class Transaction implements BaseTransaction {
    * @static
    * @param {BaseTx} params
    */
-  static confirm(Map params, Messenger messenger) {
+  static confirmTxn(Map params, Messenger messenger) {
     return new Transaction(
         params: params, messenger: messenger, status: TxStatus.Confirmed);
   }
@@ -228,5 +229,70 @@ class Transaction implements BaseTransaction {
     } catch (error) {
       throw error;
     }
+  }
+
+  Future<bool> trackTx(String txHash) async {
+    // TODO: regex validation for txHash so we don't get garbage
+    var res = await this.messenger.send(RPCMethod.GetTransaction, txHash);
+
+    if (res.error != null) {
+      return false;
+    }
+
+    this.TranID = res.result.resultMap['ID'];
+    this.receipt = res.result.resultMap['receipt'];
+    this.status = this.receipt != null && this.receipt['success']
+        ? TxStatus.Confirmed
+        : TxStatus.Rejected;
+
+    return true;
+  }
+
+  /**
+   * confirmReceipt
+   *
+   * Similar to the Promise API. This sets the Transaction instance to a state
+   * of pending. Calling this function kicks off a passive loop that polls the
+   * lookup node for confirmation on the txHash.
+   *
+   * The polls are performed with a linear backoff:
+   *
+   * `const delay = interval * attempt`
+   *
+   * This is a low-level method that you should generally not have to use
+   * directly.
+   *
+   * @param {string} txHash
+   * @param {number} maxAttempts
+   * @param {number} initial interval in milliseconds
+   * @returns {Promise<Transaction>}
+   */
+  Future<Transaction> confirm(
+      {String txHash, int maxAttempts = 20, int interval = 1000}) async {
+    this.status = TxStatus.Pending;
+    int attempt = 0;
+    do {
+      try {
+        if (await this.trackTx(txHash)) {
+          return this;
+        }
+      } catch (err) {
+        this.status = TxStatus.Rejected;
+        throw err;
+      }
+      if (attempt < maxAttempts - 1) {
+        sleep(ms: interval * attempt, callback: () => attempt += 1);
+      } else
+        break;
+    } while (attempt < maxAttempts);
+
+    this.status = TxStatus.Rejected;
+    throw 'The transaction is still not confirmed after ${maxAttempts} attemps.';
+  }
+
+  int getVersion() {
+    var CHAIN_ID_BIT = 2 << 16;
+    var b = this.version;
+    return CHAIN_ID_BIT + b;
   }
 }

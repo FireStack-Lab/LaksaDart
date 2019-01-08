@@ -94,7 +94,7 @@ class Account
     return {
       'privateKey': this.privateKey,
       'publicKey': this.publicKey,
-      'address': this.address.toString()
+      'address': this.address.checkSumAddress.toString()
     };
   }
 

@@ -95,13 +95,20 @@ class ZilAddress extends Address {
     String stripAddress = numbers.strip0x(address.toLowerCase());
     final hash = sha256.convert(numbers.hexToBytes(stripAddress)).toString();
     String ret = '0x';
+
+    BigInt v = numbers.hexToInt(hash);
+
     for (int i = 0; i < address.length; i++) {
-      if (int.parse(hash[i], radix: 16) >= 8) {
-        ret += address[i].toUpperCase();
-      } else {
+      if ('0123456789'.indexOf(address[i]) != -1) {
         ret += address[i];
+      } else {
+        var checker = v & BigInt.from(2).pow(BigInt.from(255 - 6 * i).toInt());
+        ret += checker >= BigInt.from(1)
+            ? address[i].toUpperCase()
+            : address[i].toLowerCase();
       }
     }
+
     return ret;
   }
 

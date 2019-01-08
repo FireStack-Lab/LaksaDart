@@ -10,6 +10,8 @@ import 'package:laksaDart/src/utils/validators.dart' as validators;
 import 'package:laksaDart/src/crypto/dartRandom.dart';
 import 'package:laksaDart/src/account/wallet.dart';
 import 'package:laksaDart/src/account/account.dart';
+import 'package:laksaDart/src/account/address.dart';
+
 import 'package:laksaDart/src/utils/unit.dart' as unit;
 
 import 'package:laksaDart/src/provider/Http.dart';
@@ -32,22 +34,37 @@ main() async {
 
   var acc = laksa.wallet
       .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
+  var test = BigInt.from(2);
+  var test2 = BigInt.from(3);
+  await acc.updateBalance();
+  print(acc.balance);
+  // print(new ZilAddress('4BAF5FADA8E5DB92C3D3242618C5B47133AE003C')
+  //     .checkSumAddress); // ==
+  //'0x4BAF5faDA8e5Db92C3d3242618c5B47133AE003C');
 
-  var mGasPrice = await laksa.blockchain.getMinimumGasPrice();
+  // var mGasPrice = await laksa.blockchain.getMinimumGasPrice();
+  // // print('mGasPrice:${mGasPrice.result.toString()}');
+  // // // await acc.updateBalance();
+  // // // print(acc.balance);
 
-  // await acc.updateBalance();
-  // print(acc.balance);
+  // Transaction txn = laksa.transactions.newTx({
+  //   'version': 1,
+  //   'toAddr': '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+  //   'amount': BigInt.from(123),
+  //   'gasPrice': BigInt.from(num.parse(
+  //       mGasPrice.result != null ? mGasPrice.result.toString() : '1000000000')),
+  //   'gasLimit': 1,
+  // });
 
-  Transaction txn = laksa.transactions.newTx({
-    'version': 1,
-    'toAddr': '2E3C9B415B19AE4035503A06192A0FAD76E04243',
-    'amount': BigInt.from(123),
-    'gasPrice': BigInt.from(num.parse(mGasPrice.result.toString())),
-    'gasLimit': 1,
-  });
+  // var signed = await acc.signTransaction(txn);
+  // print(signed.toPayload);
+  // var sent = await signed.sendTransaction();
+  // if (sent.transaction.TranID != null) {
+  //   print(sent.transaction.TranID);
+  //   var confirmed =
+  //       await sent.transaction.confirm(txHash: sent.transaction.TranID);
+  //   print(confirmed.TranID);
+  // }
 
-  var signed = await acc.signTransaction(txn);
-
-  var sent = await signed.sendTransaction();
-  print(sent.transaction.TranID);
+  // print(sent.transaction.TranID);
 }

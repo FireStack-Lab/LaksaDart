@@ -49,6 +49,34 @@
   - setMiddleware
   - useMiddleware
 
+- Blockchain
+
+  - getBalance
+  - getBlockchainInfo
+  - getDSBlock
+  - getTxBlock
+  - getLatestDSBlock
+  - getNumDSBlocks
+  - getDSBlockRate
+  - getDSBlockListing
+  - getLatestTxBlock
+  - getNumTxBlocks
+  - getTxBlockRate
+  - getTxBlockListing
+  - getNumTransactions
+  - getTransactionRate
+  - getCurrentMiniEpoch
+  - getCurrentDSEpoch
+  - getPrevDifficulty
+  - getPrevDSDifficulty
+  - getRecentTransactions
+  - getNumTxnsTxEpoch
+  - getNumTxnsDSEpoch
+  - getMinimumGasPrice
+  - createTransaction
+  - checkCode(Scilla runner)
+  - testCall(Scilla runner)
+
 - Provider
 
   - BaseProvider

@@ -13,8 +13,9 @@ void main() {
   test("Test Get Contract ABIs", () async {
     File contract = new File('./contracts/helloworld.txt');
     await contract.readAsString().then((contractString) async {
-      Laksa laksa = new Laksa('https://api.zilliqa.com');
-      laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
+      Laksa laksa = new Laksa(
+          nodeUrl: 'https://api.zilliqa.com',
+          scillaUrl: 'https://scilla-runner.zilliqa.com');
 
       var result = await laksa.blockchain.checkCode(code: contractString);
       // var result = await laksa.messenger
@@ -38,8 +39,9 @@ void main() {
   test('Test call to scilla-runner', () async {
     File contract = new File('./contracts/helloworld.txt');
     await contract.readAsString().then((contractString) async {
-      Laksa laksa = new Laksa('https://api.zilliqa.com');
-      laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
+      Laksa laksa = new Laksa(
+          nodeUrl: 'https://api.zilliqa.com',
+          scillaUrl: 'https://scilla-runner.zilliqa.com');
       // laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
       var init = [
         {

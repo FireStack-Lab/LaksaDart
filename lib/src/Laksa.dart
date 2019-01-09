@@ -16,7 +16,7 @@ class Laksa {
   Wallet wallet;
   TransactionFactory transactions;
 
-  Laksa(String nodeUrl, [String scillaUrl]) {
+  Laksa({String nodeUrl, String scillaUrl}) {
     if (scillaUrl == null) {
       this.scillaUrl = nodeUrl;
     } else {

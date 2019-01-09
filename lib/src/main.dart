@@ -27,9 +27,11 @@ import 'package:laksaDart/src/contract/util.dart';
 import 'Laksa.dart' show Laksa;
 
 main() async {
-  var laksa = new Laksa('https://api.zilliqa.com');
-  laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
+  var laksa = new Laksa(
+      nodeUrl: 'https://api.zilliqa.com',
+      scillaUrl: 'https://scilla-runner.zilliqa.com');
 
-  var acc = laksa.wallet
-      .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
+  // var acc = laksa.wallet
+  //     .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
+  print(laksa.messenger.scillaProvider.url);
 }

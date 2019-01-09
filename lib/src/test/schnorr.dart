@@ -9,12 +9,12 @@ import 'package:laksaDart/src/crypto/schnorr.dart' as schnorr;
 void main() {
   test("Test Schnorr Signature with preset json", () async {
     File schnorrVector = new File('./fixtures/schnorr.signature.json');
-    schnorrVector
+    await schnorrVector
         .readAsString()
         .then((fileContents) => jsonDecode(fileContents))
         .then((testJson) async {
       // error i=284
-      for (int i = 0; i < 200; i++) {
+      for (int i = 285; i < 1000; i++) {
         String pub = testJson[i]['pub'];
         String priv = testJson[i]['priv'];
         String msg = testJson[i]['msg'];

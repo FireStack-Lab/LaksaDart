@@ -44,8 +44,6 @@ class RPCMethod {
       'GetContractAddressFromTransactionID';
   // GetStorageAt = 'GetStorageAt';
 
-  // Account-related methods
-
   Map get Mapping => {
         GetNetworkId: 'GetNetworkId',
         GetClientVersion: 'GetClientVersion',
@@ -90,6 +88,18 @@ class RPCMethod {
 
         // Account-related methods
         GetBalance: 'GetBalance',
+      };
+}
+
+class Endpoint {
+  // Scilla Runner Related Method
+  static final ScillaCheck = '/contract/check';
+  static final ScillaCall = '/contract/call';
+
+  Map get Mapping => {
+        // Scilla Runner Related Method
+        ScillaCheck: '/contract/check',
+        ScillaCall: '/contract/call'
       };
 }
 

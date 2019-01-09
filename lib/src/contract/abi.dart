@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 abstract class ABIObject {
-  List<dynamic> events;
-  List<Map<String, dynamic>> fields;
+  List<Map> events;
+  List<Map> fields;
   String name;
-  List<dynamic> params;
-  List<dynamic> transitions;
+  List<Map> params;
+  List<Map> transitions;
 }
 
 /*
@@ -16,19 +18,28 @@ abstract class ABIObject {
  * In laksa, we use remote endpont call to get ABI, however you can set scillaProvider using your own local address.
  */
 class ABI implements ABIObject {
-  List<dynamic> events;
-  List<Map<String, dynamic>> fields;
+  List<Map> events;
+  List<Map> fields;
   String name;
-  List<dynamic> params;
-  List<dynamic> transitions;
+  List<Map> params;
+  List<Map> transitions;
 
-  ABI(this.events, this.fields, this.name, this.params, this.transitions);
+  ABI(Map<String, dynamic> Abi) {
+    // because ABI is <String,dynamic>, to get the type annotation ready,
+    // we need to use List.from(),which will get the correct list.
+    // then we can extract the List<dynamic> type to List<Map>
+    this.events = List.from(Abi['events']);
+    this.fields = List.from(Abi['fields']);
+    this.name = Abi['name'];
+    this.params = List.from(Abi['params']);
+    this.transitions = List.from(Abi['transitions']);
+  }
 
   String getName() {
     return this.name;
   }
 
-  List<dynamic> getInitParams() {
+  List<Map> getInitParams() {
     return this.params;
   }
 
@@ -50,15 +61,15 @@ class ABI implements ABIObject {
       return null;
   }
 
-  List<dynamic> getTransitions() {
+  List<Map> getTransitions() {
     return this.transitions;
   }
 
-  List<dynamic> getTransitionsParamTypes() {
+  List<Map> getTransitionsParamTypes() {
     List returnArray = [];
     if (this.transitions.length > 0) {
       for (int i = 0; i < this.transitions.length; i += 1) {
-        returnArray[i] = getParamTypes(this.transitions[i].params);
+        returnArray[i] = getParamTypes(this.transitions[i]['params']);
       }
     }
     if (returnArray.length > 0) {
@@ -67,12 +78,12 @@ class ABI implements ABIObject {
       return null;
   }
 
-  List<dynamic> getEvents() {
+  List<Map> getEvents() {
     return this.events;
   }
 }
 
-List<String> getParamTypes(List<Map<String, dynamic>> list) {
+List<String> getParamTypes(List<Map> list) {
   List<String> keyList2 = [];
   var boolList = list.map<bool>((obj) {
     keyList2.addAll(obj.keys);

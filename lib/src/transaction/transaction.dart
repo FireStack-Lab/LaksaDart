@@ -44,7 +44,7 @@ class Transaction implements BaseTransaction {
 
   // getter toPayload
   Map<String, dynamic> get toPayload => {
-        'version': this.getVersion(),
+        'version': 0, //this.getVersion(),
         'toAddr': this.toAddr,
         'nonce': this.nonce,
         'pubKey': this.pubKey,

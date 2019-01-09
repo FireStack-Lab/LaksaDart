@@ -1,5 +1,7 @@
 part of 'keyStore.dart';
 
+final String ALGO_IDENTIFIER = 'aes-128-ctr';
+
 Future<String> encrypt(String privateKey, String passphrase,
     [Map<String, dynamic> options]) async {
   Uint8List uuid = new Uint8List(16);
@@ -35,7 +37,13 @@ Future<String> encrypt(String privateKey, String passphrase,
   List<int> ciphertextBytes =
       await _encryptPrivateKey(derivator, encodedPassword, iv, privateKey);
 
-  List<int> macBuffer = derivedKey.sublist(16, 32) + ciphertextBytes;
+  List<int> macBuffer = derivedKey.sublist(16, 32) +
+      ciphertextBytes +
+      iv +
+      ALGO_IDENTIFIER.codeUnits;
+
+  String mac = numbers.bytesToHex(
+      new HMAC(sha256, derivedKey).update(macBuffer).digest().bytes);
 
   Map<String, dynamic> map = {
     'crypto': {
@@ -44,7 +52,7 @@ Future<String> encrypt(String privateKey, String passphrase,
       'ciphertext': numbers.bytesToHex(ciphertextBytes),
       'kdf': kdf,
       'kdfparams': json.encode(kdfParams),
-      'mac': numbers.bytesToHex(sha256.convert(macBuffer).bytes),
+      'mac': mac,
     },
     'id': uuidParser.unparse(uuid),
     'version': 3,
@@ -55,22 +63,30 @@ Future<String> encrypt(String privateKey, String passphrase,
 Future<String> decrypt(Map<String, dynamic> keyStore, String passphrase) async {
   List<int> ciphertext = numbers.hexToBytes(keyStore['crypto']['ciphertext']);
   String kdf = keyStore['crypto']['kdf'];
-  Map<String, dynamic> kdfparams = json.decode(keyStore['crypto']['kdfparams']);
+
+  Map<String, dynamic> kdfparams = keyStore['crypto']['kdfparams'] is String
+      ? json.decode(keyStore['crypto']['kdfparams'])
+      : keyStore['crypto']['kdfparams'];
+  var cipherparams = keyStore['crypto']["cipherparams"];
+  var iv = numbers.hexToBytes(cipherparams["iv"]);
 
   List<int> encodedPassword = utf8.encode(passphrase);
   _KeyDerivator derivator = getDerivedKey(kdf, kdfparams);
   List<int> derivedKey = derivator.deriveKey(encodedPassword);
-  List<int> macBuffer = derivedKey.sublist(16, 32) + ciphertext;
-  String mac = numbers.bytesToHex(sha256.convert(macBuffer).bytes);
+  List<int> macBuffer =
+      derivedKey.sublist(16, 32) + ciphertext + iv + ALGO_IDENTIFIER.codeUnits;
+
+  // use hmac
+  String mac = numbers.bytesToHex(
+      new HMAC(sha256, derivedKey).update(macBuffer).digest().bytes);
+
   String macString = keyStore['crypto']['mac'];
 
-  // check bits
   Function eq = const ListEquality().equals;
   if (!eq(mac.toUpperCase().codeUnits, macString.toUpperCase().codeUnits)) {
     throw 'Decryption Failed';
   }
-  var cipherparams = keyStore['crypto']["cipherparams"];
-  var iv = numbers.hexToBytes(cipherparams["iv"]);
+
   var aesKey = derivedKey.sublist(0, 16);
   var encryptedPrivateKey =
       numbers.hexToBytes(keyStore["crypto"]["ciphertext"]);

@@ -39,16 +39,21 @@ class Laksa {
   void setNodeProvider(String url) {
     this.nodeUrl = url;
     this.nodeProvider = new HttpProvider(url);
+    this.setMessenger();
   }
 
   void setScillaProvider(String url) {
     this.scillaUrl = url;
     this.scillaProvider = new HttpProvider(url);
+    this.setMessenger();
   }
 
   void setMessenger() {
     this.messenger = new Messenger(
         nodeProvider: this.nodeProvider, scillaProvider: this.scillaProvider);
+    this.setBlockchain();
+    this.setWallet();
+    this.setTransactions();
   }
 
   void setBlockchain() {

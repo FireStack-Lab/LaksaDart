@@ -40,13 +40,33 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     };
   }
 
+  // if scilla-runner calls
+  Map<String, dynamic> buildEndpointPayload(dynamic params) {
+    return {'payload': params};
+  }
+
   Future<RPCMiddleWare> send(String method, [dynamic params]) async {
+    return this._requestFunc(method: method, params: params);
+  }
+
+  Future<RPCMiddleWare> sendServer(String endpoint, [dynamic params]) async {
+    return this._requestFunc(method: '', params: params, endpoint: endpoint);
+  }
+
+  Future<RPCMiddleWare> _requestFunc(
+      {String method, dynamic params, String endpoint}) async {
     List<List<Transformer>> middleware = this.getMiddleware(method);
     Transformer reqMiddleware = this.composeMiddleware(middleware.first);
     Transformer resMiddleware = this.composeMiddleware(middleware.last);
-    var req = reqMiddleware(this.buildPayload(method, params));
-    var url = this.url;
+
+    // compact with scilla runner if endpoint appears
+    var req = reqMiddleware(endpoint == null
+        ? this.buildPayload(method, params)
+        : this.buildEndpointPayload(params));
+    var url = endpoint == null ? this.url : '${this.url}${endpoint}';
     var headers = this.headers;
+
+    // request to RPC
     RPCMiddleWare result = await performRPC(url, headers, req);
     return resMiddleware(result);
   }
@@ -78,7 +98,7 @@ Future<RPCMiddleWare> performRPC(
   Map<String, dynamic> body = json.decode(response.body);
 
   // response.statusCode;
-  if (response.statusCode >= 400) throw Future.error('connection error');
+  // if (response.statusCode >= 400) throw Future.error('connection error');
   var newMapEntry = MapEntry('req', response.request);
   body.addEntries([newMapEntry]);
 

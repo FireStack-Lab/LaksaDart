@@ -90,7 +90,7 @@ class Contract implements BaseContract {
   Map get deployDayload => {
         'version': 0,
         'amount': BigInt.from(0),
-        'toAddr': Int8List(40).toString(),
+        'toAddr': '0' * 40,
         'code': this.code,
         'data': json.encode(this.init).replaceAll(r"/\\", '"')
       };
@@ -215,6 +215,7 @@ class Contract implements BaseContract {
       await this.signTxn(account: account, passphrase: passphrase);
 
       var txnSent = await this.transaction.sendTransaction();
+
       var transaction = txnSent.transaction;
       var result = txnSent.result;
 
@@ -228,6 +229,7 @@ class Contract implements BaseContract {
       });
 
       this.setStatus(ContractStatus.SENT);
+
       return this;
     } catch (error) {
       throw error;
@@ -244,6 +246,7 @@ class Contract implements BaseContract {
       this.transaction = await account.signTransaction(this.transaction,
           passphrase: passphrase);
       this.setStatus(ContractStatus.SIGNED);
+
       return this;
     } catch (error) {
       throw error;
@@ -292,6 +295,7 @@ class Contract implements BaseContract {
 
     this.transaction =
         new Transaction(params: params, messenger: this.messenger);
+
     return this;
   }
 

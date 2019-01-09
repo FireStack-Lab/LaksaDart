@@ -69,6 +69,7 @@ class RPCMiddleWare
   final id = '1';
   SuccessMiddleware result;
   ErrorMiddleware error;
+  var message;
   var req;
 
   RPCMiddleWare.success(dynamic resultData) {
@@ -87,6 +88,9 @@ class RPCMiddleWare
     if (data['req'] != null) {
       this.req = data['req'];
     }
+    if (data['message'] != null) {
+      this.message = data['message'];
+    }
   }
 
   // @override
@@ -96,8 +100,10 @@ class RPCMiddleWare
   Map get raw => {
         'jsonrpc': jsonrpc,
         'id': id,
-        'result': result == null ? null : result.raw,
-        'error': error == null ? null : error.raw,
+        'result': result != null ? result.raw : null,
+        'error': error != null ? error.raw : null,
+        'message':
+            message != null ? message : error != null ? error.message : null,
         'req': req
       };
 }

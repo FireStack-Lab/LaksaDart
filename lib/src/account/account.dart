@@ -246,11 +246,12 @@ class Account
       });
     } else {
       await this.updateBalance();
+
       Map<String, dynamic> newTxMap = Map.from(txnObj.txParams);
+
       newTxMap.update('nonce', (found) => this.nonce + 1,
           ifAbsent: () => this.nonce + 1);
       var signed = crypto.SchnorrSign(this.privateKey, newTxMap);
-
       return txnObj.map((Map obj) {
         obj.addAll(signed);
         return obj;

@@ -17,11 +17,12 @@ class Messenger {
     this.scillaProvider =
         scillaProvider is HttpProvider ? scillaProvider : this.nodeProvider;
   }
-  Messenger.setNodeProvider(HttpProvider provider) {
-    new Messenger(nodeProvider: provider);
+  void setNodeProvider(HttpProvider provider) {
+    this.nodeProvider = provider;
   }
-  Messenger.setScillaProvider(HttpProvider provider) {
-    new Messenger(scillaProvider: provider);
+
+  void setScillaProvider(HttpProvider provider) {
+    this.scillaProvider = provider;
   }
 
   void setMiddleware(Function middware, {String match}) {
@@ -41,6 +42,17 @@ class Messenger {
       throw '$method' + 'is not found in RPCMethod list';
     } else {
       return await this.nodeProvider.send(method, params);
+    }
+  }
+
+  Future<RPCMiddleWare> sendServer(String endpoint, [dynamic params]) async {
+    // use middleware
+
+    var methodMap = new Endpoint().Mapping;
+    if (methodMap[endpoint] == null) {
+      throw '$endpoint' + 'is not found in Endpoint list';
+    } else {
+      return await this.scillaProvider.sendServer(endpoint, params);
     }
   }
 }

@@ -128,4 +128,22 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
       throw error;
     }
   }
+
+  // scilla-runner checker
+  Future<RPCMiddleWare> checkCode({String code}) async {
+    return await this
+        .messenger
+        .sendServer(Endpoint.ScillaCheck, {'code': code});
+  }
+
+  // scilla-runner call
+  Future<RPCMiddleWare> testCall(Map callJson) async {
+    return await this.messenger.sendServer(Endpoint.ScillaCall, {
+      //don't encode code, provider will encode it automatically
+      'code': callJson['code'].toString(),
+      'init': json.encode(callJson['init']),
+      'blockchain': json.encode(callJson['blockchain']),
+      'gaslimit': json.encode(callJson['gasLimit'])
+    });
+  }
 }

@@ -4,7 +4,28 @@ import 'package:laksaDart/src/messenger/Blockchain.dart';
 import 'package:laksaDart/src/account/wallet.dart';
 import 'package:laksaDart/src/transaction/factory.dart';
 // import 'package:laksaDart/src/account/account.dart';
+import 'package:laksaDart/src/core/ZilliqaConfig.dart';
 import 'package:laksaDart/src/utils/validators.dart' as validators;
+
+var DefaultConfig = new ZilliqaConfig({
+  'Default': new ConfigItem(
+      CHAIN_ID: 3,
+      Network_ID: 'TestNet',
+      nodeProviderUrl: 'http://localhost:4200'),
+  'Staging': new ConfigItem(
+      CHAIN_ID: 63,
+      Network_ID: 'TestNet',
+      nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'),
+  'TestNet': new ConfigItem(
+      CHAIN_ID: 62,
+      Network_ID: 'TestNet',
+      nodeProviderUrl: 'https://api.zilliqa.com' // Mainnet
+      ),
+  'MainNet': new ConfigItem(
+      CHAIN_ID: 1,
+      Network_ID: 'MainNet',
+      nodeProviderUrl: 'https://mainnet.zilliqa.com')
+});
 
 class Laksa {
   String nodeUrl;
@@ -15,6 +36,7 @@ class Laksa {
   Blockchain blockchain;
   Wallet wallet;
   TransactionFactory transactions;
+  ZilliqaConfig config;
 
   Laksa({String nodeUrl, String scillaUrl}) {
     if (scillaUrl == null) {
@@ -23,6 +45,7 @@ class Laksa {
       this.scillaUrl = scillaUrl;
     }
     this.nodeUrl = nodeUrl;
+    this.config = DefaultConfig;
 
     if (validators.isUrl(this.nodeUrl) && validators.isUrl(this.scillaUrl)) {
       this.setNodeProvider(this.nodeUrl);
@@ -50,7 +73,9 @@ class Laksa {
 
   void setMessenger() {
     this.messenger = new Messenger(
-        nodeProvider: this.nodeProvider, scillaProvider: this.scillaProvider);
+        nodeProvider: this.nodeProvider,
+        scillaProvider: this.scillaProvider,
+        config: this.config);
     this.setBlockchain();
     this.setWallet();
     this.setTransactions();

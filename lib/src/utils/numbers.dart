@@ -91,3 +91,7 @@ List<int> intToBytes(BigInt number, {int length}) {
 BigInt hexToInt(String hex) {
   return BigInt.parse(strip0x(hex), radix: 16);
 }
+
+int pack(int a, int b) {
+  return (a << 16) + b;
+}

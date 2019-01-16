@@ -23,6 +23,7 @@ import 'package:laksaDart/src/transaction/transaction.dart';
 import 'package:laksaDart/src/contract/contract.dart';
 import 'package:laksaDart/src/contract/testScilla.dart';
 import 'package:laksaDart/src/contract/util.dart';
+import 'package:laksaDart/src/crypto/schnorr.dart' as schnorr;
 
 import 'Laksa.dart' show Laksa;
 
@@ -31,7 +32,48 @@ main() async {
       nodeUrl: 'https://api.zilliqa.com',
       scillaUrl: 'https://scilla-runner.zilliqa.com');
 
-  // var acc = laksa.wallet
-  //     .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
-  print(laksa.messenger.scillaProvider.url);
+  var acc = laksa.wallet
+      .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
+
+  void autoTransaction() async {
+    await acc.updateBalance();
+    var nonce = acc.nonce;
+    var txn = laksa.transactions.newTx({
+      'toAddr': '2E3C9B415B19AE4035503A06192A0FAD76E04243',
+      'amount': unit.Unit.Zil(nonce + 1).qa,
+      'gasPrice': unit.Unit.Li(1000).qa,
+      'gasLimit': 1,
+      'version': laksa.messenger.setTransactionVersion(1)
+    });
+
+    var signed = await acc.signTransaction(txn);
+    print(json.encode(signed.toPayload));
+    var sent = await signed.sendTransaction();
+    print(sent.transaction.TranID);
+    var sendTime = DateTime.now();
+    var result = await sent.transaction.confirm(
+        txHash: sent.transaction.TranID, maxAttempts: 33, interval: 1000);
+    print(result.receipt['success']);
+    if (result != null) {
+      var during = DateTime.now().difference(sendTime);
+      print('confirmed during:$during');
+    }
+  }
+
+  for (int i = 0; i < 100; i += 1) {
+    try {
+      await autoTransaction();
+    } catch (e) {
+      print(e);
+    }
+  }
+// await schnorr.verify(
+//           numbers.hexToBytes(msg),
+//           sig.r,
+//           sig.s,
+//           numbers.hexToBytes(pub),
+//         );
+  // var txn=laksa.transactions.newTx({txParams})
+  // await acc.updateBalance();
+  // print(acc.nonce);
 }

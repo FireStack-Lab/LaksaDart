@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:laksaDart/src/provider/net.dart';
 import 'package:laksaDart/src/messenger/Messenger.dart';
+import 'package:laksaDart/src/account/address.dart';
 import 'util.dart';
 import 'api.dart';
 
@@ -30,7 +31,7 @@ class Transaction implements BaseTransaction {
   // getter txParmas
   Map<String, dynamic> get txParams => {
         'version': this.version,
-        'toAddr': this.toAddr,
+        'toAddr': new ZilAddress(this.toAddr).checkSumAddress.substring(2),
         'nonce': this.nonce,
         'pubKey': this.pubKey,
         'amount': this.amount,
@@ -44,7 +45,7 @@ class Transaction implements BaseTransaction {
 
   // getter toPayload
   Map<String, dynamic> get toPayload => {
-        'version': 0, //this.getVersion(),
+        'version': this.version, //this.getVersion(),
         'toAddr': this.toAddr,
         'nonce': this.nonce,
         'pubKey': this.pubKey,
@@ -212,6 +213,7 @@ class Transaction implements BaseTransaction {
       var res = await this
           .messenger
           .send(RPCMethod.CreateTransaction, this.toPayload);
+
       if (res.result != null) {
         var result = res.result.toMap();
         var TranID = result['TranID'];

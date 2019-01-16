@@ -235,7 +235,10 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
 
   while (sig == null) {
     var k = numbers.hexToInt(drbg.generate(len));
+
     sig = trySign(msg, k, prv, pubKey);
+    // print(
+    //     '{"msg":"${numbers.bytesToHex(msg)}","k":"${numbers.toHex(k)}","prv":"${numbers.bytesToHex(privKey)}","pubKey":"${numbers.bytesToHex(pubKey)}","sig":"${sig.signature}"}');
   }
   return sig;
 }
@@ -338,6 +341,7 @@ Map<String, dynamic> SchnorrSign(
   };
 
   Uint8List encodedTx = encodeTransactionProto(txn);
+  // print(numbers.bytesToHex(encodedTx));
 
   SchnorrSignature signature = sign(
       encodedTx, numbers.hexToBytes(privateKey), numbers.hexToBytes(pubKey));

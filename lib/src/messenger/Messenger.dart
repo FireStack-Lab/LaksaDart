@@ -1,10 +1,13 @@
 import 'package:laksaDart/src/provider/Http.dart';
 import 'package:laksaDart/src/provider/net.dart';
 import 'package:laksaDart/src/provider/Middleware.dart';
+import 'package:laksaDart/src/core/ZilliqaConfig.dart';
+import 'package:laksaDart/src/utils/numbers.dart' as numbers;
 
 class Messenger {
   HttpProvider nodeProvider;
   HttpProvider scillaProvider;
+  ZilliqaConfig config;
 
   String get nodeUrl => this.nodeProvider.url;
   String get scillaUrl => this.scillaProvider.url;
@@ -12,10 +15,14 @@ class Messenger {
   Function middleware = (data) => new RPCMiddleWare(data);
   String middlewareApply = '*';
 
-  Messenger({HttpProvider nodeProvider, HttpProvider scillaProvider}) {
+  Messenger(
+      {HttpProvider nodeProvider,
+      HttpProvider scillaProvider,
+      ZilliqaConfig config}) {
     this.nodeProvider = nodeProvider is HttpProvider ? nodeProvider : null;
     this.scillaProvider =
         scillaProvider is HttpProvider ? scillaProvider : this.nodeProvider;
+    this.config = config;
   }
   void setNodeProvider(HttpProvider provider) {
     this.nodeProvider = provider;
@@ -54,5 +61,19 @@ class Messenger {
     } else {
       return await this.scillaProvider.sendServer(endpoint, params);
     }
+  }
+
+  int setTransactionVersion(int version) {
+    var CHAIN_ID = 1;
+    if (this.nodeProvider.url == this.config.Default.nodeProviderUrl) {
+      CHAIN_ID = this.config.Default.CHAIN_ID;
+    } else if (this.nodeProvider.url == this.config.Staging.nodeProviderUrl) {
+      CHAIN_ID = this.config.Staging.CHAIN_ID;
+    } else if (this.nodeProvider.url == this.config.TestNet.nodeProviderUrl) {
+      CHAIN_ID = this.config.TestNet.CHAIN_ID;
+    } else if (this.nodeProvider.url == this.config.MainNet.nodeProviderUrl) {
+      CHAIN_ID = this.config.MainNet.CHAIN_ID;
+    }
+    return numbers.pack(CHAIN_ID, version);
   }
 }

@@ -1,20 +1,12 @@
-// import 'numbers.dart' as numbers;
+enum Units { Zil, Li, Qa }
 
-class Units {
-  final String Zil = 'zil';
-  final String Li = 'li';
-  final String Qa = 'qa';
-}
-
-final Units units = new Units();
-
-Map<String, String> unitMap = {
-  units.Qa: '1',
-  units.Li: '1000000',
-  units.Zil: '1000000000000'
+Map<Units, String> unitMap = {
+  Units.Qa: '1',
+  Units.Li: '1000000',
+  Units.Zil: '1000000000000'
 };
 
-String fromQa(BigInt qa, String unit, {pad: false}) {
+String fromQaFunc(BigInt qa, Units unit, {pad: false}) {
   if (unit == 'qa') {
     return qa.toString();
   }
@@ -43,7 +35,7 @@ String fromQa(BigInt qa, String unit, {pad: false}) {
   return fraction == '0' ? '${whole}' : '${whole}.${fraction}';
 }
 
-BigInt toQa(dynamic input, String unit) {
+BigInt toQaFunc(String input, Units unit) {
   String inputStr = num.parse(input).toString();
   String baseStr = unitMap[unit];
 
@@ -67,11 +59,12 @@ BigInt toQa(dynamic input, String unit) {
 
   // Split it into a whole and fractional part
   List<String> comps = inputStr.split('.'); // eslint-disable-line
+
   if (comps.length > 2) {
     throw 'too long: Cannot convert ${inputStr} to Qa.';
   }
   String whole = comps.first;
-  String fraction = comps.last;
+  String fraction = comps.length == 2 ? comps.last : null;
 
   if (whole == null) {
     whole = '0';
@@ -89,11 +82,68 @@ BigInt toQa(dynamic input, String unit) {
 
   BigInt wholeBN = BigInt.parse(whole);
   BigInt fractionBN = BigInt.parse(fraction);
-  BigInt wei = wholeBN * base + fractionBN; // eslint-disable-line
+  BigInt wei = wholeBN * base + fractionBN;
 
   if (isNegative) {
     wei = -(wei);
   }
 
   return BigInt.parse(wei.toString());
+}
+
+class Unit {
+  String unit;
+  BigInt qa;
+  static from(dynamic str) {
+    return new Unit(str);
+  }
+
+  static Zil(dynamic str) {
+    return new Unit(str).asZil();
+  }
+
+  static Li(dynamic str) {
+    return new Unit(str).asLi();
+  }
+
+  static Qa(dynamic str) {
+    return new Unit(str).asQa();
+  }
+
+  Unit(dynamic str) {
+    this.unit = str is String
+        ? num.parse(str).toString()
+        : str is int ? str.toString() : str is BigInt ? str.toString() : '';
+  }
+
+  asZil() {
+    this.qa = toQaFunc(this.unit, Units.Zil);
+    return this;
+  }
+
+  asLi() {
+    this.qa = toQaFunc(this.unit, Units.Li);
+    return this;
+  }
+
+  asQa() {
+    this.qa = BigInt.parse(this.unit);
+    return this;
+  }
+
+  toQa() {
+    return this.qa;
+  }
+
+  toLi() {
+    return fromQaFunc(this.qa, Units.Li);
+  }
+
+  toZil() {
+    return fromQaFunc(this.qa, Units.Zil);
+  }
+
+  toQaString() {
+    return this.qa.toString();
+  }
 }

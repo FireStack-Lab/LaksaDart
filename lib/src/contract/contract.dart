@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:laksaDart/src/account/account.dart';
+import 'package:laksaDart/src/account/wallet.dart';
 import 'package:laksaDart/src/messenger/Messenger.dart';
 import 'package:laksaDart/src/transaction/transaction.dart';
 import 'util.dart';
@@ -10,21 +11,28 @@ class Contract implements BaseContract {
   String code = '';
   List<Map> init = [];
   String ContractAddress;
-  Messenger messenger;
   ContractStatus status;
   Transaction transaction;
+  //----- factory ---//
+  Messenger messenger;
+  Wallet wallet;
+  Account get signer => this.wallet.getAccount(this.wallet.defaultAccount);
 
   Contract(
       {Map params,
       Messenger messenger,
+      Wallet wallet,
       ContractStatus status = ContractStatus.INITIALISED}) {
     this.code = params['code'] != null ? params['code'] : '';
     this.init = params['init'] != null ? params['init'] : [];
+    this.transaction =
+        params['transaction'] == null ? params['transaction'] : null;
     this.ContractAddress =
         params['ContractAddress'] != null ? params['ContractAddress'] : '';
-    this.status = status;
+    this.status = params['status'] != null ? params['status'] : status;
+    // factory
     this.messenger = messenger;
-    this.transaction = null;
+    this.wallet = wallet;
   }
 
   /**
@@ -88,7 +96,7 @@ class Contract implements BaseContract {
    * @return {object} {default deployment payload}
    */
   Map get deployDayload => {
-        'version': 0,
+        'version': this.messenger.setTransactionVersion(0),
         'amount': BigInt.from(0),
         'toAddr': '0' * 40,
         'code': this.code,
@@ -100,7 +108,10 @@ class Contract implements BaseContract {
    * @param  {Map} Map get callPayload            {description}
    * @return {type} {description}
    */
-  Map get callPayload => {'version': 0, 'toAddr': this.ContractAddress};
+  Map get callPayload => {
+        'version': this.messenger.setTransactionVersion(0),
+        'toAddr': this.ContractAddress
+      };
 
   /**
    * @function {setStatus}
@@ -136,7 +147,9 @@ class Contract implements BaseContract {
       this.setDeployPayload(
           gasLimit: gasLimit != null ? gasLimit : defaultGasLimit,
           gasPrice: gasPrice != null ? gasPrice : defaultGasPrice);
-      await this.sendContract(account: account, passphrase: passphrase);
+      await this.sendContract(
+          account: account != null ? account : this.signer,
+          passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
       return this;
     } catch (err) {
@@ -174,7 +187,9 @@ class Contract implements BaseContract {
           amount: amount != null ? amount : defaultAmount,
           gasLimit: gasLimit,
           gasPrice: gasPrice != null ? gasPrice : defulatGasPrice);
-      await this.sendContract(account: account, passphrase: passphrase);
+      await this.sendContract(
+          account: account != null ? account : this.signer,
+          passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
       return this;
     } catch (err) {
@@ -242,8 +257,9 @@ class Contract implements BaseContract {
    * @return {Contract} {Contract Signed}
    */
   Future<Contract> signTxn({Account account, String passphrase}) async {
+    Account signingAccount = account != null ? account : this.signer;
     try {
-      this.transaction = await account.signTransaction(this.transaction,
+      this.transaction = await signingAccount.signTransaction(this.transaction,
           passphrase: passphrase);
       this.setStatus(ContractStatus.SIGNED);
 

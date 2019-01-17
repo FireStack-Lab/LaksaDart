@@ -3,7 +3,7 @@ import 'package:laksaDart/src/messenger/Messenger.dart';
 import 'package:laksaDart/src/messenger/Blockchain.dart';
 import 'package:laksaDart/src/account/wallet.dart';
 import 'package:laksaDart/src/transaction/factory.dart';
-// import 'package:laksaDart/src/account/account.dart';
+import 'package:laksaDart/src/contract/factory.dart';
 import 'package:laksaDart/src/core/ZilliqaConfig.dart';
 import 'package:laksaDart/src/utils/validators.dart' as validators;
 
@@ -35,6 +35,7 @@ class Laksa {
   Messenger messenger;
   Blockchain blockchain;
   Wallet wallet;
+  Contracts contracts;
   TransactionFactory transactions;
   ZilliqaConfig config;
 
@@ -54,6 +55,7 @@ class Laksa {
       this.setBlockchain();
       this.setWallet();
       this.setTransactions();
+      this.setContracts();
     } else {
       throw 'url is not correct';
     }
@@ -92,5 +94,10 @@ class Laksa {
 
   void setTransactions() {
     this.transactions = new TransactionFactory(this.messenger);
+  }
+
+  void setContracts() {
+    this.contracts =
+        new Contracts(messenger: this.messenger, wallet: this.wallet);
   }
 }

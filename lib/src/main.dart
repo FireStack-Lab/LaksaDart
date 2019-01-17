@@ -21,6 +21,7 @@ import 'package:laksaDart/src/provider/Middleware.dart';
 import 'package:laksaDart/src/messenger/Messenger.dart';
 import 'package:laksaDart/src/transaction/transaction.dart';
 import 'package:laksaDart/src/contract/contract.dart';
+import 'package:laksaDart/src/contract/factory.dart';
 import 'package:laksaDart/src/contract/testScilla.dart';
 import 'package:laksaDart/src/contract/util.dart';
 import 'package:laksaDart/src/crypto/schnorr.dart' as schnorr;
@@ -60,13 +61,13 @@ main() async {
     }
   }
 
-  for (int i = 0; i < 100; i += 1) {
-    try {
-      await autoTransaction();
-    } catch (e) {
-      print(e);
-    }
-  }
+  // for (int i = 0; i < 100; i += 1) {
+  //   try {
+  //     await autoTransaction();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 // await schnorr.verify(
 //           numbers.hexToBytes(msg),
 //           sig.r,
@@ -76,4 +77,38 @@ main() async {
   // var txn=laksa.transactions.newTx({txParams})
   // await acc.updateBalance();
   // print(acc.nonce);
+
+  void deploy() async {
+    File contract = new File('../test/contracts/helloworld.txt');
+    await contract.readAsString().then((contractString) async {
+      Laksa laksa = new Laksa(nodeUrl: 'https://api.zilliqa.com');
+      // laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
+      var init = [
+        {
+          'vname': '_scilla_version',
+          'type': 'Uint32',
+          'value': '0',
+        },
+        {
+          'value': '0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+          'vname': 'owner',
+          'type': 'ByStr20'
+        }
+      ];
+
+      laksa.wallet.add(
+          'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
+
+      var newContract =
+          laksa.contracts.newContract(code: contractString, init: init);
+      newContract.setDeployPayload(
+          gasLimit: 2500000000000, gasPrice: BigInt.from(1000000000));
+      var sent = await newContract.sendContract();
+      print(sent.transaction.TranID);
+      var deployed = await sent.confirmTx(maxAttempts: 33, interval: 1000);
+      print(deployed.ContractAddress);
+    });
+  }
+
+  await deploy();
 }

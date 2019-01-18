@@ -1,32 +1,8 @@
-import 'dart:math';
 import 'dart:convert';
-import 'dart:async';
-import 'dart:typed_data';
 import 'dart:io';
-// import 'package:crypto/crypto.dart';
-
-import 'package:http/http.dart' as http;
-import 'package:laksaDart/src/utils/numbers.dart' as numbers;
-import 'package:laksaDart/src/utils/validators.dart' as validators;
-import 'package:laksaDart/src/crypto/dartRandom.dart';
-import 'package:laksaDart/src/account/wallet.dart';
-import 'package:laksaDart/src/account/account.dart';
-import 'package:laksaDart/src/account/address.dart';
 
 import 'package:laksaDart/src/utils/unit.dart' as unit;
-
-import 'package:laksaDart/src/provider/Http.dart';
-import 'package:laksaDart/src/provider/net.dart';
-import 'package:laksaDart/src/provider/Middleware.dart';
-import 'package:laksaDart/src/messenger/Messenger.dart';
-import 'package:laksaDart/src/transaction/transaction.dart';
-import 'package:laksaDart/src/contract/contract.dart';
-import 'package:laksaDart/src/contract/factory.dart';
-import 'package:laksaDart/src/contract/testScilla.dart';
-import 'package:laksaDart/src/contract/util.dart';
-import 'package:laksaDart/src/crypto/schnorr.dart' as schnorr;
-
-import 'Laksa.dart' show Laksa;
+import 'package:laksaDart/src/Laksa.dart' show Laksa;
 
 main() async {
   var laksa = new Laksa(
@@ -61,23 +37,6 @@ main() async {
     }
   }
 
-  // for (int i = 0; i < 100; i += 1) {
-  //   try {
-  //     await autoTransaction();
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-// await schnorr.verify(
-//           numbers.hexToBytes(msg),
-//           sig.r,
-//           sig.s,
-//           numbers.hexToBytes(pub),
-//         );
-  // var txn=laksa.transactions.newTx({txParams})
-  // await acc.updateBalance();
-  // print(acc.nonce);
-
   void deploy() async {
     File contract = new File('../test/contracts/helloworld.txt');
     await contract.readAsString().then((contractString) async {
@@ -110,5 +69,6 @@ main() async {
     });
   }
 
+  await autoTransaction();
   await deploy();
 }

@@ -3,12 +3,9 @@
 import 'dart:convert';
 import 'dart:io';
 import "package:test/test.dart";
-import "package:laksaDart/src/contract/factory.dart";
-import "package:laksaDart/src/contract/contract.dart";
-import "package:laksaDart/src/contract/testScilla.dart";
-import "package:laksaDart/src/contract/util.dart";
-import 'package:laksaDart/src/contract/abi.dart';
-import 'package:laksaDart/src/laksa.dart';
+import "package:laksadart/src/contract/factory.dart";
+import 'package:laksadart/src/contract/abi.dart';
+import 'package:laksadart/src/laksa.dart';
 
 void main() {
   test("Test Get Contract ABIs", () async {

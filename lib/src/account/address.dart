@@ -1,8 +1,8 @@
 import 'package:crypto/crypto.dart';
 import 'package:meta/meta.dart';
 
-import 'package:laksaDart/src/crypto/schnorr.dart' as crypto;
-import 'package:laksaDart/src/utils/numbers.dart' as numbers;
+import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
 
 @immutable
 class Address {

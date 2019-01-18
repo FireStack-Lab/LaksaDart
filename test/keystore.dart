@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import "package:test/test.dart";
-import "package:laksaDart/src/account/account.dart";
+import "package:laksadart/src/account/account.dart";
 
 main() {
   test("Test decrypt KeyStores", () async {

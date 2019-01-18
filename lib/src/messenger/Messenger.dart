@@ -1,8 +1,8 @@
-import 'package:laksaDart/src/provider/Http.dart';
-import 'package:laksaDart/src/provider/net.dart';
-import 'package:laksaDart/src/provider/Middleware.dart';
-import 'package:laksaDart/src/core/ZilliqaConfig.dart';
-import 'package:laksaDart/src/utils/numbers.dart' as numbers;
+import 'package:laksadart/src/provider/Http.dart';
+import 'package:laksadart/src/provider/net.dart';
+import 'package:laksadart/src/provider/Middleware.dart';
+import 'package:laksadart/src/core/ZilliqaConfig.dart';
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
 
 class Messenger {
   HttpProvider nodeProvider;

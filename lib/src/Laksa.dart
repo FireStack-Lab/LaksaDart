@@ -1,11 +1,11 @@
-import 'package:laksaDart/src/provider/Http.dart';
-import 'package:laksaDart/src/messenger/Messenger.dart';
-import 'package:laksaDart/src/messenger/Blockchain.dart';
-import 'package:laksaDart/src/account/wallet.dart';
-import 'package:laksaDart/src/transaction/factory.dart';
-import 'package:laksaDart/src/contract/factory.dart';
-import 'package:laksaDart/src/core/ZilliqaConfig.dart';
-import 'package:laksaDart/src/utils/validators.dart' as validators;
+import 'package:laksadart/src/provider/Http.dart';
+import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/messenger/Blockchain.dart';
+import 'package:laksadart/src/account/wallet.dart';
+import 'package:laksadart/src/transaction/factory.dart';
+import 'package:laksadart/src/contract/factory.dart';
+import 'package:laksadart/src/core/ZilliqaConfig.dart';
+import 'package:laksadart/src/utils/validators.dart' as validators;
 
 var DefaultConfig = new ZilliqaConfig({
   'Default': new ConfigItem(

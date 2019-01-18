@@ -3,8 +3,8 @@
 import 'dart:convert';
 import 'dart:io';
 import "package:test/test.dart";
-import 'package:laksaDart/src/utils/numbers.dart' as numbers;
-import 'package:laksaDart/src/crypto/schnorr.dart' as schnorr;
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
+import 'package:laksadart/src/crypto/schnorr.dart' as schnorr;
 
 void main() {
   test("Test Schnorr Signature with preset json", () async {

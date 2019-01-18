@@ -1,6 +1,6 @@
-import 'package:laksaDart/src/core/ZilliqaModule.dart';
-import 'package:laksaDart/src/messenger/Messenger.dart';
-import 'package:laksaDart/src/transaction/transaction.dart';
+import 'package:laksadart/src/core/ZilliqaModule.dart';
+import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/transaction/transaction.dart';
 
 class TransactionFactory implements ZilliqaModule<Messenger, void> {
   Messenger messenger;

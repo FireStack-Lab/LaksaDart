@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:laksaDart/src/utils/unit.dart' as unit;
-import 'package:laksaDart/src/Laksa.dart' show Laksa;
+import 'package:laksadart/src/utils/unit.dart' as unit;
+import 'package:laksadart/src/Laksa.dart' show Laksa;
 
 main() async {
   var laksa = new Laksa(

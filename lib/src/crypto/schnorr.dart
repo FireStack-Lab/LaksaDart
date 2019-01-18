@@ -79,7 +79,8 @@ String getAddressFromPublicKey(String publicKey) {
   return sha256.convert(numbers.hexToBytes(publicKey)).toString().substring(24);
 }
 
-bool verifyPrivateKey(String privateKey) {}
+//TODO: need to implementing this
+// bool verifyPrivateKey(String privateKey) {}
 
 /**
  * @function {hash}

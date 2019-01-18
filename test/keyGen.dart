@@ -1,7 +1,7 @@
 @TestOn("vm")
 
 import "package:test/test.dart";
-import 'package:laksaDart/src/crypto/schnorr.dart' as crypto;
+import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
 
 main() {
   test('test with 1000 keypairs', () {

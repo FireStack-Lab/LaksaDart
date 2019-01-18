@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:laksaDart/src/messenger/Messenger.dart';
-import 'package:laksaDart/src/transaction/transaction.dart';
-import 'package:laksaDart/src/provider/net.dart';
+import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/transaction/transaction.dart';
+import 'package:laksadart/src/provider/net.dart';
 import 'util.dart';
 import 'abi.dart';
 

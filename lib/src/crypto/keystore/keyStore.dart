@@ -15,7 +15,7 @@ import 'package:pointycastle/key_derivators/scrypt.dart' as scrypt;
 import 'package:pointycastle/macs/hmac.dart';
 import 'package:pointycastle/block/aes_fast.dart';
 import 'package:pointycastle/stream/ctr.dart';
-import 'package:laksaDart/src/utils/numbers.dart' as numbers;
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
 import '../hmac-drbg.dart';
 import '../schnorr.dart' as crypto;
 

@@ -1,7 +1,7 @@
 import 'dart:core';
 import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart';
-import 'package:laksaDart/src/proto/message.pb.dart' as zMessage;
+import 'package:laksadart/src/proto/message.pb.dart' as zMessage;
 import './numbers.dart' as numbers;
 import './common.dart';
 

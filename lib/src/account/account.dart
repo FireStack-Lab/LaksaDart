@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:laksaDart/src/crypto/schnorr.dart' as crypto;
-import 'package:laksaDart/src/crypto/keystore/api.dart';
-import 'package:laksaDart/src/utils/numbers.dart' as numbers;
-import 'package:laksaDart/src/core/ZilliqaModule.dart';
-import 'package:laksaDart/src/messenger/Messenger.dart';
-import 'package:laksaDart/src/provider/Middleware.dart';
-import 'package:laksaDart/src/provider/net.dart';
-import 'package:laksaDart/src/transaction/transaction.dart';
+import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
+import 'package:laksadart/src/crypto/keystore/api.dart';
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
+import 'package:laksadart/src/core/ZilliqaModule.dart';
+import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/provider/Middleware.dart';
+import 'package:laksadart/src/provider/net.dart';
+import 'package:laksadart/src/transaction/transaction.dart';
 import './api.dart' show BaseAccount;
 import './address.dart';
 

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 abstract class ABIObject {
   List<Map> events;
   List<Map> fields;

@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:laksaDart/src/provider/net.dart';
-import 'package:laksaDart/src/core/ZilliqaModule.dart';
-import 'package:laksaDart/src/provider/Middleware.dart';
-import 'package:laksaDart/src/transaction/transaction.dart';
-import 'package:laksaDart/src/transaction/api.dart';
+import 'package:laksadart/src/provider/net.dart';
+import 'package:laksadart/src/core/ZilliqaModule.dart';
+import 'package:laksadart/src/provider/Middleware.dart';
+import 'package:laksadart/src/transaction/transaction.dart';
+import 'package:laksadart/src/transaction/api.dart';
 import 'Messenger.dart';
 
 class Blockchain implements ZilliqaModule<Messenger, void> {
@@ -124,6 +124,7 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
       } else if (res.error != null) {
         throw res.error.message;
       }
+      return null;
     } catch (error) {
       throw error;
     }

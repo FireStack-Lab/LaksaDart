@@ -1,8 +1,8 @@
 @TestOn("vm")
 
 import "package:test/test.dart";
-import 'package:laksaDart/src/utils/numbers.dart' as numbers;
-import 'package:laksaDart/src/utils/transaction.dart';
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
+import 'package:laksadart/src/utils/transaction.dart';
 
 void main() {
   test('test protobuf encode transaction', () {

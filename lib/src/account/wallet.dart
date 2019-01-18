@@ -1,5 +1,5 @@
-import 'package:laksaDart/src/core/ZilliqaModule.dart';
-import 'package:laksaDart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/core/ZilliqaModule.dart';
+import 'package:laksadart/src/messenger/Messenger.dart';
 import './api.dart' show BaseWallet;
 import './account.dart';
 

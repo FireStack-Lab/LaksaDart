@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:laksadart/src/messenger/Messenger.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
+import 'package:laksadart/src/provider/Middleware.dart';
 import 'package:laksadart/src/provider/net.dart';
 import 'util.dart';
 import 'abi.dart';
@@ -41,11 +42,11 @@ class TestScilla extends Contract {
         'gaslimit': gasLimit.toString()
       };
       // the endpoint for sendServer has been set to scillaProvider
-      var res = await this
+      RPCMiddleWare res = await this
           .messenger
           .sendServer(Endpoint.ScillaCall, callContractJson);
 
-      if (res.result != 'error') {
+      if (res.result.toString() != 'error') {
         this.setStatus(ContractStatus.TESTED);
       } else {
         this.setStatus(ContractStatus.ERROR);
@@ -59,11 +60,12 @@ class TestScilla extends Contract {
   Future<dynamic> getABI({String code}) async {
     // the endpoint for sendServer has been set to scillaProvider
     try {
-      var result =
+      RPCMiddleWare res =
           await this.messenger.sendServer(Endpoint.ScillaCheck, {'code': code});
-      if (result.result != 'error' && result.message != null) {
-        return json.decode(result.message);
-      }
+      if (res.result.toString() != 'error' && res.message != null) {
+        return json.decode(res.message);
+      } else
+        throw res.message;
     } catch (error) {
       throw error;
     }

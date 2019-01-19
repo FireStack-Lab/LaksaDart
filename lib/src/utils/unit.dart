@@ -7,7 +7,7 @@ Map<Units, String> unitMap = {
 };
 
 String fromQaFunc(BigInt qa, Units unit, {pad: false}) {
-  if (unit == 'qa') {
+  if (unit.toString() == 'qa') {
     return qa.toString();
   }
   String baseStr = unitMap[unit];

@@ -16,10 +16,8 @@ void main() {
           scillaUrl: 'https://scilla-runner.zilliqa.com');
 
       var result = await laksa.blockchain.checkCode(code: contractString);
-      // var result = await laksa.messenger
-      //     .sendServer('/contract/check', {'code': contractString});
 
-      if (result.result != 'error' && result.message != null) {
+      if (result.result.toString() != 'error' && result.message != null) {
         var abiObject = new ABI(json.decode(result.message));
         expect(abiObject.name, equals('HelloWorld'));
         expect(abiObject.params.toString(),
@@ -52,6 +50,7 @@ void main() {
           new Contracts(messenger: laksa.messenger, wallet: laksa.wallet);
       var testResult =
           await contracts.testContract(code: contractString, init: init);
+      //  print(testResult);
       expect(testResult, equals(true));
     });
   });

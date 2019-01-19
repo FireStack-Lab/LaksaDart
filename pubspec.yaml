@@ -1,6 +1,6 @@
 name: laksadart
-description: Dart library to connect to Zilliqa Blockchain
-version: 0.0.1
+description: Dart library to connect to Zilliqa Blockchain, including Zilliqa-defined schnorr signing method,util functions,wallet/account with keys manager, RPCMethod/HttpProvider and Middleware, Transactions and Contracts deploy/call.If you are familiar with Zilliqa's Javascript library or Laksa.js, you can easily use this dart version to your dart web/server app, or even Flutter apps. For more information and help, or you have suggestions, please PR or issues on our github page.
+version: 0.0.2
 author: neeboo <neeboo@firestack>
 homepage: https://github.com/firestack-lab/laksaDart
 

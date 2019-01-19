@@ -6,7 +6,7 @@ import 'package:laksadart/src/Laksa.dart' show Laksa;
 
 main() async {
   var laksa = new Laksa(
-      nodeUrl: 'https://api.zilliqa.com',
+      nodeUrl: 'https://staging-api.aws.z7a.xyz', // 'https://api.zilliqa.com',
       scillaUrl: 'https://scilla-runner.zilliqa.com');
 
   var acc = laksa.wallet
@@ -40,8 +40,10 @@ main() async {
   void deploy() async {
     File contract = new File('../test/contracts/helloworld.txt');
     await contract.readAsString().then((contractString) async {
-      Laksa laksa = new Laksa(nodeUrl: 'https://api.zilliqa.com');
-      // laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
+      Laksa laksa = new Laksa(
+          nodeUrl:
+              'https://api.zilliqa.com', //'https://staging-api.aws.z7a.xyz'
+          scillaUrl: 'https://scilla-runner.zilliqa.com');
       var init = [
         {
           'vname': '_scilla_version',

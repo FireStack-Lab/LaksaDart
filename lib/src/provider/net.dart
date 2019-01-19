@@ -33,6 +33,7 @@ class RPCMethod {
   static final GetRecentTransactions = 'GetRecentTransactions';
   static final GetNumTxnsTxEpoch = 'GetNumTxnsTxEpoch';
   static final GetNumTxnsDSEpoch = 'GetNumTxnsDSEpoch';
+  static final GetTransactionsForTxBlock = 'GetTransactionsForTxBlock';
   static final GetMinimumGasPrice = 'GetMinimumGasPrice';
   // GetGasEstimate = 'GetGasEstimate';
 
@@ -76,6 +77,7 @@ class RPCMethod {
         GetNumTxnsTxEpoch: 'GetNumTxnsTxEpoch',
         GetNumTxnsDSEpoch: 'GetNumTxnsDSEpoch',
         GetMinimumGasPrice: 'GetMinimumGasPrice',
+        GetTransactionsForTxBlock: 'GetTransactionsForTxBlock',
         // GetGasEstimate : 'GetGasEstimate',
 
         // Contract-related methods

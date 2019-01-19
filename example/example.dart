@@ -70,5 +70,5 @@ main() async {
   }
 
   await autoTransaction();
-  await deploy();
+  // await deploy();
 }

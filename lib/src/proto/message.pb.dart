@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: proto/message.proto
+//  source: message.proto
 ///
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import
 
@@ -37,15 +37,15 @@ class ByteArray extends $pb.GeneratedMessage {
 
 class ProtoTransactionCoreInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = new $pb.BuilderInfo('ProtoTransactionCoreInfo', package: const $pb.PackageName('ZilliqaMessage'))
-    ..a<int>(1, 'version', $pb.PbFieldType.QU3)
-    ..a<Int64>(2, 'nonce', $pb.PbFieldType.QU6, Int64.ZERO)
-    ..a<List<int>>(3, 'toaddr', $pb.PbFieldType.QY)
-    ..a<ByteArray>(4, 'senderpubkey', $pb.PbFieldType.QM, ByteArray.getDefault, ByteArray.create)
-    ..a<ByteArray>(5, 'amount', $pb.PbFieldType.QM, ByteArray.getDefault, ByteArray.create)
-    ..a<ByteArray>(6, 'gasprice', $pb.PbFieldType.QM, ByteArray.getDefault, ByteArray.create)
-    ..a<Int64>(7, 'gaslimit', $pb.PbFieldType.QU6, Int64.ZERO)
-    ..a<List<int>>(8, 'code', $pb.PbFieldType.QY)
-    ..a<List<int>>(9, 'data', $pb.PbFieldType.QY)
+    ..a<int>(1, 'version', $pb.PbFieldType.OU3)
+    ..a<Int64>(2, 'nonce', $pb.PbFieldType.OU6, Int64.ZERO)
+    ..a<List<int>>(3, 'toaddr', $pb.PbFieldType.OY)
+    ..a<ByteArray>(4, 'senderpubkey', $pb.PbFieldType.OM, ByteArray.getDefault, ByteArray.create)
+    ..a<ByteArray>(5, 'amount', $pb.PbFieldType.OM, ByteArray.getDefault, ByteArray.create)
+    ..a<ByteArray>(6, 'gasprice', $pb.PbFieldType.OM, ByteArray.getDefault, ByteArray.create)
+    ..a<Int64>(7, 'gaslimit', $pb.PbFieldType.OU6, Int64.ZERO)
+    ..a<List<int>>(8, 'code', $pb.PbFieldType.OY)
+    ..a<List<int>>(9, 'data', $pb.PbFieldType.OY)
   ;
 
   ProtoTransactionCoreInfo() : super();
@@ -110,9 +110,9 @@ class ProtoTransactionCoreInfo extends $pb.GeneratedMessage {
 
 class ProtoTransaction extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = new $pb.BuilderInfo('ProtoTransaction', package: const $pb.PackageName('ZilliqaMessage'))
-    ..a<List<int>>(1, 'tranid', $pb.PbFieldType.QY)
-    ..a<ProtoTransactionCoreInfo>(2, 'info', $pb.PbFieldType.QM, ProtoTransactionCoreInfo.getDefault, ProtoTransactionCoreInfo.create)
-    ..a<ByteArray>(3, 'signature', $pb.PbFieldType.QM, ByteArray.getDefault, ByteArray.create)
+    ..a<List<int>>(1, 'tranid', $pb.PbFieldType.OY)
+    ..a<ProtoTransactionCoreInfo>(2, 'info', $pb.PbFieldType.OM, ProtoTransactionCoreInfo.getDefault, ProtoTransactionCoreInfo.create)
+    ..a<ByteArray>(3, 'signature', $pb.PbFieldType.OM, ByteArray.getDefault, ByteArray.create)
   ;
 
   ProtoTransaction() : super();
@@ -147,8 +147,9 @@ class ProtoTransaction extends $pb.GeneratedMessage {
 
 class ProtoTransactionReceipt extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = new $pb.BuilderInfo('ProtoTransactionReceipt', package: const $pb.PackageName('ZilliqaMessage'))
-    ..a<List<int>>(1, 'receipt', $pb.PbFieldType.QY)
-    ..a<Int64>(2, 'cumgas', $pb.PbFieldType.QU6, Int64.ZERO)
+    ..a<List<int>>(1, 'receipt', $pb.PbFieldType.OY)
+    ..a<Int64>(2, 'cumgas', $pb.PbFieldType.OU6, Int64.ZERO)
+    ..hasRequiredFields = false
   ;
 
   ProtoTransactionReceipt() : super();
@@ -178,8 +179,8 @@ class ProtoTransactionReceipt extends $pb.GeneratedMessage {
 
 class ProtoTransactionWithReceipt extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = new $pb.BuilderInfo('ProtoTransactionWithReceipt', package: const $pb.PackageName('ZilliqaMessage'))
-    ..a<ProtoTransaction>(1, 'transaction', $pb.PbFieldType.QM, ProtoTransaction.getDefault, ProtoTransaction.create)
-    ..a<ProtoTransactionReceipt>(2, 'receipt', $pb.PbFieldType.QM, ProtoTransactionReceipt.getDefault, ProtoTransactionReceipt.create)
+    ..a<ProtoTransaction>(1, 'transaction', $pb.PbFieldType.OM, ProtoTransaction.getDefault, ProtoTransaction.create)
+    ..a<ProtoTransactionReceipt>(2, 'receipt', $pb.PbFieldType.OM, ProtoTransactionReceipt.getDefault, ProtoTransactionReceipt.create)
   ;
 
   ProtoTransactionWithReceipt() : super();

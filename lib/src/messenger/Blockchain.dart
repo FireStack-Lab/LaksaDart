@@ -103,6 +103,12 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     return await this.messenger.send(RPCMethod.GetMinimumGasPrice);
   }
 
+  Future<RPCMiddleWare> getTransactionsForTxBlock({int txBlock}) async {
+    return await this
+        .messenger
+        .send(RPCMethod.GetTransactionsForTxBlock, txBlock);
+  }
+
   // TODO: getTransaction
   // TODO: completeTransaction
   // TODO: createTransaction

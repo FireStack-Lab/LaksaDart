@@ -20,7 +20,7 @@ List<Map> setParamValues(List<Map> rawParams, List<Map> newValues) {
     var v = rawParams[i];
     var newMap = {
       'value': newValues[i]['value'],
-      'vname': v['name'] != null ? v['name'] : v['vname']
+      'vname': v['name'] ?? v['vname']
     };
     Map newObj = Map.from(v);
     newObj.addAll(newMap);

@@ -48,16 +48,14 @@ class BaseProvider
     }
 
     if (type == MiddlewareType.REQ) {
-      var current =
-          this.reqMiddleware[match] != null ? this.reqMiddleware[match] : [];
+      var current = this.reqMiddleware[match] ?? [];
       List<Transformer> matchers = List.from(current);
       matchers.add(fn);
       this
           .reqMiddleware
           .update(match, (found) => matchers, ifAbsent: () => matchers);
     } else {
-      var current =
-          this.resMiddleware[match] != null ? this.resMiddleware[match] : [];
+      var current = this.resMiddleware[match] ?? [];
       List<Transformer> matchers = List.from(current);
       matchers.add(fn);
       this

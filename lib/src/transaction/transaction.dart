@@ -175,8 +175,8 @@ class Transaction implements BaseTransaction {
     this.nonce = params['nonce'];
     this.pubKey = params['pubKey'];
     this.amount = params['amount'];
-    this.code = params['code'] != null ? params['code'] : '';
-    this.data = params['data'] != null ? params['data'] : '';
+    this.code = params['code'] ?? '';
+    this.data = params['data'] ?? '';
     this.signature = params['signature'];
     this.gasPrice = params['gasPrice'];
     this.gasLimit = params['gasLimit'];

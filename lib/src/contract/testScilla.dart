@@ -20,10 +20,9 @@ class TestScilla extends Contract {
 
   TestScilla({Map params, Messenger messenger, ContractStatus status})
       : super(params: params, messenger: messenger, status: status) {
-    this.code = params['code'] != null ? params['code'] : '';
-    this.init = params['init'] != null ? params['init'] : [];
-    this.ContractAddress =
-        params['ContractAddress'] != null ? params['ContractAddress'] : '';
+    this.code = params['code'] ?? '';
+    this.init = params['init'] ?? [];
+    this.ContractAddress = params['ContractAddress'] ?? '';
     this.status = status;
     this.messenger = messenger;
     this.transaction = null;
@@ -147,7 +146,7 @@ class TestScilla extends Contract {
    * @return {Contract} {raw contract with code}
    */
   TestScilla setCode(String code) {
-    this.code = code != null ? code : '';
+    this.code = code ?? '';
     return this;
   }
 

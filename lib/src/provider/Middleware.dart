@@ -102,8 +102,7 @@ class RPCMiddleWare
         'id': id,
         'result': result != null ? result.raw : null,
         'error': error != null ? error.raw : null,
-        'message':
-            message != null ? message : error != null ? error.message : null,
+        'message': message ?? error != null ? error.message : null,
         'req': req
       };
 }

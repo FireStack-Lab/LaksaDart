@@ -22,13 +22,11 @@ class Contract implements BaseContract {
       Messenger messenger,
       Wallet wallet,
       ContractStatus status = ContractStatus.INITIALISED}) {
-    this.code = params['code'] != null ? params['code'] : '';
-    this.init = params['init'] != null ? params['init'] : [];
-    this.transaction =
-        params['transaction'] == null ? params['transaction'] : null;
-    this.ContractAddress =
-        params['ContractAddress'] != null ? params['ContractAddress'] : '';
-    this.status = params['status'] != null ? params['status'] : status;
+    this.code = params['code'] ?? '';
+    this.init = params['init'] ?? [];
+    this.transaction = params['transaction'] ?? null;
+    this.ContractAddress = params['ContractAddress'] ?? '';
+    this.status = params['status'] ?? status;
     // factory
     this.messenger = messenger;
     this.wallet = wallet;
@@ -144,11 +142,10 @@ class Contract implements BaseContract {
 
     try {
       this.setDeployPayload(
-          gasLimit: gasLimit != null ? gasLimit : defaultGasLimit,
-          gasPrice: gasPrice != null ? gasPrice : defaultGasPrice);
+          gasLimit: gasLimit ?? defaultGasLimit,
+          gasPrice: gasPrice ?? defaultGasPrice);
       await this.sendContract(
-          account: account != null ? account : this.signer,
-          passphrase: passphrase);
+          account: account ?? this.signer, passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
       return this;
     } catch (err) {
@@ -183,12 +180,11 @@ class Contract implements BaseContract {
       this.setCallPayload(
           transition: transition,
           params: params,
-          amount: amount != null ? amount : defaultAmount,
+          amount: amount ?? defaultAmount,
           gasLimit: gasLimit,
-          gasPrice: gasPrice != null ? gasPrice : defulatGasPrice);
+          gasPrice: gasPrice ?? defulatGasPrice);
       await this.sendContract(
-          account: account != null ? account : this.signer,
-          passphrase: passphrase);
+          account: account ?? this.signer, passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
       return this;
     } catch (err) {
@@ -256,7 +252,7 @@ class Contract implements BaseContract {
    * @return {Contract} {Contract Signed}
    */
   Future<Contract> signTxn({Account account, String passphrase}) async {
-    Account signingAccount = account != null ? account : this.signer;
+    Account signingAccount = account ?? this.signer;
     try {
       this.transaction = await signingAccount.signTransaction(this.transaction,
           passphrase: passphrase);

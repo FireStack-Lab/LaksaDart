@@ -69,7 +69,7 @@ class Account
   Account create() {
     try {
       String prv = crypto.generatePrivateKey();
-      return new Account(prv);
+      return new Account(prv, this.messenger);
     } catch (e) {
       throw e;
     }

@@ -37,7 +37,7 @@ class Wallet
   }
 
   Account create() {
-    var acc = new Account().create();
+    var acc = new Account(null, this.messenger).create();
     this.add(acc);
     return acc;
   }

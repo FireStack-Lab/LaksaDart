@@ -71,7 +71,17 @@ main() async {
     });
   }
 
-  await autoTransaction();
+  void wallet() async {
+    Laksa laksa = new Laksa(
+        nodeUrl: 'https://api.zilliqa.com', //'https://staging-api.aws.z7a.xyz'
+        scillaUrl: 'https://scilla-runner.zilliqa.com');
+    var newAcc = laksa.wallet.create();
+    await newAcc.updateBalance();
+    print(newAcc.balance);
+  }
+
+  await wallet();
+  // await autoTransaction();
 
   // await deploy();
 }

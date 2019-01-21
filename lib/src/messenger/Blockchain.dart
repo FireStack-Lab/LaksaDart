@@ -109,9 +109,6 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
         .send(RPCMethod.GetTransactionsForTxBlock, txBlock);
   }
 
-  // TODO: getTransaction
-  // TODO: completeTransaction
-  // TODO: createTransaction
   Future<TransactionSent> createTransaction(Transaction transaction) async {
     try {
       var res = await this
@@ -134,6 +131,24 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     } catch (error) {
       throw error;
     }
+  }
+
+  Future<Transaction> completeTransaction(
+      {Transaction transaction, int maxAttempts, int interval}) async {
+    try {
+      TransactionSent result = await createTransaction(transaction);
+      Transaction confirmed = await result.transaction.confirm(
+          txHash: result.transaction.TranID,
+          maxAttempts: maxAttempts,
+          interval: interval);
+      return confirmed;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<RPCMiddleWare> getTransaction({String txHash}) async {
+    return await this.messenger.send(RPCMethod.GetTransaction, txHash);
   }
 
   // scilla-runner checker

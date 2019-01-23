@@ -1,3 +1,3 @@
 #! /bin/bash
 cd ..
-git add . && git commit
+git add . && git commit && git push

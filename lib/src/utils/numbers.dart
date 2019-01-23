@@ -95,3 +95,15 @@ BigInt hexToInt(String hex) {
 int pack(int a, int b) {
   return (a << 16) + b;
 }
+
+List<String> numberToHexArray(int number, int size) {
+  String hexVal = number.toRadixString(16);
+  List<String> hexRep = List.filled(hexVal.length, '0');
+  List<String> hex = List.filled(size, '0');
+  // TODO: this really needs to be refactored.
+  for (int i = 0; i < hexVal.length; i++) {
+    hexRep[i] = hexVal.substring(i, i + 1);
+  }
+  hex.setRange(size - hexVal.length, size, hexRep);
+  return hex;
+}

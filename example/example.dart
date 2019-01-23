@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+// import 'package:crypto/crypto.dart';
+// import 'package:crypto/src/digest_sink.dart';
 
 import 'package:laksadart/src/utils/unit.dart' as unit;
-import 'package:laksadart/src/Laksa.dart' show Laksa;
+import 'package:laksadart/laksadart.dart';
 
 main() async {
   var laksa = new Laksa(
@@ -65,9 +67,40 @@ main() async {
       newContract.setDeployPayload(
           gasLimit: 10000, gasPrice: BigInt.from(1000000000));
       var sent = await newContract.sendContract();
+      print(sent.transaction.toPayload);
+      var sendTime = DateTime.now();
+      print('sent contract at:$sendTime');
       print(sent.transaction.TranID);
       var deployed = await sent.confirmTx(maxAttempts: 33, interval: 1000);
       print(deployed.ContractAddress);
+      if (deployed != null) {
+        var during = DateTime.now().difference(sendTime);
+        print('deployed confirmed during:$during');
+      }
+
+      // test call contract
+
+      deployed.setCallPayload(
+          params: [
+            {'vname': "msg", 'type': "String", 'value': "Hello World"}
+          ],
+          gasLimit: 8000,
+          gasPrice: unit.Unit.Li(1000).qa,
+          amount: unit.Unit.Qa(0).qa);
+      var sentCall = await deployed.sendContract();
+      print(sentCall.transaction.toPayload);
+      var calledTime = DateTime.now();
+      print('sent called time:$calledTime');
+      print(sentCall.transaction.TranID);
+
+      var called = await sentCall.confirmTx(maxAttempts: 33, interval: 1000);
+      print(called.ContractAddress);
+      if (called != null) {
+        var during2 = DateTime.now().difference(calledTime);
+        print('deployed confirmed during:$during2');
+      }
+      var state = await called.getState();
+      print("The state of the contract is:$state");
     });
   }
 
@@ -83,4 +116,25 @@ main() async {
   // await wallet();
   // await autoTransaction();
   // await deploy();
+  // var addr =
+  //     new HMAC(sha256, hexToBytes('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'))
+  //         .update(hexToBytes(numberToHexArray(18, 16).join('')))
+  //         .digest()
+  //         .bytes;
+  // print(bytesToHex(addr).substring(24));
+
+  // var ds = new DigestSink();
+  // var s = sha256.startChunkedConversion(ds);
+  // s.add(hexToBytes('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'));
+  // s.add(hexToBytes(numberToHexArray(18, 16)
+  //     .join(''))); // call `add` for every chunk of input data
+  // s.close();
+  // var digest = ds.value;
+
+  var newSha = SHA256()
+      .update(hexToBytes('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'))
+      .update(hexToBytes(numberToHexArray(18, 16).join('')))
+      .toString();
+
+  print(newSha.substring(24));
 }

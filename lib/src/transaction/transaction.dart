@@ -1,6 +1,7 @@
 import 'package:laksadart/src/provider/net.dart';
 import 'package:laksadart/src/messenger/Messenger.dart';
 import 'package:laksadart/src/account/address.dart';
+import 'package:laksadart/src/crypto/index.dart';
 import 'util.dart';
 import 'api.dart';
 
@@ -23,7 +24,7 @@ class Transaction implements BaseTransaction {
   String data;
   Map<String, dynamic> receipt;
   String signature;
-
+  String get senderAddress => this._senderAddress();
   // messenger
   Messenger messenger;
 
@@ -59,6 +60,13 @@ class Transaction implements BaseTransaction {
   // Uint8List get bytes;
   // String get senderAddress;
   TxStatus status;
+
+  String _senderAddress() {
+    if (this.pubKey != null) {
+      return '0' * 40;
+    }
+    return getAddressFromPublicKey(this.pubKey);
+  }
 
   Transaction(
       {Map params,

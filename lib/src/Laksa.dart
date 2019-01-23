@@ -16,7 +16,7 @@ var DefaultConfig = new ZilliqaConfig({
       Network_ID: 'TestNet',
       nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'),
   'TestNet': new ConfigItem(
-      CHAIN_ID: 62,
+      CHAIN_ID: 2,
       Network_ID: 'TestNet',
       nodeProviderUrl: 'https://api.zilliqa.com' // Mainnet
       ),

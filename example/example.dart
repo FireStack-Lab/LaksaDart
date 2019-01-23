@@ -6,7 +6,7 @@ import 'package:laksadart/src/Laksa.dart' show Laksa;
 
 main() async {
   var laksa = new Laksa(
-      nodeUrl: 'https://staging-api.aws.z7a.xyz', // 'https://api.zilliqa.com',
+      nodeUrl: 'https://api.zilliqa.com', // 'https://api.zilliqa.com',
       scillaUrl: 'https://scilla-runner.zilliqa.com');
 
   var acc = laksa.wallet
@@ -17,7 +17,7 @@ main() async {
     var nonce = acc.nonce;
     var txn = laksa.transactions.newTx({
       'toAddr': '2E3C9B415B19AE4035503A06192A0FAD76E04243',
-      'amount': unit.Unit.Zil(nonce + 1).qa,
+      'amount': unit.Unit.Li(nonce + 1).qa,
       'gasPrice': unit.Unit.Li(1000).qa,
       'gasLimit': 1,
       'version': laksa.messenger.setTransactionVersion(1)
@@ -38,7 +38,7 @@ main() async {
   }
 
   void deploy() async {
-    File contract = new File('../test/contracts/helloworld.txt');
+    File contract = new File('../test/contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
           nodeUrl:
@@ -63,7 +63,7 @@ main() async {
       var newContract =
           laksa.contracts.newContract(code: contractString, init: init);
       newContract.setDeployPayload(
-          gasLimit: 2500000000000, gasPrice: BigInt.from(1000000000));
+          gasLimit: 10000, gasPrice: BigInt.from(1000000000));
       var sent = await newContract.sendContract();
       print(sent.transaction.TranID);
       var deployed = await sent.confirmTx(maxAttempts: 33, interval: 1000);
@@ -80,8 +80,7 @@ main() async {
     print(newAcc.balance);
   }
 
-  await wallet();
+  // await wallet();
   // await autoTransaction();
-
   // await deploy();
 }

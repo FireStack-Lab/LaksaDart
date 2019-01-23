@@ -175,14 +175,14 @@ class Contract implements BaseContract {
       throw 'Contract has not been deployed!';
     }
     var defaultAmount = BigInt.from(10000);
-    var defulatGasPrice = BigInt.from(100000000);
+    var defaultGasPrice = BigInt.from(100000000);
     try {
       this.setCallPayload(
           transition: transition,
           params: params,
           amount: amount ?? defaultAmount,
           gasLimit: gasLimit,
-          gasPrice: gasPrice ?? defulatGasPrice);
+          gasPrice: gasPrice ?? defaultGasPrice);
       await this.sendContract(
           account: account ?? this.signer, passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);

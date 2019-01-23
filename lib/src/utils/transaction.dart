@@ -19,7 +19,16 @@ Uint8List encodeTransactionProto(Map<String, dynamic> tx) {
   txnBuffer.gasprice = zMessage.ByteArray.create();
   txnBuffer.gasprice.data = numbers.intToBytes(tx['gasPrice'], length: 16);
   txnBuffer.gaslimit = tx['gasLimit'] is int ? Int64(tx['gasLimit']) : Int64(0);
-  txnBuffer.code = toArray(tx['code'] is String ? tx['code'] : null);
-  txnBuffer.data = toArray(tx['data'] is String ? tx['data'] : null);
+
+  if (null != tx['code'] &&
+      tx['code'] is String &&
+      tx['code'].toString().length > 0) {
+    txnBuffer.code = toArray(tx['code']);
+  }
+  if (null != tx['data'] &&
+      tx['data'] is String &&
+      tx['data'].toString().length > 0) {
+    txnBuffer.data = toArray(tx['data']);
+  }
   return txnBuffer.writeToBuffer();
 }

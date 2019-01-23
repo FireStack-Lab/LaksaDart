@@ -101,6 +101,5 @@ Future<RPCMiddleWare> performRPC(
   // if (response.statusCode >= 400) throw Future.error('connection error');
   var newMapEntry = MapEntry('req', response.request);
   body.addEntries([newMapEntry]);
-
   return new RPCMiddleWare(body);
 }

@@ -1,4 +1,3 @@
-import 'package:crypto/crypto.dart';
 import 'package:laksadart/src/core/ZilliqaModule.dart';
 import 'package:laksadart/src/messenger/Messenger.dart';
 import 'package:laksadart/src/account/wallet.dart';
@@ -44,16 +43,15 @@ class Contracts implements ZilliqaModule<Messenger, void> {
     );
   }
 
-  // String getAddressForContract(Transaction tx) {
-  //   var nonce = tx.txParams['nonce'] ? tx.txParams['nonce'] - 1 : 0;
-  //   var newBytes = new HMAC(sha256, null)
-  //       .update(numbers.hexToBytes(tx.senderAddress))
-  //       .update(
-  //           numbers.hexToBytes(numbers.numberToHexArray(nonce, 16).join('')))
-  //       .digest()
-  //       .bytes;
-  //   return numbers.bytesToHex(newBytes);
-  // }
+  String getAddressForContract(Transaction tx) {
+    var nonce = tx.txParams['nonce'] ? tx.txParams['nonce'] - 1 : 0;
+    var newSha = SHA256()
+        .update(numbers.hexToBytes(tx.senderAddress))
+        .update(
+            numbers.hexToBytes(numbers.numberToHexArray(nonce, 16).join('')))
+        .toString();
+    return newSha.substring(24);
+  }
 
   Future<bool> testContract({String code, List init}) async {
     TestScilla contract = new TestScilla(

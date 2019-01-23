@@ -116,25 +116,4 @@ main() async {
   // await wallet();
   // await autoTransaction();
   // await deploy();
-  // var addr =
-  //     new HMAC(sha256, hexToBytes('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'))
-  //         .update(hexToBytes(numberToHexArray(18, 16).join('')))
-  //         .digest()
-  //         .bytes;
-  // print(bytesToHex(addr).substring(24));
-
-  // var ds = new DigestSink();
-  // var s = sha256.startChunkedConversion(ds);
-  // s.add(hexToBytes('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'));
-  // s.add(hexToBytes(numberToHexArray(18, 16)
-  //     .join(''))); // call `add` for every chunk of input data
-  // s.close();
-  // var digest = ds.value;
-
-  var newSha = SHA256()
-      .update(hexToBytes('9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a'))
-      .update(hexToBytes(numberToHexArray(18, 16).join('')))
-      .toString();
-
-  print(newSha.substring(24));
 }

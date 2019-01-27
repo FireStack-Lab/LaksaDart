@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 // import 'package:crypto/crypto.dart';
 // import 'package:crypto/src/digest_sink.dart';
-
+import "package:pointycastle/ecc/ecc_fp.dart";
 import 'package:laksadart/src/utils/unit.dart' as unit;
 import 'package:laksadart/laksadart.dart';
 
@@ -81,8 +81,9 @@ main() async {
       // test call contract
 
       deployed.setCallPayload(
+          transition: 'setHello',
           params: [
-            {'vname': "msg", 'type': "String", 'value': "Hello World"}
+            {'vname': "msg", 'type': "String", 'value': "Test World"}
           ],
           gasLimit: 8000,
           gasPrice: unit.Unit.Li(1000).qa,
@@ -93,13 +94,13 @@ main() async {
       print('sent called time:$calledTime');
       print(sentCall.transaction.TranID);
 
-      var called = await sentCall.confirmTx(maxAttempts: 33, interval: 1000);
-      print(called.ContractAddress);
-      if (called != null) {
+      await sentCall.confirmTx(maxAttempts: 33, interval: 1000);
+      print(sentCall.ContractAddress);
+      if (sentCall != null) {
         var during2 = DateTime.now().difference(calledTime);
         print('deployed confirmed during:$during2');
       }
-      var state = await called.getState();
+      var state = await sentCall.getState();
       print("The state of the contract is:$state");
     });
   }
@@ -115,5 +116,5 @@ main() async {
 
   // await wallet();
   // await autoTransaction();
-  // await deploy();
+  await deploy();
 }

@@ -18,8 +18,7 @@ var DefaultConfig = new ZilliqaConfig({
   'TestNet': new ConfigItem(
       CHAIN_ID: 2,
       Network_ID: 'TestNet',
-      nodeProviderUrl: 'https://api.zilliqa.com' // Mainnet
-      ),
+      nodeProviderUrl: 'https://api.zilliqa.com'),
   'MainNet': new ConfigItem(
       CHAIN_ID: 1,
       Network_ID: 'MainNet',

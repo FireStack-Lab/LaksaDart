@@ -1,5 +1,5 @@
 scilla_version 0
-(* Deployed by newboo@FireStack.one *)
+(* Deployed by neeboo@FireStack.one *)
 (* HelloWorld contract *)
 import ListUtils
 (***************************************************)

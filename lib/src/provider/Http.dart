@@ -73,7 +73,7 @@ class HttpProvider extends BaseProvider implements RPCRequest {
 
   dynamic composeMiddleware(List<Transformer> middwareList) {
     if (middwareList.length == 0) {
-      return (dynamic arg) => arg;
+      return (arg) => arg;
     }
 
     if (middwareList.length == 1) {
@@ -81,8 +81,7 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     }
 
     if (middwareList.length > 1) {
-      return List.from(middwareList)
-          .reduce((a, b) => (dynamic any) => a(b(any)));
+      return List.from(middwareList).reduce((a, b) => (any) => a(b(any)));
     }
   }
 }

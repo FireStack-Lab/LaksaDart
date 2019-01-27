@@ -92,8 +92,12 @@ BigInt hexToInt(String hex) {
   return BigInt.parse(strip0x(hex), radix: 16);
 }
 
-int pack(int a, int b) {
-  return (a << 16) + b;
+int pack(int CHAIN_ID, int rawVersion) {
+  return (CHAIN_ID << 16) + rawVersion;
+}
+
+int unPack(int versioned, int CHAIN_ID) {
+  return versioned - (CHAIN_ID << 16);
 }
 
 List<String> numberToHexArray(int number, int size) {

@@ -229,7 +229,9 @@ class Contract implements BaseContract {
       var transaction = txnSent.transaction;
       var result = txnSent.result;
 
-      this.ContractAddress = result['ContractAddress'];
+      this.ContractAddress = this.ContractAddress.isNotEmpty
+          ? this.ContractAddress
+          : result['ContractAddress'];
 
       this.transaction = transaction.map((obj) {
         var resultMap = Map.from(obj);

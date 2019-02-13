@@ -21,26 +21,24 @@ class Contracts implements ZilliqaModule<Messenger, void> {
     this.wallet = wallet;
   }
 
-  Contract newContract({String code, List init}) {
+  Contract newContract({String code, List init, int version, bool toDS}) {
     return new Contract(
-        params: {'code': code, 'init': init},
+        params: {'code': code, 'init': init, 'version': version},
         messenger: this.messenger,
         wallet: this.wallet,
-        status: ContractStatus.INITIALISED);
+        status: ContractStatus.INITIALISED,
+        toDS: toDS);
   }
 
   Contract at(Contract contract) {
-    return new Contract(
-      params: {
-        'code': contract.code,
-        'init': contract.init,
-        'ContractAddress': contract.ContractAddress,
-        'status': contract.status,
-        'transaction': contract.transaction
-      },
-      messenger: this.messenger,
-      wallet: this.wallet,
-    );
+    return new Contract(params: {
+      'code': contract.code,
+      'init': contract.init,
+      'version': contract.version,
+      'ContractAddress': contract.ContractAddress,
+      'status': contract.status,
+      'transaction': contract.transaction,
+    }, messenger: this.messenger, wallet: this.wallet, toDS: contract.toDS);
   }
 
   String getAddressForContract(Transaction tx) {
@@ -53,9 +51,9 @@ class Contracts implements ZilliqaModule<Messenger, void> {
     return newSha.substring(24);
   }
 
-  Future<bool> testContract({String code, List init}) async {
+  Future<bool> testContract({String code, List init, int version}) async {
     TestScilla contract = new TestScilla(
-        params: {'code': code, 'init': init},
+        params: {'code': code, 'init': init, 'version': version},
         messenger: this.messenger,
         status: ContractStatus.INITIALISED);
     Map result = await contract

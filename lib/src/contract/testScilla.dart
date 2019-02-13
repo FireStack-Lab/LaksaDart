@@ -12,6 +12,7 @@ class TestScilla extends Contract {
   String code = '';
   List<Map> init;
   String ContractAddress;
+  int version;
   Messenger messenger;
   ContractStatus status;
   Transaction transaction;
@@ -22,6 +23,7 @@ class TestScilla extends Contract {
       : super(params: params, messenger: messenger, status: status) {
     this.code = params['code'] ?? '';
     this.init = params['init'] ?? [];
+    this.version = params['version'] ?? 0;
     this.ContractAddress = params['ContractAddress'] ?? '';
     this.status = status;
     this.messenger = messenger;

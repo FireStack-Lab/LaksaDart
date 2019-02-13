@@ -27,6 +27,7 @@ class Transaction implements BaseTransaction {
   String get senderAddress => this._senderAddress();
   // messenger
   Messenger messenger;
+  bool toDS = false;
 
   // getter txParmas
   Map<String, dynamic> get txParams => {
@@ -54,7 +55,8 @@ class Transaction implements BaseTransaction {
         'gasLimit': this.gasLimit.toString(),
         'code': this.code,
         'data': this.data,
-        'signature': this.signature
+        'signature': this.signature,
+        'priority': this.toDS
         // 'receipt': this.receipt,
       };
   // Uint8List get bytes;
@@ -71,7 +73,8 @@ class Transaction implements BaseTransaction {
   Transaction(
       {Map params,
       Messenger messenger,
-      TxStatus status = TxStatus.Initialised}) {
+      TxStatus status = TxStatus.Initialised,
+      bool toDS = false}) {
     // params
     this.version = params['version'];
     this.TranID = params['TranID'];
@@ -88,6 +91,7 @@ class Transaction implements BaseTransaction {
     // // status
     this.status = status;
     this.messenger = messenger;
+    this.toDS = toDS;
   }
 
   /**

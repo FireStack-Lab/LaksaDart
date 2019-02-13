@@ -8,8 +8,9 @@ import 'package:laksadart/laksadart.dart';
 
 main() async {
   var laksa = new Laksa(
-      nodeUrl: 'https://api.zilliqa.com', // 'https://api.zilliqa.com',
-      scillaUrl: 'https://scilla-runner.zilliqa.com');
+      nodeUrl: 'https://dev-api.zilliqa.com', // 'https://api.zilliqa.com',
+      scillaUrl: 'https://scilla-runner.zilliqa.com',
+      networkID: 'DevNet');
 
   var acc = laksa.wallet
       .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
@@ -22,7 +23,8 @@ main() async {
       'amount': unit.Unit.Li(nonce + 1).qa,
       'gasPrice': unit.Unit.Li(1000).qa,
       'gasLimit': 1,
-      'version': laksa.messenger.setTransactionVersion(1)
+      'version':
+          laksa.messenger.setTransactionVersion(1, laksa.messenger.Network_ID)
     });
 
     var signed = await acc.signTransaction(txn);
@@ -44,8 +46,9 @@ main() async {
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
           nodeUrl:
-              'https://api.zilliqa.com', //'https://staging-api.aws.z7a.xyz'
-          scillaUrl: 'https://scilla-runner.zilliqa.com');
+              'https://dev-api.zilliqa.com', //'https://staging-api.aws.z7a.xyz'
+          scillaUrl: 'https://scilla-runner.zilliqa.com',
+          networkID: 'DevNet');
       var init = [
         {
           'vname': '_scilla_version',
@@ -62,10 +65,10 @@ main() async {
       laksa.wallet.add(
           'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
 
-      var newContract =
-          laksa.contracts.newContract(code: contractString, init: init);
+      var newContract = laksa.contracts
+          .newContract(code: contractString, init: init, version: 0);
       newContract.setDeployPayload(
-          gasLimit: 10000, gasPrice: BigInt.from(1000000000));
+          gasLimit: 10000, gasPrice: BigInt.from(1000000000), toDS: true);
       var sent = await newContract.sendContract();
       print(sent.transaction.toPayload);
       var sendTime = DateTime.now();
@@ -87,7 +90,8 @@ main() async {
           ],
           gasLimit: 8000,
           gasPrice: unit.Unit.Li(1000).qa,
-          amount: unit.Unit.Qa(0).qa);
+          amount: unit.Unit.Qa(0).qa,
+          toDS: true);
       var sentCall = await deployed.sendContract();
       print(sentCall.transaction.toPayload);
       var calledTime = DateTime.now();
@@ -98,7 +102,7 @@ main() async {
       print(sentCall.ContractAddress);
       if (sentCall != null) {
         var during2 = DateTime.now().difference(calledTime);
-        print('deployed confirmed during:$during2');
+        print('called confirmed during:$during2');
       }
       var state = await sentCall.getState();
       print("The state of the contract is:$state");
@@ -107,8 +111,10 @@ main() async {
 
   void wallet() async {
     Laksa laksa = new Laksa(
-        nodeUrl: 'https://api.zilliqa.com', //'https://staging-api.aws.z7a.xyz'
-        scillaUrl: 'https://scilla-runner.zilliqa.com');
+        nodeUrl:
+            'https://dev-api.zilliqa.com', //'https://staging-api.aws.z7a.xyz'
+        scillaUrl: 'https://scilla-runner.zilliqa.com',
+        networkID: 'DevNet');
     var newAcc = laksa.wallet.create();
     await newAcc.updateBalance();
     print(newAcc.balance);

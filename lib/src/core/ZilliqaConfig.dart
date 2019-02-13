@@ -14,11 +14,13 @@ class ZilliqaConfig {
   ConfigItem Staging;
   ConfigItem TestNet;
   ConfigItem MainNet;
+  ConfigItem DevNet;
   ZilliqaConfig(Map<String, ConfigItem> config) {
     this.Default = config['Default'];
     this.Staging = config['Staging'];
     this.TestNet = config['TestNet'];
     this.MainNet = config['MainNet'];
+    this.DevNet = config['DevNet'];
   }
   void setDefault(ConfigItem config) {
     this.Default = config;
@@ -34,5 +36,9 @@ class ZilliqaConfig {
 
   void setMainNet(ConfigItem config) {
     this.MainNet = config;
+  }
+
+  void setDevNet(ConfigItem config) {
+    this.DevNet = config;
   }
 }

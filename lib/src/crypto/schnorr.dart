@@ -237,9 +237,18 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   while (sig == null) {
     var k = numbers.hexToInt(drbg.generate(len));
 
-    sig = trySign(msg, k, prv, pubKey);
-    // print(
-    //     '{"msg":"${numbers.bytesToHex(msg)}","k":"${numbers.toHex(k)}","prv":"${numbers.bytesToHex(privKey)}","pubKey":"${numbers.bytesToHex(pubKey)}","sig":"${sig.signature}"}');
+    var trySig = trySign(msg, k, prv, pubKey);
+    bool res = verify(
+      msg,
+      trySig.r,
+      trySig.s,
+      pubKey,
+    );
+    if (res) {
+      sig = trySig;
+    } else {
+      sig = null;
+    }
   }
   return sig;
 }

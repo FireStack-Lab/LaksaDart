@@ -8,6 +8,7 @@ class Messenger {
   HttpProvider nodeProvider;
   HttpProvider scillaProvider;
   ZilliqaConfig config;
+  String Network_ID;
 
   String get nodeUrl => this.nodeProvider.url;
   String get scillaUrl => this.scillaProvider.url;
@@ -23,6 +24,7 @@ class Messenger {
     this.scillaProvider =
         scillaProvider is HttpProvider ? scillaProvider : this.nodeProvider;
     this.config = config;
+    this.Network_ID = config.Default.Network_ID;
   }
   void setNodeProvider(HttpProvider provider) {
     this.nodeProvider = provider;
@@ -63,17 +65,28 @@ class Messenger {
     }
   }
 
-  int setTransactionVersion(int version) {
+  int setTransactionVersion(int version, String networkId) {
     var CHAIN_ID = 1;
-    if (this.nodeProvider.url == this.config.Default.nodeProviderUrl) {
+    if (networkId == this.config.Default.Network_ID) {
       CHAIN_ID = this.config.Default.CHAIN_ID;
-    } else if (this.nodeProvider.url == this.config.Staging.nodeProviderUrl) {
+      this.setNetworkID(networkId);
+    } else if (networkId == this.config.Staging.Network_ID) {
       CHAIN_ID = this.config.Staging.CHAIN_ID;
-    } else if (this.nodeProvider.url == this.config.TestNet.nodeProviderUrl) {
+      this.setNetworkID(networkId);
+    } else if (networkId == this.config.TestNet.Network_ID) {
       CHAIN_ID = this.config.TestNet.CHAIN_ID;
-    } else if (this.nodeProvider.url == this.config.MainNet.nodeProviderUrl) {
+      this.setNetworkID(networkId);
+    } else if (networkId == this.config.MainNet.Network_ID) {
       CHAIN_ID = this.config.MainNet.CHAIN_ID;
+      this.setNetworkID(networkId);
+    } else if (networkId == this.config.DevNet.Network_ID) {
+      CHAIN_ID = this.config.DevNet.CHAIN_ID;
+      this.setNetworkID(networkId);
     }
     return numbers.pack(CHAIN_ID, version);
+  }
+
+  String setNetworkID(String id) {
+    this.Network_ID = id;
   }
 }

@@ -12,6 +12,8 @@ class Contract implements BaseContract {
   String ContractAddress;
   ContractStatus status;
   Transaction transaction;
+  int version;
+  bool toDS = false;
   //----- factory ---//
   Messenger messenger;
   Wallet wallet;
@@ -21,15 +23,18 @@ class Contract implements BaseContract {
       {Map params,
       Messenger messenger,
       Wallet wallet,
-      ContractStatus status = ContractStatus.INITIALISED}) {
+      ContractStatus status = ContractStatus.INITIALISED,
+      bool toDS = false}) {
     this.code = params['code'] ?? '';
     this.init = params['init'] ?? [];
+    this.version = params['version'] ?? 0;
     this.transaction = params['transaction'] ?? null;
     this.ContractAddress = params['ContractAddress'] ?? '';
     this.status = params['status'] ?? status;
     // factory
     this.messenger = messenger;
     this.wallet = wallet;
+    this.toDS = toDS;
   }
 
   /**
@@ -93,7 +98,11 @@ class Contract implements BaseContract {
    * @return {object} {default deployment payload}
    */
   Map get deployDayload => {
-        'version': this.messenger.setTransactionVersion(0),
+        'version': this.version < 65536
+            ? this
+                .messenger
+                .setTransactionVersion(this.version, this.messenger.Network_ID)
+            : this.version,
         'amount': BigInt.from(0),
         'toAddr': '0' * 40,
         'code': this.code,
@@ -106,7 +115,11 @@ class Contract implements BaseContract {
    * @return {type} {description}
    */
   Map get callPayload => {
-        'version': this.messenger.setTransactionVersion(0),
+        'version': this.version < 65536
+            ? this
+                .messenger
+                .setTransactionVersion(this.version, this.messenger.Network_ID)
+            : this.version,
         'toAddr': this.ContractAddress
       };
 
@@ -132,7 +145,8 @@ class Contract implements BaseContract {
       Account account,
       String passphrase,
       int maxAttempts = 20,
-      int interval = 1000}) async {
+      int interval = 1000,
+      bool toDS = false}) async {
     var defaultGasLimit = 2500000000;
     var defaultGasPrice = BigInt.from(100000000);
 
@@ -143,7 +157,8 @@ class Contract implements BaseContract {
     try {
       this.setDeployPayload(
           gasLimit: gasLimit ?? defaultGasLimit,
-          gasPrice: gasPrice ?? defaultGasPrice);
+          gasPrice: gasPrice ?? defaultGasPrice,
+          toDS: toDS ?? this.toDS);
       await this.sendContract(
           account: account ?? this.signer, passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
@@ -170,7 +185,8 @@ class Contract implements BaseContract {
       Account account,
       String passphrase,
       int maxAttempts = 20,
-      int interval = 1000}) async {
+      int interval = 1000,
+      bool toDS = false}) async {
     if (this.ContractAddress == null) {
       throw 'Contract has not been deployed!';
     }
@@ -182,7 +198,8 @@ class Contract implements BaseContract {
           params: params,
           amount: amount ?? defaultAmount,
           gasLimit: gasLimit,
-          gasPrice: gasPrice ?? defaultGasPrice);
+          gasPrice: gasPrice ?? defaultGasPrice,
+          toDS: toDS ?? this.toDS);
       await this.sendContract(
           account: account ?? this.signer, passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
@@ -298,7 +315,8 @@ class Contract implements BaseContract {
     return this;
   }
 
-  Contract setDeployPayload({BigInt gasPrice, int gasLimit}) {
+  Contract setDeployPayload(
+      {BigInt gasPrice, int gasLimit, bool toDS = false}) {
     Map add = {
       'gasPrice': gasPrice,
       'gasLimit': gasLimit,
@@ -306,8 +324,8 @@ class Contract implements BaseContract {
     Map params = Map.from(this.deployDayload);
     params.addAll(add);
 
-    this.transaction =
-        new Transaction(params: params, messenger: this.messenger);
+    this.transaction = new Transaction(
+        params: params, messenger: this.messenger, toDS: toDS ?? this.toDS);
 
     return this;
   }
@@ -317,7 +335,8 @@ class Contract implements BaseContract {
       List<Map> params,
       BigInt amount,
       int gasLimit,
-      BigInt gasPrice}) {
+      BigInt gasPrice,
+      bool toDS = false}) {
     Map msg = {
       '_tag': transition,
 
@@ -332,8 +351,8 @@ class Contract implements BaseContract {
       'data': json.encode(msg)
     };
     txnParams.addAll(newMaps);
-    this.transaction =
-        new Transaction(params: txnParams, messenger: this.messenger);
+    this.transaction = new Transaction(
+        params: txnParams, messenger: this.messenger, toDS: toDS ?? this.toDS);
     return this;
   }
 }

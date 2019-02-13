@@ -15,6 +15,10 @@ var DefaultConfig = new ZilliqaConfig({
       CHAIN_ID: 63,
       Network_ID: 'TestNet',
       nodeProviderUrl: 'https://staging-api.aws.z7a.xyz'),
+  'DevNet': new ConfigItem(
+      CHAIN_ID: 333,
+      Network_ID: 'DevNet',
+      nodeProviderUrl: 'https://dev-api.zilliqa.com'),
   'TestNet': new ConfigItem(
       CHAIN_ID: 2,
       Network_ID: 'TestNet',
@@ -22,12 +26,13 @@ var DefaultConfig = new ZilliqaConfig({
   'MainNet': new ConfigItem(
       CHAIN_ID: 1,
       Network_ID: 'MainNet',
-      nodeProviderUrl: 'https://mainnet.zilliqa.com')
+      nodeProviderUrl: 'https://api.zilliqa.com')
 });
 
 class Laksa {
   String nodeUrl;
   String scillaUrl;
+  String networkID;
   HttpProvider nodeProvider;
   HttpProvider scillaProvider;
   Messenger messenger;
@@ -37,7 +42,7 @@ class Laksa {
   TransactionFactory transactions;
   ZilliqaConfig config;
 
-  Laksa({String nodeUrl, String scillaUrl}) {
+  Laksa({String nodeUrl, String scillaUrl, String networkID}) {
     if (scillaUrl == null) {
       this.scillaUrl = nodeUrl;
     } else {
@@ -45,6 +50,7 @@ class Laksa {
     }
     this.nodeUrl = nodeUrl;
     this.config = DefaultConfig;
+    this.networkID = networkID ?? this.config.Default.Network_ID;
 
     if (validators.isUrl(this.nodeUrl) && validators.isUrl(this.scillaUrl)) {
       this.setNodeProvider(this.nodeUrl);
@@ -57,6 +63,7 @@ class Laksa {
     } else {
       throw 'url is not correct';
     }
+    this.setNetworkID(this.networkID);
   }
 
   void setNodeProvider(String url) {
@@ -97,5 +104,9 @@ class Laksa {
   void setContracts() {
     this.contracts =
         new Contracts(messenger: this.messenger, wallet: this.wallet);
+  }
+
+  void setNetworkID(String id) {
+    this.messenger.setNetworkID(id);
   }
 }

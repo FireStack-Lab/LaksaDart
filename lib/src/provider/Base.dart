@@ -36,9 +36,9 @@ class BaseProvider
   BaseProvider(Map reqMiddleware, Map resMiddleware) {
     this.reqMiddleware = reqMiddleware is Map ? reqMiddleware : {'*': []};
     this.resMiddleware = resMiddleware is Map ? resMiddleware : {'*': []};
-    this.middleware.request.use = (Transformer fn, {String match: '*'}) =>
+    this.middleware.request.use = (Transformer fn, {String match = '*'}) =>
         this._pushMiddleware(fn, MiddlewareType.REQ, match);
-    this.middleware.response.use = (Transformer fn, {String match: '*'}) =>
+    this.middleware.response.use = (Transformer fn, {String match = '*'}) =>
         this._pushMiddleware(fn, MiddlewareType.RES, match);
   }
 

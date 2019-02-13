@@ -129,7 +129,7 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
       }
       return null;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -143,7 +143,7 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
           interval: interval);
       return confirmed;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 

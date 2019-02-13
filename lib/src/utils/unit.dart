@@ -6,7 +6,7 @@ Map<Units, String> unitMap = {
   Units.Zil: '1000000000000'
 };
 
-String fromQaFunc(BigInt qa, Units unit, {pad: false}) {
+String fromQaFunc(BigInt qa, Units unit, {pad = false}) {
   if (unit.toString() == 'qa') {
     return qa.toString();
   }

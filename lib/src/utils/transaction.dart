@@ -22,12 +22,12 @@ Uint8List encodeTransactionProto(Map<String, dynamic> tx) {
 
   if (null != tx['code'] &&
       tx['code'] is String &&
-      tx['code'].toString().length > 0) {
+      tx['code'].toString().isNotEmpty) {
     txnBuffer.code = toArray(tx['code']);
   }
   if (null != tx['data'] &&
       tx['data'] is String &&
-      tx['data'].toString().length > 0) {
+      tx['data'].toString().isNotEmpty) {
     txnBuffer.data = toArray(tx['data']);
   }
   return txnBuffer.writeToBuffer();

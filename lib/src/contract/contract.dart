@@ -164,7 +164,7 @@ class Contract implements BaseContract {
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
       return this;
     } catch (err) {
-      throw err;
+      rethrow;
     }
   }
 
@@ -205,7 +205,7 @@ class Contract implements BaseContract {
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
       return this;
     } catch (err) {
-      throw err;
+      rethrow;
     }
   }
 
@@ -228,7 +228,7 @@ class Contract implements BaseContract {
       this.setStatus(ContractStatus.DEPLOYED);
       return this;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -261,7 +261,7 @@ class Contract implements BaseContract {
 
       return this;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -279,7 +279,7 @@ class Contract implements BaseContract {
 
       return this;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 

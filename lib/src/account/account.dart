@@ -71,7 +71,7 @@ class Account
       String prv = crypto.generatePrivateKey();
       return new Account(prv, this.messenger);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -159,7 +159,7 @@ class Account
       else
         return null;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -171,7 +171,7 @@ class Account
       else
         return null;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -183,7 +183,7 @@ class Account
       } else
         throw ArgumentError('PrivateKey is not correct');
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -193,7 +193,7 @@ class Account
       String prvHex = number.toRadixString(16);
       return Account._importFromString(prvHex);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 

@@ -4,7 +4,7 @@ bool isUrl(String url) {
   var urlString = {'url': url};
   var validator = new angel.Validator({'url': angel.isUrl});
   var result = validator.check(urlString);
-  return result.errors.length > 0 ? false : true;
+  return result.errors.isNotEmpty ? false : true;
 }
 
 bool isByteString(String byStr, {int length}) {
@@ -17,7 +17,7 @@ bool isByteString(String byStr, {int length}) {
     }
   });
   var result = validator.check(byStrMap);
-  return result.errors.length > 0 ? false : true;
+  return result.errors.isNotEmpty ? false : true;
 }
 
 bool isAddress(String str) {

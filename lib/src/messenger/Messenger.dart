@@ -86,7 +86,7 @@ class Messenger {
     return numbers.pack(CHAIN_ID, version);
   }
 
-  String setNetworkID(String id) {
+  void setNetworkID(String id) {
     this.Network_ID = id;
   }
 }

@@ -232,7 +232,7 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   DRBG drbg = getDRBG(msg);
   int len = numbers.intToBytes(params.n).length;
 
-  var sig = null;
+  var sig;
 
   while (sig == null) {
     var k = numbers.hexToInt(drbg.generate(len));

@@ -99,7 +99,7 @@ class ZilAddress extends Address {
     BigInt v = numbers.hexToInt(hash);
 
     for (int i = 0; i < address.length; i++) {
-      if ('0123456789'.indexOf(address[i]) != -1) {
+      if ('0123456789'.contains(address[i])) {
         ret += address[i];
       } else {
         var checker = v & BigInt.from(2).pow(BigInt.from(255 - 6 * i).toInt());

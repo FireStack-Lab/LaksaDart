@@ -35,10 +35,10 @@ class DRBG<T> {
   List<int> nonce;
   List<int> pers;
   int get outLen => hash.blockSize * 4;
-  dynamic K = null;
-  dynamic V = null;
-  dynamic _reseed = null;
-  dynamic reseedInterval = null;
+  dynamic K;
+  dynamic V;
+  dynamic _reseed;
+  dynamic reseedInterval;
 
   DRBG(
       {Hash hash,

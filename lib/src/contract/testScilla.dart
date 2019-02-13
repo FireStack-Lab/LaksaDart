@@ -54,7 +54,7 @@ class TestScilla extends Contract {
       }
       return this;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -68,7 +68,7 @@ class TestScilla extends Contract {
       } else
         throw res.message;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -102,7 +102,7 @@ class TestScilla extends Contract {
       this.setABI(abiObj);
       return this;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -128,7 +128,7 @@ class TestScilla extends Contract {
       } else
         return this;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 

@@ -240,7 +240,7 @@ class Transaction implements BaseTransaction {
       } else
         return null;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -291,7 +291,7 @@ class Transaction implements BaseTransaction {
         }
       } catch (err) {
         this.status = TxStatus.Rejected;
-        throw err;
+        rethrow;
       }
       if (attempt < maxAttempts - 1) {
         sleep(ms: interval * attempt, callback: () => attempt += 1);

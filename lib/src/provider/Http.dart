@@ -72,7 +72,7 @@ class HttpProvider extends BaseProvider implements RPCRequest {
   }
 
   dynamic composeMiddleware(List<Transformer> middwareList) {
-    if (middwareList.length == 0) {
+    if (middwareList.isEmpty) {
       return (arg) => arg;
     }
 

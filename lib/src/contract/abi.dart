@@ -42,7 +42,7 @@ class ABI implements ABIObject {
   }
 
   List<String> getInitParamTypes() {
-    if (this.params.length > 0) {
+    if (this.params.isNotEmpty) {
       return getParamTypes(this.params);
     } else
       return null;
@@ -53,7 +53,7 @@ class ABI implements ABIObject {
   }
 
   List<String> getFieldsTypes() {
-    if (this.fields.length > 0) {
+    if (this.fields.isNotEmpty) {
       return getParamTypes(this.fields);
     } else
       return null;
@@ -65,12 +65,12 @@ class ABI implements ABIObject {
 
   List<Map> getTransitionsParamTypes() {
     List returnArray = [];
-    if (this.transitions.length > 0) {
+    if (this.transitions.isNotEmpty) {
       for (int i = 0; i < this.transitions.length; i += 1) {
         returnArray[i] = getParamTypes(this.transitions[i]['params']);
       }
     }
-    if (returnArray.length > 0) {
+    if (returnArray.isNotEmpty) {
       return returnArray;
     } else
       return null;
@@ -87,7 +87,7 @@ List<String> getParamTypes(List<Map> list) {
     keyList2.addAll(obj.keys);
     return false;
   });
-  if (boolList.length > 0) {
+  if (boolList.isNotEmpty) {
     return keyList2;
   } else
     return null;

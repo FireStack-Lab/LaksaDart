@@ -57,7 +57,8 @@ Future<String> encrypt(String privateKey, String passphrase,
     'id': uuidParser.unparse(uuid),
     'version': 3,
   };
-  return json.encode(map);
+  String result = json.encode(map);
+  return result;
 }
 
 Future<String> decrypt(Map<String, dynamic> keyStore, String passphrase) async {

@@ -1,6 +1,6 @@
 name: laksadart
 description: Dart library for Zilliqa's Blockchain, including Schnorr, wallet/account/keys manager, RPCMethod, Transactions and Contracts deploy/call.
-version: 0.1.0
+version: 0.1.1
 author: neeboo <neeboo@firestack>
 homepage: https://github.com/firestack-lab/laksaDart
 
@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   angel_validate: ^2.0.1
+  validators: ^1.0.0+1
   pointycastle: '^1.0.0-rc4'
   crypto: '^2.0.6'
   convert: '^2.1.1'

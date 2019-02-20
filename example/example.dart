@@ -116,11 +116,13 @@ main() async {
         scillaUrl: 'https://scilla-runner.zilliqa.com',
         networkID: 'DevNet');
     var newAcc = laksa.wallet.create();
-    await newAcc.updateBalance();
-    print(newAcc.balance);
+    await newAcc.encryptAccount('passphrase');
+    print(newAcc);
+    // await newAcc.updateBalance();
+    // print(newAcc.balance);
   }
 
-  // await wallet();
+  await wallet();
   // await autoTransaction();
-  await deploy();
+  // await deploy();
 }

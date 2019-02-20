@@ -1,23 +1,26 @@
-import 'package:angel_validate/server.dart' as angel;
+import 'package:validators/validators.dart' as validators;
+
+// bool isByteString(String byStr, {int length}) {
+//   var byStrMap = {byStr: byStr};
+//   var regString = r"^(0x)?[0-9a-f]" + "{$length}";
+//   var validator = new angel.Validator({
+//     byStr: (data) {
+//       var reg = new RegExp(regString, caseSensitive: false);
+//       return reg.hasMatch(data);
+//     }
+//   });
+//   var result = validator.check(byStrMap);
+//   return result.errors.isNotEmpty ? false : true;
+// }
 
 bool isUrl(String url) {
-  var urlString = {'url': url};
-  var validator = new angel.Validator({'url': angel.isUrl});
-  var result = validator.check(urlString);
-  return result.errors.isNotEmpty ? false : true;
+  return validators.isURL(url);
 }
 
 bool isByteString(String byStr, {int length}) {
-  var byStrMap = {byStr: byStr};
-  var regString = r"^(0x)?[0-9a-f]" + "{$length}";
-  var validator = new angel.Validator({
-    byStr: (data) {
-      var reg = new RegExp(regString, caseSensitive: false);
-      return reg.hasMatch(data);
-    }
-  });
-  var result = validator.check(byStrMap);
-  return result.errors.isNotEmpty ? false : true;
+  var str = byStr.replaceFirst(new RegExp('0x'), '');
+
+  return validators.matches(str, '^[0-9a-fA-F]{${length}}');
 }
 
 bool isAddress(String str) {

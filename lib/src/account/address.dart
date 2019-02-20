@@ -2,6 +2,7 @@ import 'package:crypto/crypto.dart';
 import 'package:meta/meta.dart';
 
 import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
+import 'package:laksadart/src/crypto/isolates.dart';
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
 
 @immutable
@@ -123,6 +124,14 @@ class ZilAddress extends Address {
 
   static ZilAddress fromPublicKey(String publicKey) =>
       new ZilAddress(crypto.getAddressFromPublicKey(publicKey));
+
+  static Future<ZilAddress> asyncFromPrivateKey(String privateKey) async {
+    return new ZilAddress(await asyncGetAddressFromPrivateKey(privateKey));
+  }
+
+  static Future<ZilAddress> asyncFromPublicKey(String publicKey) async {
+    return new ZilAddress(await asyncGetAddressFromPublicKey(publicKey));
+  }
 
   static ZilAddress fromAddress(String address) => new ZilAddress(address);
 

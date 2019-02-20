@@ -101,7 +101,7 @@ void _isolate_genratePrvKey(SendPort initialReplyTo) {
   //绑定
   initialReplyTo.send(port.sendPort);
   //监听
-  port.listen((message) async {
+  port.listen((message) {
     //获取数据并解析
 
     final send = message[0] as SendPort;
@@ -137,13 +137,118 @@ void _isolate_SchnorrSign(SendPort initialReplyTo) {
   //绑定
   initialReplyTo.send(port.sendPort);
   //监听
-  port.listen((message) async {
+  port.listen((message) {
     //获取数据并解析
     final prv = message[0] as String;
     final txn = message[1] as Map<String, dynamic>;
     final send = message[2] as SendPort;
     //返回结果
-    var signed = await SchnorrSign(prv, txn);
+    var signed = SchnorrSign(prv, txn);
+    send.send(signed);
+  });
+}
+
+Future<dynamic> asyncGetPubKeyFromPrivateKey(
+  String privateKey,
+) async {
+  //首先创建一个ReceivePort，为什么要创建这个？
+  //因为创建isolate所需的参数，必须要有SendPort，SendPort需要ReceivePort来创建
+  final response = new ReceivePort();
+  //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
+  //_isolate是创建isolate必须要的参数。
+  await Isolate.spawn(_isolate_getPubKeyFromPrivateKey, response.sendPort);
+  //获取sendPort来发送数据
+  final sendPort = await response.first as SendPort;
+  //接收消息的ReceivePort
+  final answer = new ReceivePort();
+  //发送数据
+  sendPort.send([privateKey, answer.sendPort]);
+  //获得数据并返回
+  return answer.first;
+}
+
+//创建isolate必须要的参数
+void _isolate_getPubKeyFromPrivateKey(SendPort initialReplyTo) {
+  final port = new ReceivePort();
+  //绑定
+  initialReplyTo.send(port.sendPort);
+  //监听
+  port.listen((message) {
+    //获取数据并解析
+    final prv = message[0] as String;
+    final send = message[1] as SendPort;
+    //返回结果
+    var signed = getPubKeyFromPrivateKey(prv);
+    send.send(signed);
+  });
+}
+
+Future<dynamic> asyncGetAddressFromPrivateKey(
+  String privateKey,
+) async {
+  //首先创建一个ReceivePort，为什么要创建这个？
+  //因为创建isolate所需的参数，必须要有SendPort，SendPort需要ReceivePort来创建
+  final response = new ReceivePort();
+  //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
+  //_isolate是创建isolate必须要的参数。
+  await Isolate.spawn(_isolate_getAddressFromPrivateKey, response.sendPort);
+  //获取sendPort来发送数据
+  final sendPort = await response.first as SendPort;
+  //接收消息的ReceivePort
+  final answer = new ReceivePort();
+  //发送数据
+  sendPort.send([privateKey, answer.sendPort]);
+  //获得数据并返回
+  return answer.first;
+}
+
+//创建isolate必须要的参数
+void _isolate_getAddressFromPrivateKey(SendPort initialReplyTo) {
+  final port = new ReceivePort();
+  //绑定
+  initialReplyTo.send(port.sendPort);
+  //监听
+  port.listen((message) {
+    //获取数据并解析
+    final prv = message[0] as String;
+    final send = message[1] as SendPort;
+    //返回结果
+    var signed = getAddressFromPrivateKey(prv);
+    send.send(signed);
+  });
+}
+
+Future<dynamic> asyncGetAddressFromPublicKey(
+  String pubKey,
+) async {
+  //首先创建一个ReceivePort，为什么要创建这个？
+  //因���创建isolate所需的参数，必须要有SendPort，SendPort需要ReceivePort来创建
+  final response = new ReceivePort();
+  //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
+  //_isolate是创建isolate必须要的参数。
+  await Isolate.spawn(_isolate_getAddressFromPublicKey, response.sendPort);
+  //获取sendPort来发送数据
+  final sendPort = await response.first as SendPort;
+  //接收消息的ReceivePort
+  final answer = new ReceivePort();
+  //发送数据
+  sendPort.send([pubKey, answer.sendPort]);
+  //获得数据并返回
+  return answer.first;
+}
+
+//创建isolate必须要的参数
+void _isolate_getAddressFromPublicKey(SendPort initialReplyTo) {
+  final port = new ReceivePort();
+  //绑定
+  initialReplyTo.send(port.sendPort);
+  //监听
+  port.listen((message) {
+    //获取数据并解析
+    final pub = message[0] as String;
+    final send = message[1] as SendPort;
+    //返回结果
+    var signed = getAddressFromPublicKey(pub);
     send.send(signed);
   });
 }

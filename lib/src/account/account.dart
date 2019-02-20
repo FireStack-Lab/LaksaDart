@@ -220,10 +220,24 @@ class Account
       return null;
   }
 
+  Future<String> asyncGetPublicKey(String privateKey) async {
+    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
+      return await asyncGetPubKeyFromPrivateKey(privateKey);
+    else
+      return null;
+  }
+
   // get address key from privateKey
   ZilAddress getAddress(String privateKey) {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
       return ZilAddress.fromPrivateKey(privateKey);
+    else
+      return null;
+  }
+
+  Future<ZilAddress> asyncGetAddress(String privateKey) async {
+    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
+      return await ZilAddress.asyncFromPrivateKey(privateKey);
     else
       return null;
   }

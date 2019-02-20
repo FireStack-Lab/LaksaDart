@@ -1,11 +1,9 @@
 # Change Log
 
-## Next version
+## Feb-20-2019
 
-- reconstruct all library to standart api/functions, possibly move some files
-- reconsider the `hmac-drbg` if it were needed.
-- remove unnecessary randomnumber generation methods, would use std libary
-- considering using the `Lombok` library to simplify the get/set methods
+- added `isolates` to account.encryptAccount/decryptAccount
+- replace `angel_validate` to `validators`
 
 ## Jan-19-2019
 

@@ -8,7 +8,6 @@ environment:
   sdk: '>=1.8.0 <3.0.0'
 
 dependencies:
-  angel_validate: ^2.0.1
   validators: ^1.0.0+1
   pointycastle: '^1.0.0-rc4'
   crypto: '^2.0.6'

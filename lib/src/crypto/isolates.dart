@@ -1,4 +1,5 @@
 import 'dart:isolate';
+import 'dart:async';
 import 'schnorr.dart';
 import 'keystore/api.dart';
 
@@ -10,7 +11,7 @@ Future<dynamic> asyncEncrypt(String prvKey, String psw,
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  var isolate = await Isolate.spawn(_isolate_encrypt, response.sendPort,
+  await Isolate.spawn(_isolate_encrypt, response.sendPort,
       onExit: response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
@@ -21,8 +22,6 @@ Future<dynamic> asyncEncrypt(String prvKey, String psw,
   //获得数据并返回
   final result = await answer.first;
   response.close();
-  answer.close();
-  isolate.kill();
   return result;
 }
 
@@ -39,8 +38,7 @@ void _isolate_encrypt(SendPort initialReplyTo) {
     final options = message[2] as Map<String, dynamic>;
     final send = message[3] as SendPort;
     //返回结果
-    var encrypted = await encrypt(prvKey, psw, options);
-    send.send(encrypted);
+    send.send(await encrypt(prvKey, psw, options));
   });
 }
 
@@ -54,7 +52,7 @@ Future<dynamic> asyncDecrypt(
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  var isolate = await Isolate.spawn(_isolate_decrypt, response.sendPort,
+  await Isolate.spawn(_isolate_decrypt, response.sendPort,
       onExit: response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
@@ -65,8 +63,6 @@ Future<dynamic> asyncDecrypt(
   final result = await answer.first;
   //获得数据并返回
   response.close();
-  answer.close();
-  isolate.kill();
   return result;
 }
 
@@ -82,8 +78,8 @@ void _isolate_decrypt(SendPort initialReplyTo) {
     final psw = message[1] as String;
     final send = message[2] as SendPort;
     //返回结果
-    var encrypted = await decrypt(keyStore, psw);
-    send.send(encrypted);
+
+    send.send(await decrypt(keyStore, psw));
   });
 }
 
@@ -94,7 +90,7 @@ Future<dynamic> asyncGeneratePrivateKey() async {
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  var isolate = await Isolate.spawn(_isolate_genratePrvKey, response.sendPort,
+  await Isolate.spawn(_isolate_genratePrvKey, response.sendPort,
       onExit: response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
@@ -105,8 +101,6 @@ Future<dynamic> asyncGeneratePrivateKey() async {
   final result = await answer.first;
   //获得数据并返回
   response.close();
-  answer.close();
-  isolate.kill();
   return result;
 }
 
@@ -121,8 +115,7 @@ void _isolate_genratePrvKey(SendPort initialReplyTo) {
 
     final send = message[0] as SendPort;
     //返回结果
-    var encrypted = generatePrivateKey();
-    send.send(encrypted);
+    send.send(generatePrivateKey());
   });
 }
 
@@ -135,7 +128,7 @@ Future<dynamic> asyncSchnorrSign(
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  var isolate = await Isolate.spawn(_isolate_SchnorrSign, response.sendPort,
+  await Isolate.spawn(_isolate_SchnorrSign, response.sendPort,
       onExit: response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
@@ -146,8 +139,6 @@ Future<dynamic> asyncSchnorrSign(
   //获得数据并返回
   final result = answer.first;
   response.close();
-  answer.close();
-  isolate.kill();
   return result;
 }
 
@@ -163,8 +154,7 @@ void _isolate_SchnorrSign(SendPort initialReplyTo) {
     final txn = message[1] as Map<String, dynamic>;
     final send = message[2] as SendPort;
     //返回结果
-    var signed = SchnorrSign(prv, txn);
-    send.send(signed);
+    send.send(SchnorrSign(prv, txn));
   });
 }
 
@@ -176,8 +166,7 @@ Future<dynamic> asyncGetPubKeyFromPrivateKey(
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  var isolate =
-      await Isolate.spawn(_isolate_getPubKeyFromPrivateKey, response.sendPort);
+  await Isolate.spawn(_isolate_getPubKeyFromPrivateKey, response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
   //接收消息的ReceivePort
@@ -186,8 +175,6 @@ Future<dynamic> asyncGetPubKeyFromPrivateKey(
   sendPort.send([privateKey, answer.sendPort]);
   final result = answer.first;
   response.close();
-  answer.close();
-  isolate.kill();
   //获得数据并返回
   return result;
 }
@@ -203,8 +190,7 @@ void _isolate_getPubKeyFromPrivateKey(SendPort initialReplyTo) {
     final prv = message[0] as String;
     final send = message[1] as SendPort;
     //返回结果
-    var signed = getPubKeyFromPrivateKey(prv);
-    send.send(signed);
+    send.send(getPubKeyFromPrivateKey(prv));
   });
 }
 
@@ -216,8 +202,7 @@ Future<dynamic> asyncGetAddressFromPrivateKey(
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  var isolate =
-      await Isolate.spawn(_isolate_getAddressFromPrivateKey, response.sendPort);
+  await Isolate.spawn(_isolate_getAddressFromPrivateKey, response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
   //接收消息的ReceivePort
@@ -226,8 +211,6 @@ Future<dynamic> asyncGetAddressFromPrivateKey(
   sendPort.send([privateKey, answer.sendPort]);
   final result = answer.first;
   response.close();
-  answer.close();
-  isolate.kill();
   //获得数据并返回
   return result;
 }
@@ -243,8 +226,7 @@ void _isolate_getAddressFromPrivateKey(SendPort initialReplyTo) {
     final prv = message[0] as String;
     final send = message[1] as SendPort;
     //返回结果
-    var signed = getAddressFromPrivateKey(prv);
-    send.send(signed);
+    send.send(getAddressFromPrivateKey(prv));
   });
 }
 
@@ -256,7 +238,7 @@ Future<dynamic> asyncGetAddressFromPublicKey(
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  var isolate =
+  final isolate =
       await Isolate.spawn(_isolate_getAddressFromPublicKey, response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
@@ -267,8 +249,6 @@ Future<dynamic> asyncGetAddressFromPublicKey(
   //获得数据并返回
   final result = answer.first;
   response.close();
-  answer.close();
-  isolate.kill();
   //获得数据并返回
   return result;
 }

@@ -6,3 +6,4 @@ export 'hmac-drbg.dart';
 export 'schnorr.dart';
 export 'signature.dart';
 export 'sha256digest.dart';
+export 'isolates.dart';

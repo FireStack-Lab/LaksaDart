@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
+import 'package:laksadart/src/crypto/isolates.dart';
 import 'package:laksadart/src/crypto/keystore/api.dart';
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
 import 'package:laksadart/src/core/ZilliqaModule.dart';
@@ -9,7 +10,6 @@ import 'package:laksadart/src/provider/net.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
 import './api.dart' show BaseAccount;
 import './address.dart';
-import './isolates.dart';
 
 // Account instance with keystore encrypt/decrypt
 class Account
@@ -77,6 +77,15 @@ class Account
     }
   }
 
+  Future<Account> asyncCreate() async {
+    try {
+      String prv = await asyncGeneratePrivateKey();
+      return new Account(prv, this.messenger);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   void setMessenger(Messenger messenger) {
     this.messenger = messenger;
   }
@@ -123,7 +132,9 @@ class Account
         Account.isPrivateKey.hasMatch(this.privateKey)) {
       return null;
     }
-    this.privateKey = await decrypt(json.decode(this.privateKey), passphrase);
+    // this.privateKey = await decrypt(json.decode(this.privateKey), passphrase);
+    this.privateKey =
+        await asyncDecrypt(json.decode(this.privateKey), passphrase);
 
     // return this;
   }
@@ -242,8 +253,8 @@ class Account
       await this.updateBalance();
       txnObj.txParams.update('nonce', (found) => this.nonce + 1,
           ifAbsent: () => this.nonce + 1);
-      var signed = crypto.SchnorrSign(this.privateKey, txnObj.txParams);
-
+      // var signed = crypto.SchnorrSign(this.privateKey, txnObj.txParams);
+      var signed = await asyncSchnorrSign(this.privateKey, txnObj.txParams);
       await this.encryptAccount(passphrase);
       return txnObj.map((Map obj) {
         return obj.addAll(signed);
@@ -255,7 +266,8 @@ class Account
 
       newTxMap.update('nonce', (found) => this.nonce + 1,
           ifAbsent: () => this.nonce + 1);
-      var signed = crypto.SchnorrSign(this.privateKey, newTxMap);
+      // var signed = crypto.SchnorrSign(this.privateKey, newTxMap);
+      var signed = await asyncSchnorrSign(this.privateKey, newTxMap);
       return txnObj.map((Map obj) {
         obj.addAll(signed);
         return obj;

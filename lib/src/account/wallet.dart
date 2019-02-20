@@ -43,6 +43,12 @@ class Wallet
     return acc;
   }
 
+  Future<Account> asyncCreate() async {
+    var acc = await new Account(null, this.messenger).asyncCreate();
+    this.add(acc);
+    return acc;
+  }
+
   void remove(String addr) {
     this.toMap.remove(addr);
     if (this.defaultAccount == addr) this.defaultAccount = null;

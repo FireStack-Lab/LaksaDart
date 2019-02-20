@@ -20,6 +20,7 @@ class Wallet
   // add to wallet
   Account add(dynamic obj) {
     if (obj is Account) {
+      obj.setMessenger(this.messenger);
       MapEntry<String, Account> entry =
           new MapEntry(obj.address.toString(), obj);
       this.toMap.addEntries([entry]);

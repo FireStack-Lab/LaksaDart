@@ -54,6 +54,17 @@ class Account
     this.setMessenger(messenger);
   }
 
+  static fromMap(Map<String, dynamic> accountMap) {
+    final prv = accountMap['privateKey'];
+    final pub = accountMap['publicKey'];
+    final addr = ZilAddress.fromAddress(accountMap['address']);
+    Account newAcc = new Account();
+    newAcc.privateKey = prv;
+    newAcc.publicKey = pub;
+    newAcc.address = addr;
+    return newAcc;
+  }
+
   static fromFile(String keyStore, String passphrase) async {
     // String newPrvKey = await decrypt(json.decode(keyStore), passphrase);
     String newPrvKey = await asyncDecrypt(json.decode(keyStore), passphrase);

@@ -133,7 +133,8 @@ class ZilAddress extends Address {
     return new ZilAddress(await asyncGetAddressFromPublicKey(publicKey));
   }
 
-  static ZilAddress fromAddress(String address) => new ZilAddress(address);
+  static ZilAddress fromAddress(String address) =>
+      new ZilAddress(address.toLowerCase());
 
   static ZilAddress fromBigInt(BigInt number) =>
       new ZilAddress(new Address.fromNumber(number).address);

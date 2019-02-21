@@ -11,7 +11,7 @@ Future<dynamic> asyncEncrypt(String prvKey, String psw,
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  await Isolate.spawn(_isolate_encrypt, response.sendPort,
+  var isolate = await Isolate.spawn(_isolate_encrypt, response.sendPort,
       onExit: response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
@@ -22,6 +22,7 @@ Future<dynamic> asyncEncrypt(String prvKey, String psw,
   //获得数据并返回
   final result = await answer.first;
   response.close();
+
   return result;
 }
 
@@ -166,7 +167,8 @@ Future<dynamic> asyncGetPubKeyFromPrivateKey(
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  await Isolate.spawn(_isolate_getPubKeyFromPrivateKey, response.sendPort);
+  final isolate =
+      await Isolate.spawn(_isolate_getPubKeyFromPrivateKey, response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
   //接收消息的ReceivePort
@@ -222,7 +224,7 @@ void _isolate_getAddressFromPrivateKey(SendPort initialReplyTo) {
   initialReplyTo.send(port.sendPort);
   //监听
   port.listen((message) {
-    //获取数据并解析
+    //获取���据并解析
     final prv = message[0] as String;
     final send = message[1] as SendPort;
     //返回结果
@@ -238,8 +240,7 @@ Future<dynamic> asyncGetAddressFromPublicKey(
   final response = new ReceivePort();
   //开始创建isolate,Isolate.spawn函数是isolate.dart里的代码,_isolate是我们自己实现的函数
   //_isolate是创建isolate必须要的参数。
-  final isolate =
-      await Isolate.spawn(_isolate_getAddressFromPublicKey, response.sendPort);
+  await Isolate.spawn(_isolate_getAddressFromPublicKey, response.sendPort);
   //获取sendPort来发送数据
   final sendPort = await response.first as SendPort;
   //接收消息的ReceivePort

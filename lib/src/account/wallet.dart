@@ -33,6 +33,14 @@ class Wallet
       this.toMap.addEntries([entryNew]);
       this.getDefaultAccount();
       return this.getAccount(address.toString());
+    } else if (obj is Map) {
+      Account acc = Account.fromMap(obj);
+      acc.setMessenger(this.messenger);
+      String address = acc.address.toString();
+      MapEntry<String, Account> entryNew = new MapEntry(address, acc);
+      this.toMap.addEntries([entryNew]);
+      this.getDefaultAccount();
+      return this.getAccount(address.toString());
     } else
       return null;
   }

@@ -42,7 +42,7 @@ main() async {
   }
 
   void deploy() async {
-    File contract = new File('../test/contracts/helloworldversion.txt');
+    File contract = new File('test/contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
           nodeUrl:
@@ -122,7 +122,7 @@ main() async {
     // print(newAcc.balance);
   }
 
-  await wallet();
+  // await wallet();
   // await autoTransaction();
-  // await deploy();
+  await deploy();
 }

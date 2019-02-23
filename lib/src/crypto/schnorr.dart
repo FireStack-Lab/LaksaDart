@@ -10,6 +10,7 @@ import "package:pointycastle/ecc/curves/secp256k1.dart";
 
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
 import 'package:laksadart/src/utils/transaction.dart';
+import 'package:laksadart/src/utils/validators.dart' show isSignature;
 import 'hmac-drbg.dart';
 import 'dartRandom.dart';
 import 'signature.dart';
@@ -244,7 +245,7 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
       trySig.s,
       pubKey,
     );
-    if (res) {
+    if (res && isSignature(trySig.signature)) {
       sig = trySig;
     } else {
       sig = null;

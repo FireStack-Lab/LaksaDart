@@ -67,15 +67,22 @@ class Account
 
   static fromFile(String keyStore, String passphrase) async {
     // String newPrvKey = await decrypt(json.decode(keyStore), passphrase);
-    String newPrvKey = await asyncDecrypt(json.decode(keyStore), passphrase);
-    return new Account(newPrvKey);
+    try {
+      String newPrvKey = await asyncDecrypt(json.decode(keyStore), passphrase);
+      return new Account(newPrvKey);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<String> toFile(String passphrase,
       [Map<String, dynamic> options]) async {
-    await this.encryptAccount(passphrase, options);
-
-    return json.encode(this.keyStoreMap);
+    try {
+      await this.encryptAccount(passphrase, options);
+      return json.encode(this.keyStoreMap);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // create method, should call constructor first

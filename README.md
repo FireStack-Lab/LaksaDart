@@ -1,136 +1,136 @@
 # Laksa, Dart Version
 
-** !! Do Not Use in Production !! **
+Waiting for Usage example and docs
 
 ## Porting from Laksa and ZilliqaJS
 
 - Account
 
-  - create
-  - toFile
-  - fromFile
-  - signTransaction
+  - [x] create
+  - [x] toFile
+  - [x] fromFile
+  - [x] signTransaction
 
 - Wallet
 
-  - add
-  - remove
-  - getAccount
-  - encryptAccount
-  - decryptAccount
-  - setDefaultAccount
-  - getDefaultAccount
+  - [x] add
+  - [x] remove
+  - [x] getAccount
+  - [x] encryptAccount
+  - [x] decryptAccount
+  - [x] setDefaultAccount
+  - [x] getDefaultAccount
 
 - crypto
 
-  - getDerivedKey ((keystore))
-  - encrypt(keystore)
-  - decrypt(keystore)
-  - sign(Schnorr function)
-  - verify(Schnorr function)
-  - SchnorrSign(Schnorr function with protobuf encodation)
-  - generatePrivateKey
-  - getPublicKeyFromPrivateKey
-  - getPublicKeyFromPrivateKey
-  - getAddressFromPublicKey
-  - getAddressFromPrivateKey
-  - hmac-drbg(HMAC update digest)
-  - getDRBG(inner function)
-  - generateNewPrivateKey(inner function)
-  - privateKeyToPublic(inner function)
-  - getPublic(inner function)
+  - [x] getDerivedKey ((keystore))
+  - [x] encrypt(keystore)
+  - [x] decrypt(keystore)
+  - [x] sign(Schnorr function)
+  - [x] verify(Schnorr function)
+  - [x] SchnorrSign(Schnorr function with protobuf encodation)
+  - [x] generatePrivateKey
+  - [x] getPublicKeyFromPrivateKey
+  - [x] getPublicKeyFromPrivateKey
+  - [x] getAddressFromPublicKey
+  - [x] getAddressFromPrivateKey
+  - [x] hmac-drbg(HMAC update digest)
+  - [x] getDRBG(inner function)
+  - [x] generateNewPrivateKey(inner function)
+  - [x] privateKeyToPublic(inner function)
+  - [x] getPublic(inner function)
 
 - Messenger
 
-  - send
-  - sendServer(Scilla runner)
-  - setNodeProvider
-  - setScillaProvider
-  - setMiddleware
-  - useMiddleware
+  - [x] send
+  - [x] sendServer(Scilla runner)
+  - [x] setNodeProvider
+  - [x] setScillaProvider
+  - [x] setMiddleware
+  - [x] useMiddleware
 
-- Blockchain
+- Blockchain(RPC methods)
 
-  - getBalance
-  - getBlockchainInfo
-  - getDSBlock
-  - getTxBlock
-  - getLatestDSBlock
-  - getNumDSBlocks
-  - getDSBlockRate
-  - getDSBlockListing
-  - getLatestTxBlock
-  - getNumTxBlocks
-  - getTxBlockRate
-  - getTxBlockListing
-  - getNumTransactions
-  - getTransactionRate
-  - getCurrentMiniEpoch
-  - getCurrentDSEpoch
-  - getPrevDifficulty
-  - getPrevDSDifficulty
-  - getRecentTransactions
-  - getNumTxnsTxEpoch
-  - getNumTxnsDSEpoch
-  - getMinimumGasPrice
-  - createTransaction
-  - checkCode(Scilla runner)
-  - testCall(Scilla runner)
+  - [x] getBalance
+  - [x] getBlockchainInfo
+  - [x] getDSBlock
+  - [x] getTxBlock
+  - [x] getLatestDSBlock
+  - [x] getNumDSBlocks
+  - [x] getDSBlockRate
+  - [x] getDSBlockListing
+  - [x] getLatestTxBlock
+  - [x] getNumTxBlocks
+  - [x] getTxBlockRate
+  - [x] getTxBlockListing
+  - [x] getNumTransactions
+  - [x] getTransactionRate
+  - [x] getCurrentMiniEpoch
+  - [x] getCurrentDSEpoch
+  - [x] getPrevDifficulty
+  - [x] getPrevDSDifficulty
+  - [x] getRecentTransactions
+  - [x] getNumTxnsTxEpoch
+  - [x] getNumTxnsDSEpoch
+  - [x] getMinimumGasPrice
+  - [x] createTransaction
+  - [x] checkCode(Scilla runner)
+  - [x] testCall(Scilla runner)
 
 - Provider
 
   - BaseProvider
   - HttpProvider
-    - buildPayload
-    - buildEndpointPayload
-    - performRPC
-    - send
-    - sendServer(Scilla runner)
+    - [x] buildPayload
+    - [x] buildEndpointPayload
+    - [x] performRPC
+    - [x] send
+    - [x] sendServer(Scilla runner)
   - RPCMiddleware
-    - RPCResponseBody
-      - SuccessMiddleware
-      - ErrorMiddleware
+    - [x] RPCResponseBody
+    - [x] SuccessMiddleware
+    - [x] ErrorMiddleware
   - RPCMehod
   - Endpoint
 
 - Transaction
 
-  - Factory
-  - sendTransaction
-  - trackTx
-  - confirm
-  - getVersion(calculate version number)
+  - [x] Factory
+  - [x] sendTransaction
+  - [x] trackTx
+  - [x] confirm
+  - [x] getVersion(calculate version number)
 
 - Contract
 
-  - Factory
-  - deploy
-  - call
-  - confirmTx
-  - sendContract
-  - signTxn
-  - getState
-  - setInitParamsValues
-  - setDeployPayload
-  - setCallPayload
+  - [x] Factory
+  - [x] deploy
+  - [x] call
+  - [x] confirmTx
+  - [x] sendContract
+  - [x] signTxn
+  - [x] getState
+  - [x] setInitParamsValues
+  - [x] setDeployPayload
+  - [x] setCallPayload
 
 - utils
-  - numbers.strip0x
-  - numbers.toHex
-  - numbers.bytesToHex
-  - numbers.numberToBytes
-  - numbers.hexToBytes
-  - numbers.intToBytes
-  - numbers.hexToInt
-  - validators.isUrl
-  - validators.isByteString
-  - validators.isAddres
-  - validators.isPublicKey
-  - validators.isPrivateKey
-  - validators.isSignature
-  - unit.fromQa
-  - unit.toQa
-  - encodeTransactionProto
+  - [x] numbers.strip0x
+  - [x] numbers.toHex
+  - [x] numbers.bytesToHex
+  - [x] numbers.numberToBytes
+  - [x] numbers.hexToBytes
+  - [x] numbers.intToBytes
+  - [x] numbers.hexToInt
+  - [x] validators.isUrl
+  - [x] validators.isByteString
+  - [x] validators.isAddres
+  - [x] validators.isPublicKey
+  - [x] validators.isPrivateKey
+  - [x] validators.isSignature
+  - [x] unit.fromQa
+  - [x] unit.toQa
+  - [x] encodeTransactionProto
 
 ## Thanks to
 

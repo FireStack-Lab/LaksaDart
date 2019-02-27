@@ -18,9 +18,11 @@ bool isUrl(String url) {
 }
 
 bool isByteString(String byStr, {int length}) {
-  var str = byStr.replaceFirst(new RegExp('0x'), '');
+  var str = byStr.startsWith(new RegExp(r'0x', caseSensitive: false))
+      ? byStr.substring(2)
+      : byStr;
   return validators.matches(str, '^[0-9a-fA-F]{${length}}') &&
-      validators.isLength(byStr, length, length);
+      validators.isLength(str, length, length);
 }
 
 bool isAddress(String str) {

@@ -16,6 +16,7 @@ main() async {
       .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
 
   void autoTransaction() async {
+    await acc.encryptAccount('111');
     await acc.updateBalance();
     var nonce = acc.nonce;
     var txn = laksa.transactions.newTx({
@@ -27,7 +28,7 @@ main() async {
           laksa.messenger.setTransactionVersion(1, laksa.messenger.Network_ID)
     });
 
-    var signed = await acc.signTransaction(txn);
+    var signed = await acc.signTransaction(txn, passphrase: '111');
     print(json.encode(signed.toPayload));
     var sent = await signed.sendTransaction();
     print(sent.transaction.TranID);
@@ -123,6 +124,6 @@ main() async {
   }
 
   // await wallet();
-  // await autoTransaction();
-  await deploy();
+  await autoTransaction();
+  // await deploy();
 }

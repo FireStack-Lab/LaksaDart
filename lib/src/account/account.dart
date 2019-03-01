@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
 import 'package:laksadart/src/crypto/isolates.dart';
 import 'package:laksadart/src/crypto/keystore/api.dart';
@@ -283,13 +284,15 @@ class Account
     if (this.isEncrypted) {
       await this.decryptAccount(passphrase);
       await this.updateBalance();
-      txnObj.txParams.update('nonce', (found) => this.nonce + 1,
+      Map<String, dynamic> newTxMap = Map.from(txnObj.txParams);
+      newTxMap.update('nonce', (found) => this.nonce + 1,
           ifAbsent: () => this.nonce + 1);
       // var signed = crypto.SchnorrSign(this.privateKey, txnObj.txParams);
-      var signed = await asyncSchnorrSign(this.privateKey, txnObj.txParams);
+      var signed = await asyncSchnorrSign(this.privateKey, newTxMap);
       await this.encryptAccount(passphrase);
       return txnObj.map((Map obj) {
-        return obj.addAll(signed);
+        obj.addAll(signed);
+        return obj;
       });
     } else {
       await this.updateBalance();

@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'package:laksadart/src/core/ZilliqaModule.dart';
 import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:bip32/bip32.dart' as bip32;
 import './api.dart' show BaseWallet;
 import './account.dart';
 
@@ -109,5 +113,30 @@ class Wallet
     if (this.getAccount(addr) != null) {
       this.defaultAccount = addr;
     }
+  }
+
+  String generateMnemonic() {
+    return bip39.generateMnemonic();
+  }
+
+  bool isValidMnemonic(String phrase) {
+    var list = phrase.trim().split(" ");
+    if (list.length < 12) {
+      return false;
+    }
+    return bip39.validateMnemonic(phrase);
+  }
+
+  Account importAccountFromMnemonic(phrase, index) {
+    if (!this.isValidMnemonic(phrase)) {
+      throw 'Invalid mnemonic phrase: ${phrase}';
+    }
+    final seed = bip39.mnemonicToSeed(phrase);
+    final hdKey = bip32.BIP32.fromSeed(seed);
+    final rootString = "m/44'/313'/0'/0/$index";
+    final childKey = hdKey.derivePath(rootString);
+    String prvKeys = numbers.bytesToHex(childKey.privateKey);
+    var account = Account(prvKeys);
+    return this.add(account);
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:laksadart/src/core/ZilliqaModule.dart';
 import 'package:laksadart/src/messenger/Messenger.dart';
 import 'package:laksadart/src/account/wallet.dart';

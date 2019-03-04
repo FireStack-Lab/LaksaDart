@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:laksadart/src/provider/net.dart';
 import 'package:laksadart/src/core/ZilliqaModule.dart';

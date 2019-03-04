@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:laksadart/src/provider/Http.dart';
 import 'package:laksadart/src/provider/net.dart';
 import 'package:laksadart/src/provider/Middleware.dart';

@@ -280,7 +280,7 @@ class Account
    * @return {object} {signed transaction object}
    */
   Future<Transaction> signTransaction(Transaction txnObj,
-      {String passphrase}) async {
+      {String passphrase, Map<String, dynamic> options}) async {
     if (this.isEncrypted) {
       await this.decryptAccount(passphrase);
       await this.updateBalance();
@@ -289,7 +289,7 @@ class Account
           ifAbsent: () => this.nonce + 1);
       // var signed = crypto.SchnorrSign(this.privateKey, txnObj.txParams);
       var signed = await asyncSchnorrSign(this.privateKey, newTxMap);
-      await this.encryptAccount(passphrase);
+      await this.encryptAccount(passphrase, options ?? {'level': 1024});
       return txnObj.map((Map obj) {
         obj.addAll(signed);
         return obj;

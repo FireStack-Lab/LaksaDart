@@ -12,19 +12,19 @@ import 'package:laksadart/src/transaction/transaction.dart';
 import './api.dart' show BaseAccount;
 import './address.dart';
 
-// Account instance with keystore encrypt/decrypt
+/// Account instance with keystore encrypt/decrypt
 class Account
     implements
         BaseAccount,
         KeyStore,
         ZilliqaModule<Messenger, void>,
         AccountState {
-  // static privatekey checker
+  /// static privatekey checker
   static final RegExp isPrivateKey =
       new RegExp(r"^(0x)?[0-9a-f]{64}", caseSensitive: false);
 
   Messenger messenger;
-  // account model
+
   String privateKey;
   String publicKey;
   ZilAddress address;
@@ -32,22 +32,23 @@ class Account
   int nonce = 0;
 
   bool isFound;
-  // transalte privateKey to Big Int
+
+  /// transalte privateKey to Big Int
   BigInt get privateKeyBigInt => Account._privateKeyToBigInt(this.privateKey);
 
-  // transate privatekey to Bytes
+  /// transate privatekey to Bytes
   List<int> get privateKeyBytes => Account._privateKeyToBytes(this.privateKey);
 
-  // get account Map
+  /// get account Map
   Map<String, dynamic> get accountMap => this.toMap();
 
-  // get keystore Map
+  /// get keystore Map
   Map<String, dynamic> get keyStoreMap => this.getKeyStore();
 
-  // account encryption checker
+  /// account encryption checker
   bool get isEncrypted => this.checkEncrypted();
 
-  //constructor
+  /// constructor
   Account([String privateKey, Messenger messenger]) {
     this.privateKey = privateKey;
     this.publicKey = this.getPublicKey(privateKey);
@@ -86,7 +87,7 @@ class Account
     }
   }
 
-  // create method, should call constructor first
+  /// create method, should call constructor first
   Account create() {
     try {
       String prv = crypto.generatePrivateKey();
@@ -109,7 +110,7 @@ class Account
     this.messenger = messenger;
   }
 
-  // import account from hex string
+  /// import account from hex string
   Account import(dynamic prvHex) {
     if (prvHex is String)
       return Account._importFromString(prvHex);
@@ -119,7 +120,7 @@ class Account
       return new Account();
   }
 
-  // to map method
+  /// to map method
   Map<String, dynamic> toMap() {
     return {
       'privateKey': this.privateKey,
@@ -128,12 +129,12 @@ class Account
     };
   }
 
-  // to json method
+  /// to json method
   String toJson() {
     return json.encode(this.accountMap);
   }
 
-  // account encryption
+  /// account encryption
   Future encryptAccount(String passphrase,
       [Map<String, dynamic> options]) async {
     if (this.privateKey is String &&
@@ -145,7 +146,7 @@ class Account
       return null;
   }
 
-  // account decyption
+  /// account decyption
   Future decryptAccount(String passphrase) async {
     if (this.privateKey is String &&
         Account.isPrivateKey.hasMatch(this.privateKey)) {
@@ -176,7 +177,7 @@ class Account
     }
   }
 
-  // keystore getter
+  /// keystore getter
   Map<String, dynamic> getKeyStore() {
     if (this.privateKey is String &&
         Account.isPrivateKey.hasMatch(this.privateKey)) {
@@ -185,7 +186,7 @@ class Account
     return json.decode(this.privateKey);
   }
 
-  // private key to big int
+  /// private key to big int
   static BigInt _privateKeyToBigInt(String prv) {
     try {
       if (prv is String && Account.isPrivateKey.hasMatch(prv))
@@ -197,7 +198,7 @@ class Account
     }
   }
 
-  // privat key to bytes
+  /// privat key to bytes
   static List<int> _privateKeyToBytes(String prv) {
     try {
       if (prv is String && Account.isPrivateKey.hasMatch(prv))
@@ -209,7 +210,7 @@ class Account
     }
   }
 
-  // import account from hex
+  /// import account from hex
   static Account _importFromString(String prvHex) {
     try {
       if (Account.isPrivateKey.hasMatch(prvHex)) {
@@ -221,7 +222,7 @@ class Account
     }
   }
 
-  // import account from BigInt
+  /// import account from BigInt
   static Account _importFromBigInt(BigInt number) {
     try {
       String prvHex = number.toRadixString(16);
@@ -231,7 +232,7 @@ class Account
     }
   }
 
-  // get publicKey from privatKey
+  /// get publicKey from privatKey
   String getPublicKey(String privateKey) {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
       return crypto.getPubKeyFromPrivateKey(privateKey);
@@ -246,7 +247,7 @@ class Account
       return null;
   }
 
-  // get address key from privateKey
+  /// get address key from privateKey
   ZilAddress getAddress(String privateKey) {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
       return ZilAddress.fromPrivateKey(privateKey);
@@ -261,7 +262,7 @@ class Account
       return null;
   }
 
-  // encryption checker
+  /// encryption checker
   bool checkEncrypted() {
     if (this.privateKey == null) {
       throw 'Account is corrupted';
@@ -273,12 +274,7 @@ class Account
       return false;
   }
 
-  /**
-   * @function {signTransactionWithPassword} {sign plain object with password}
-   * @param  {Transaction} txnObj {transaction object}
-   * @param  {string} password          {password string}
-   * @return {object} {signed transaction object}
-   */
+  /// sign transasction
   Future<Transaction> signTransaction(Transaction txnObj,
       {String passphrase, Map<String, dynamic> options}) async {
     if (this.isEncrypted) {

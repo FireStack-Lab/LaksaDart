@@ -28,7 +28,7 @@ Future<dynamic> asyncEncrypt(String prvKey, String psw,
     response.close();
     return result;
   } catch (e) {
-    throw e;
+    rethrow;
   }
 }
 
@@ -81,7 +81,7 @@ Future<dynamic> asyncDecrypt(
     response.close();
     return result;
   } catch (e) {
-    throw e;
+    rethrow;
   }
 }
 
@@ -126,7 +126,7 @@ Future<dynamic> asyncGeneratePrivateKey() async {
     response.close();
     return result;
   } catch (e) {
-    throw e;
+    rethrow;
   }
 }
 
@@ -174,7 +174,7 @@ Future<dynamic> asyncSchnorrSign(
     response.close();
     return result;
   } catch (e) {
-    throw e;
+    rethrow;
   }
 }
 
@@ -222,7 +222,7 @@ Future<dynamic> asyncGetPubKeyFromPrivateKey(
     response.close();
     return result;
   } catch (e) {
-    throw e;
+    rethrow;
   }
 }
 
@@ -269,7 +269,7 @@ Future<dynamic> asyncGetAddressFromPrivateKey(
     response.close();
     return result;
   } catch (e) {
-    throw e;
+    rethrow;
   }
 }
 
@@ -316,7 +316,7 @@ Future<dynamic> asyncGetAddressFromPublicKey(
     response.close();
     return result;
   } catch (e) {
-    throw e;
+    rethrow;
   }
 }
 
@@ -370,7 +370,7 @@ class IsolateFunction {
       kill();
       return result;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 

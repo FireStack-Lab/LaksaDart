@@ -57,8 +57,8 @@ class Address {
   }
 }
 
-// extends the Address to Zillia Standard
-// @immutable
+/// extends the Address to Zillia Standard
+
 class ZilAddress extends Address {
   String get hexAddress => this._getHexAddress();
   BigInt get bnAddress => this._getBigIntAddress();
@@ -68,8 +68,8 @@ class ZilAddress extends Address {
 
   String get address => super.address;
 
-  // constructor super from Address
-  ZilAddress(String str) : super(str) {}
+  /// constructor super from Address
+  ZilAddress(String str) : super(str);
 
   @override
   String toString() => address;
@@ -86,13 +86,13 @@ class ZilAddress extends Address {
     return Address._hexToAddressNum(str);
   }
 
-  // check if address is valid
+  /// check if address is valid
   bool isAddress(str) {
     RegExp superReg = Address.basicAddress;
     return superReg.hasMatch(str);
   }
 
-  // convert address to checkSumAddress
+  /// convert address to checkSumAddress
   String toCheckSumAddress(String address) {
     String stripAddress = numbers.strip0x(address.toLowerCase());
     final hash = sha256.convert(numbers.hexToBytes(stripAddress)).toString();
@@ -114,7 +114,7 @@ class ZilAddress extends Address {
     return ret;
   }
 
-  // conver hex string to Byte
+  /// conver hex string to Byte
   List<int> toByteAddress(String address) {
     String stripAddress = numbers.strip0x(address.toLowerCase());
     return numbers.hexToBytes(stripAddress);

@@ -38,66 +38,26 @@ class Contract implements BaseContract {
     this.toDS = toDS;
   }
 
-  /**
-   * isInitialised
-   *
-   * Returns true if the contract has not been deployed
-   *
-   * @returns {boolean}
-   */
   bool isInitialised() {
     return this.status == ContractStatus.INITIALISED;
   }
 
-  /**
-   * isSigned
-   *
-   * Returns true if the contract is signed
-   *
-   * @returns {boolean}
-   */
   bool isSigned() {
     return this.status == ContractStatus.SIGNED;
   }
 
-  /**
-   * isSent
-   *
-   * Returns true if the contract is sent
-   *
-   * @returns {boolean}
-   */
   bool isSent() {
     return this.status == ContractStatus.SENT;
   }
 
-  /**
-   * isDeployed
-   *
-   * Returns true if the contract is deployed
-   *
-   * @returns {boolean}
-   */
   bool isDeployed() {
     return this.status == ContractStatus.DEPLOYED;
   }
 
-  /**
-   * isRejected
-   *
-   * Returns true if an attempt to deploy the contract was made, but the
-   * underlying transaction was unsuccessful.
-   *
-   * @returns {boolean}
-   */
   bool isRejected() {
     return this.status == ContractStatus.REJECTED;
   }
 
-  /**
-   * @function {payload}
-   * @return {object} {default deployment payload}
-   */
   Map get deployDayload => {
         'version': this.version < 65536
             ? this
@@ -110,11 +70,6 @@ class Contract implements BaseContract {
         'data': json.encode(this.init).replaceAll(r"/\\", '"')
       };
 
-  /**
-   * @function {callPayload}
-   * @param  {Map} Map get callPayload            {description}
-   * @return {type} {description}
-   */
   Map get callPayload => {
         'version': this.version < 65536
             ? this
@@ -124,21 +79,9 @@ class Contract implements BaseContract {
         'toAddr': this.ContractAddress
       };
 
-  /**
-   * @function {setStatus}
-   * @param  {string} status {contract status during all life-time}
-   * @return {type} {set this.status}
-   */
   void setStatus(ContractStatus status) {
     this.status = status;
   }
-
-  /**
-   * @function {deploy}
-   * @param  {Object<{gasLimit:Long,gasPrice:BN}>} transactionParams { gasLimit and gasPrice}
-   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
-   * @return {Contract} {Contract with finalty}
-   */
 
   Future<Contract> deploy(
       {int gasLimit,
@@ -168,14 +111,6 @@ class Contract implements BaseContract {
       rethrow;
     }
   }
-
-  /**
-   * call
-   *
-   * @param {string} transition
-   * @param {any} params
-   * @returns {Promise<Transaction>}
-   */
 
   Future<Contract> call(
       {String transition,
@@ -210,10 +145,6 @@ class Contract implements BaseContract {
     }
   }
 
-  /**
-   * @function {confirmTx}
-   * @return {Contract} {Contract confirm with finalty}
-   */
   Future<Contract> confirmTx(
       {int maxAttempts = 20, int interval = 1000}) async {
     try {
@@ -233,11 +164,6 @@ class Contract implements BaseContract {
     }
   }
 
-  /**
-   * @function {sendContract}
-   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
-   * @return {Contract} {Contract Sent}
-   */
   Future<Contract> sendContract({Account account, String passphrase}) async {
     try {
       await this.signTxn(account: account, passphrase: passphrase);
@@ -266,11 +192,6 @@ class Contract implements BaseContract {
     }
   }
 
-  /**
-   * @function {signTxn}
-   * @param  {Object<{account:Account,password?:String}>} accountParams {account and password}
-   * @return {Contract} {Contract Signed}
-   */
   Future<Contract> signTxn({Account account, String passphrase}) async {
     Account signingAccount = account ?? this.signer;
     try {
@@ -304,12 +225,6 @@ class Contract implements BaseContract {
     return null;
   }
 
-  /**
-   * @function {setInitParamsValues}
-   * @param  {Array<Object>} initParams    {init params get from ABI}
-   * @param  {Array<Object>} arrayOfValues {init params set for ABI}
-   * @return {Contract} {raw contract object}
-   */
   Contract setInitParamsValues(List<Map> initParams, List<Map> arrayOfValues) {
     List<Map> result = setParamValues(initParams, arrayOfValues);
     this.init = result;

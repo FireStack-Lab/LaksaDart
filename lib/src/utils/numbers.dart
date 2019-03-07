@@ -68,12 +68,7 @@ BigInt bytesToInt(List<int> bytes) => p_utils.decodeBigInt(bytes);
 
 // List<int> intToBytes(BigInt number) => p_utils.encodeBigInt(number);
 
-/**
- * @function {intToBytes}
- * @param  {BigInt} number {Big int to transform}
- * @param  {int} length  {optional with length that contains}
- * @return {List<int>} {description}
- */
+/// big int to bytes
 List<int> intToBytes(BigInt number, {int length}) {
   Uint8List bigIntList = p_utils.encodeBigInt(number);
   if (length != null && length > bigIntList.length) {

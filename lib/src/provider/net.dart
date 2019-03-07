@@ -1,10 +1,10 @@
 class RPCMethod {
-  // Network-related methods
+  /// Network-related methods
   static final GetNetworkId = 'GetNetworkId';
   static final GetClientVersion = 'GetClientVersion';
   static final GetProtocolVersion = 'GetProtocolVersion';
 
-  // Blockchain-related methods
+  /// Blockchain-related methods
   static final GetBalance = 'GetBalance';
   static final GetBlockchainInfo = 'GetBlockchainInfo';
   static final GetShardingStructure = 'GetShardingStructure';
@@ -24,26 +24,30 @@ class RPCMethod {
   static final GetCurrentDSEpoch = 'GetCurrentDSEpoch';
   static final GetPrevDifficulty = 'GetPrevDifficulty';
   static final GetPrevDSDifficulty = 'GetPrevDSDifficulty';
-  // GetBlockTransactionCount = 'GetBlockTransactionCount';
 
-  // Transaction-related methods
+  /// GetBlockTransactionCount = 'GetBlockTransactionCount';
+
+  /// Transaction-related methods
   static final CreateTransaction = 'CreateTransaction';
   static final GetTransaction = 'GetTransaction';
-  // GetTransactionReceipt = 'GetTransactionReceipt';
+
+  /// GetTransactionReceipt = 'GetTransactionReceipt';
   static final GetRecentTransactions = 'GetRecentTransactions';
   static final GetNumTxnsTxEpoch = 'GetNumTxnsTxEpoch';
   static final GetNumTxnsDSEpoch = 'GetNumTxnsDSEpoch';
   static final GetTransactionsForTxBlock = 'GetTransactionsForTxBlock';
   static final GetMinimumGasPrice = 'GetMinimumGasPrice';
-  // GetGasEstimate = 'GetGasEstimate';
 
-  // Contract-related methods
+  /// GetGasEstimate = 'GetGasEstimate';
+
+  /// Contract-related methods
   static final GetSmartContractCode = 'GetSmartContractCode';
   static final GetSmartContractInit = 'GetSmartContractInit';
   static final GetSmartContractState = 'GetSmartContractState';
   static final GetContractAddressFromTransactionID =
       'GetContractAddressFromTransactionID';
-  // GetStorageAt = 'GetStorageAt';
+
+  /// GetStorageAt = 'GetStorageAt';
 
   Map get Mapping => {
         GetNetworkId: 'GetNetworkId',
@@ -67,39 +71,43 @@ class RPCMethod {
         GetCurrentDSEpoch: 'GetCurrentDSEpoch',
         GetPrevDifficulty: 'GetPrevDifficulty',
         GetPrevDSDifficulty: 'GetPrevDSDifficulty',
-        // GetBlockTransactionCount : 'GetBlockTransactionCount',
 
-        // Transaction-related methods
+        /// GetBlockTransactionCount : 'GetBlockTransactionCount',
+
+        /// Transaction-related methods
         CreateTransaction: 'CreateTransaction',
         GetTransaction: 'GetTransaction',
-        // GetTransactionReceipt : 'GetTransactionReceipt',
+
+        /// GetTransactionReceipt : 'GetTransactionReceipt',
         GetRecentTransactions: 'GetRecentTransactions',
         GetNumTxnsTxEpoch: 'GetNumTxnsTxEpoch',
         GetNumTxnsDSEpoch: 'GetNumTxnsDSEpoch',
         GetMinimumGasPrice: 'GetMinimumGasPrice',
         GetTransactionsForTxBlock: 'GetTransactionsForTxBlock',
-        // GetGasEstimate : 'GetGasEstimate',
 
-        // Contract-related methods
+        /// GetGasEstimate : 'GetGasEstimate',
+
+        /// Contract-related methods
         GetSmartContractCode: 'GetSmartContractCode',
         GetSmartContractInit: 'GetSmartContractInit',
         GetSmartContractState: 'GetSmartContractState',
         GetContractAddressFromTransactionID:
             'GetContractAddressFromTransactionID',
-        // GetStorageAt : 'GetStorageAt',
 
-        // Account-related methods
+        /// GetStorageAt : 'GetStorageAt',
+
+        /// Account-related methods
         GetBalance: 'GetBalance',
       };
 }
 
 class Endpoint {
-  // Scilla Runner Related Method
+  /// Scilla Runner Related Method
   static final ScillaCheck = '/contract/check';
   static final ScillaCall = '/contract/call';
 
   Map get Mapping => {
-        // Scilla Runner Related Method
+        /// Scilla Runner Related Method
         ScillaCheck: '/contract/check',
         ScillaCall: '/contract/call'
       };

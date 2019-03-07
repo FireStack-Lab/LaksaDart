@@ -30,11 +30,7 @@ class TestScilla extends Contract {
     this.messenger = messenger;
     this.transaction = null;
   }
-  /**
-   * @function {testCall}
-   * @param  {Int} gasLimit {gasLimit for test call to scilla-runner}
-   * @return {Contract} {raw Contract object}
-   */
+
   Future<TestScilla> testCall(gasLimit) async {
     try {
       Map<String, dynamic> callContractJson = {
@@ -43,7 +39,8 @@ class TestScilla extends Contract {
         'blockchain': json.encode(this.blockchain),
         'gaslimit': gasLimit.toString()
       };
-      // the endpoint for sendServer has been set to scillaProvider
+
+      /// the endpoint for sendServer has been set to scillaProvider
       RPCMiddleWare res = await this
           .messenger
           .sendServer(Endpoint.ScillaCall, callContractJson);
@@ -60,7 +57,7 @@ class TestScilla extends Contract {
   }
 
   Future<dynamic> getABI({String code}) async {
-    // the endpoint for sendServer has been set to scillaProvider
+    /// the endpoint for sendServer has been set to scillaProvider
     try {
       RPCMiddleWare res =
           await this.messenger.sendServer(Endpoint.ScillaCheck, {'code': code});
@@ -74,10 +71,7 @@ class TestScilla extends Contract {
   }
 
   get testPayload => this.getTestPayload();
-  /**
-   * @function {generateNewContractJson}
-   * @return {Contract} {raw contract with code and init params}
-   */
+
   Map getTestPayload() {
     var payload = this.deployDayload;
     var newList = List.from(this.init);
@@ -90,12 +84,6 @@ class TestScilla extends Contract {
     return payload;
   }
 
-  /**
-   * @function {decodeABI}
-   * @param  {string} { code {scilla code string}
-   * @return {Contract} {raw contract}
-   */
-
   Future<TestScilla> decodeABI({String code}) async {
     try {
       this.setCode(code);
@@ -107,11 +95,6 @@ class TestScilla extends Contract {
     }
   }
 
-  /**
-   * @function {setBlockNumber}
-   * @param  {Int} number {block number setted to blockchain}
-   * @return {Contract|false} {raw contract}
-   */
   Future<TestScilla> setBlockNumber(int number) async {
     try {
       if (number != null) {
@@ -133,43 +116,22 @@ class TestScilla extends Contract {
     }
   }
 
-  /**
-   * @function {setABIe}
-   * @param  {ABI} abi {ABI object}
-   * @return {Contract} {raw contract}
-   */
   TestScilla setABI(Map abi) {
     this.abi = new ABI(abi);
     return this;
   }
 
-  /**
-   * @function {setCode}
-   * @param  {string} code {scilla code string}
-   * @return {Contract} {raw contract with code}
-   */
   TestScilla setCode(String code) {
     this.code = code ?? '';
     return this;
   }
 
-  /**
-   * @function {setInitParamsValues}
-   * @param  {Array<Object>} initParams    {init params get from ABI}
-   * @param  {Array<Object>} arrayOfValues {init params set for ABI}
-   * @return {Contract} {raw contract object}
-   */
   TestScilla setInitParamsValues(
       List<Map> initParams, List<Map> arrayOfValues) {
     this.init = setParamValues(initParams, arrayOfValues);
     return this;
   }
 
-  /**
-   * @function {setCreationBlock}
-   * @param  {Int} blockNumber {block number for blockchain}
-   * @return {Contract} {raw contract object}
-   */
   TestScilla setCreationBlock(String blockNumber) {
     var result = setParamValues([
       {'vname': '_creation_block', 'type': 'BNum'}
@@ -187,11 +149,6 @@ class TestScilla extends Contract {
     return this;
   }
 
-  /**
-   * @function {setBlockchain}
-   * @param  {Int} blockNumber {block number for blockchain}
-   * @return {Contract} {raw contract object}
-   */
   TestScilla setBlockchain(String blockNumber) {
     var result = setParamValues([
       {'vname': 'BLOCKNUMBER', 'type': 'BNum'}

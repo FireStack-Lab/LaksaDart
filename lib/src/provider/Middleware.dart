@@ -1,4 +1,3 @@
-// import 'package:http/http.dart';
 import 'net.dart';
 import 'dart:convert';
 
@@ -92,10 +91,6 @@ class RPCMiddleWare
       this.message = data['message'];
     }
   }
-
-  // @override
-  // toString() =>
-  //     this.result != null ? this.result.toString() : this.error.toString();
 
   Map get raw => {
         'jsonrpc': jsonrpc,

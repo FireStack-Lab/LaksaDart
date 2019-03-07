@@ -47,7 +47,7 @@ class Transaction implements BaseTransaction {
 
   // getter toPayload
   Map<String, dynamic> get toPayload => {
-        'version': this.version, //this.getVersion(),
+        'version': this.version,
         'toAddr': this.toAddr,
         'nonce': this.nonce,
         'pubKey': this.pubKey,
@@ -58,10 +58,8 @@ class Transaction implements BaseTransaction {
         'data': this.data,
         'signature': this.signature,
         'priority': this.toDS
-        // 'receipt': this.receipt,
       };
-  // Uint8List get bytes;
-  // String get senderAddress;
+
   TxStatus status;
 
   String _senderAddress() {
@@ -95,87 +93,36 @@ class Transaction implements BaseTransaction {
     this.toDS = toDS;
   }
 
-  /**
-   * isPending
-   *
-   * @returns {boolean}
-   */
   bool isPending() {
     return this.status == TxStatus.Pending;
   }
 
-  /**
-   * isInitialised
-   *
-   * @returns {boolean}
-   */
   bool isInitialised() {
     return this.status == TxStatus.Initialised;
   }
 
-  /**
-   * isConfirmed
-   *
-   * @returns {boolean}
-   */
   bool isConfirmed() {
     return this.status == TxStatus.Confirmed;
   }
 
-  /**
-   * isRejected
-   *
-   * @returns {boolean}
-   */
   bool isRejected() {
     return this.status == TxStatus.Rejected;
   }
 
-  /**
-   * confirm
-   *
-   * constructs an already-confirmed transaction.
-   *
-   * @static
-   * @param {BaseTx} params
-   */
   static confirmTxn(Map params, Messenger messenger) {
     return new Transaction(
         params: params, messenger: messenger, status: TxStatus.Confirmed);
   }
 
-  /**
-   * reject
-   *
-   * constructs an already-rejected transaction.
-   *
-   * @static
-   * @param {BaseTx} params
-   */
   static reject(Map params, Messenger messenger) {
     return new Transaction(
         params: params, messenger: messenger, status: TxStatus.Rejected);
   }
 
-  /**
-   * setProvider
-   *
-   * Sets the provider on this instance.
-   *
-   * @param {Provider} provider
-   */
   void setProvider(Messenger messenger) {
     this.messenger = messenger;
   }
 
-  /**
-   * setStatus
-   *
-   * Escape hatch to imperatively set the state of the transaction.
-   *
-   * @param {TxStatus} status
-   * @returns {undefined}
-   */
   Transaction setStatus(TxStatus status) {
     this.status = status;
     return this;
@@ -196,14 +143,6 @@ class Transaction implements BaseTransaction {
     this.receipt = params['receipt'];
   }
 
-  /**
-   * map
-   *
-   * maps over the transaction, allowing for manipulation.
-   *
-   * @param {(prev: TxParams) => TxParams} fn - mapper
-   * @returns {Transaction}
-   */
   Transaction map(Function mapFn) {
     Map newParams = mapFn(this.txParams);
 
@@ -211,12 +150,6 @@ class Transaction implements BaseTransaction {
     return this;
   }
 
-  /**
-   * If a transaction is sigend , can be sent and get TranID,
-   * We set the This.TranID = TranID and return Transaction Object and response
-   * @function {sendTxn}
-   * @return {transaction:Promise<Transaction|Error>,response:Promise<Response>} {Transaction}
-   */
   Future<TransactionSent> sendTransaction() async {
     try {
       if (this.signature == null) {
@@ -246,7 +179,6 @@ class Transaction implements BaseTransaction {
   }
 
   Future<bool> trackTx(String txHash) async {
-    // TODO: regex validation for txHash so we don't get garbage
     var res = await this.messenger.send(RPCMethod.GetTransaction, txHash);
 
     if (res.error != null) {
@@ -262,25 +194,6 @@ class Transaction implements BaseTransaction {
     return true;
   }
 
-  /**
-   * confirmReceipt
-   *
-   * Similar to the Promise API. This sets the Transaction instance to a state
-   * of pending. Calling this function kicks off a passive loop that polls the
-   * lookup node for confirmation on the txHash.
-   *
-   * The polls are performed with a linear backoff:
-   *
-   * `const delay = interval * attempt`
-   *
-   * This is a low-level method that you should generally not have to use
-   * directly.
-   *
-   * @param {string} txHash
-   * @param {number} maxAttempts
-   * @param {number} initial interval in milliseconds
-   * @returns {Promise<Transaction>}
-   */
   Future<Transaction> confirm(
       {String txHash, int maxAttempts = 20, int interval = 1000}) async {
     this.status = TxStatus.Pending;

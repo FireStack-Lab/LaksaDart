@@ -7,12 +7,7 @@ enum ContractStatus {
   REJECTED,
   DEPLOYED
 }
-/**
- * @function setParamValues
- * @param  {Array<object>} rawParams {init params get from ABI}
- * @param  {Array<object>} newValues {init params set for ABI}
- * @return {Array<object>} {new array of params objects}
- */
+
 List<Map> setParamValues(List<Map> rawParams, List<Map> newValues) {
   List<Map> newParams = [];
 

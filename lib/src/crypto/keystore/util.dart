@@ -1,6 +1,6 @@
 part of 'keyStore.dart';
 
-// getDerivedKey by ``kdf`` type
+/// getDerivedKey by ``kdf`` type
 _KeyDerivator getDerivedKey(String kdf, Map<String, dynamic> params) {
   var salt = numbers.hexToBytes(params['salt']);
   if (kdf == 'pbkdf2') {

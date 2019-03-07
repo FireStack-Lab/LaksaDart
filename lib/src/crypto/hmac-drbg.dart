@@ -8,12 +8,10 @@ class HMAC extends Hmac {
   List<int> inner;
   int get blockSize => hash.blockSize ~/ 8;
 
-  // 父类没有无参数的非命名构造函数，必须手动调用一个构造函数
   HMAC(hash, key) : super(hash, key) {
     this.hash = hash;
     this.key = key;
     this.inner = List.from([]);
-    // this.init(key);
   }
   HMAC _hmac() {
     return new HMAC(this.hash, this.key);
@@ -62,7 +60,6 @@ class DRBG<T> {
   }
 
   void init() {
-    //var seed = entropy.concat(nonce).concat(pers)
     List<int> seed = new List<int>(
         this.entropy.length + this.nonce.length + this.pers.length);
     seed.setRange(0, this.entropy.length, this.entropy);
@@ -80,8 +77,9 @@ class DRBG<T> {
     }
     this._update(seed);
     this._reseed = 1;
-    this.reseedInterval = 0x1000000000000; // 2^48
-    // print({'seedLength': seed.length, 'seed': seed});
+    this.reseedInterval = 0x1000000000000;
+
+    /// 2^48
   }
 
   HMAC _hmac() {

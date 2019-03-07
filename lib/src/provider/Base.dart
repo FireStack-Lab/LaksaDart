@@ -1,5 +1,3 @@
-// final Map<String, String> MiddlewareType = {'REQ': 'REQ', 'RES': 'RES'};
-
 enum MiddlewareType { REQ, RES }
 
 class UseMiddleware {

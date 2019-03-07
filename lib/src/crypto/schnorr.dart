@@ -47,7 +47,6 @@ String privateKeyToPublic(Uint8List privateKey) {
   ECPoint p = params.G * privateKeyNum;
   Uint8List result = p.getEncoded(true);
 
-  //skip the type flag, https://github.com/ethereumjs/ethereumjs-util/blob/master/index.js#L319
   return numbers.bytesToHex(result);
 }
 
@@ -63,36 +62,30 @@ String generatePrivateKey() {
   return prvKeyBigInt.toRadixString(16);
 }
 
-// publicKey calculation for Zilliqa
+/// publicKey calculation for Zilliqa
 String getPubKeyFromPrivateKey(String privateKey) {
   BigInt privateKeyBigInt = numbers.hexToInt(privateKey);
   return getPublic(privateKeyBigInt);
 }
 
-// address calculation with privateKey for Zilliqa
+/// address calculation with privateKey for Zilliqa
 String getAddressFromPrivateKey(String privateKey) {
   String publicKey = getPubKeyFromPrivateKey(privateKey);
   return getAddressFromPublicKey(publicKey);
 }
 
-// address calculation with publicKey for zilliqa
+/// address calculation with publicKey for zilliqa
 String getAddressFromPublicKey(String publicKey) {
   return sha256.convert(numbers.hexToBytes(publicKey)).toString().substring(24);
 }
 
-//TODO: need to implementing this
-// bool verifyPrivateKey(String privateKey) {}
+/// TODO: need to implementing this
+/// bool verifyPrivateKey(String privateKey) {}
 
-/**
- * @function {hash}
- * @param  {type} BigInt q        {description}
- * @param  {type} Int8List pubkey {description}
- * @param  {type} Int8List msg    {description}
- * @return {type} {description}
- */
 BigInt hash(BigInt q, List<int> pubkey, List<int> msg) {
-  final totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 +
-      msg.length; // 33 q + 33 pubkey + variable msgLen
+  final totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.length;
+
+  /// 33 q + 33 pubkey + variable msgLen
 
   var Q = numbers.intToBytes(q);
 
@@ -111,13 +104,6 @@ BigInt hash(BigInt q, List<int> pubkey, List<int> msg) {
   return numbers.bytesToInt(hashByte);
 }
 
-/**
- * Instantiate an HMAC-DRBG.
- *
- * @param {String} msg
- *
- * @returns {DRBG}
- */
 DRBG getDRBG(List<int> msg) {
   String nonce = numbers.bytesToHex(msg);
 
@@ -144,27 +130,12 @@ DRBG getDRBG(List<int> msg) {
   return new DRBG(hash: sha256, entropy: entropy, nonce: nonce, pers: pers);
 }
 
-/**
- * @function {function name}
- * @param  {type} List<int> serialised {description}
- * @return {type} {description}
- */
 SchnorrSignature toSignature(List<int> serialised) {
   var r = numbers.bytesToInt(serialised.sublist(0, 64));
   var s = numbers.bytesToInt(serialised.sublist(64));
   return new SchnorrSignature(r, s);
 }
 
-/**
- * trySign
- *
- * @param {Buffer} msg - the message to sign over
- * @param {BN} k - output of the HMAC-DRBG
- * @param {BN} privateKey - the private key
- * @param {Buffer} pubKey - the public key
- *
- * @returns {Signature | null =>}
- */
 SchnorrSignature trySign(
     List<int> msg, BigInt k, BigInt privKey, List<int> pubKey) {
   bool isZero(BigInt test) =>
@@ -178,23 +149,24 @@ SchnorrSignature trySign(
     throw 'Bad private key';
   }
 
-  // 1a. check that k is not 0
+  /// 1a. check that k is not 0
   if (isZero(k)) {
     return null;
   }
-  // 1b. check that k is < the order of the group
+
+  /// 1b. check that k is < the order of the group
   if (isGteCurve(k)) {
     return null;
   }
 
-  // 2. Compute commitment Q = kG, where g is the base point
+  /// 2. Compute commitment Q = kG, where g is the base point
   ECPoint Q = params.G * k;
 
-  // convert the commitment to octets first
+  /// convert the commitment to octets first
   BigInt compressedQ = numbers.bytesToInt(Q.getEncoded());
 
-  // 3. Compute the challenge r = H(Q || pubKey || msg)
-  // mod reduce the r value by the order of secp256k1, n
+  /// 3. Compute the challenge r = H(Q || pubKey || msg)
+  /// mod reduce the r value by the order of secp256k1, n
 
   BigInt r = hash(compressedQ, pubKey, msg) % (params.n);
 
@@ -204,11 +176,11 @@ SchnorrSignature trySign(
     return null;
   }
 
-  // 4. Compute s = k - r * prv
-  // 4a. Compute r * prv
+  /// 4. Compute s = k - r * prv
+  /// 4a. Compute r * prv
   BigInt s = (h * privKey) % (params.n);
 
-  // 4b. Compute s = k - r * prv mod n
+  /// 4b. Compute s = k - r * prv mod n
   s = (k - s) % (params.n);
 
   if (isZero(s)) {
@@ -217,16 +189,6 @@ SchnorrSignature trySign(
 
   return new SchnorrSignature(r, s);
 }
-
-/**
- * sign
- *
- * @param {Buffer} msg
- * @param {Buffer} key
- * @param {Buffer} pubkey
- *
- * @returns {Signature}
- */
 
 SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   BigInt prv = numbers.bytesToInt(privKey);
@@ -254,22 +216,6 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   return sig;
 }
 
-/**
- * Verify signature.
- *
- * @param {Buffer} msg
- * @param {Buffer} signature
- * @param {Buffer} key
- *
- * @returns {boolean}
- *
- * 1. Check if r,s is in [1, ..., order-1]
- * 2. Compute Q = sG + r*kpub
- * 3. If Q = O (the neutral point), return 0;
- * 4. r' = H(Q, kpub, m)
- * 5. return r' == r
- */
-
 bool verify(List<int> msg, BigInt sigR, BigInt sigS, List<int> key) {
   bool isZero(BigInt test) =>
       test.compareTo(BigInt.from(0)) != 0 ? false : true;
@@ -291,11 +237,11 @@ bool verify(List<int> msg, BigInt sigR, BigInt sigS, List<int> key) {
 
   ECPoint kpub = params.curve.decodePoint(key);
 
-  //   TODO: implementation with curve.validate
-  //   if (!curve.validate(kpub)) {
-  //     throw new Error('Invalid public key')
-  //   }
-  //
+  ///   TODO: implementation with curve.validate
+  ///   if (!curve.validate(kpub)) {
+  ///     throw new Error('Invalid public key')
+  ///   }
+  ///
 
   ECPoint l = kpub * (sig.r);
 
@@ -329,12 +275,7 @@ String randomHex(int hexLength) {
 
 typedef SignedTransaction = Map<String, dynamic> Function(
     String privateKey, Map txnDetails);
-/**
- * @function signTransaction
- * @param  {PrivateKey} privateKey        {privatekey}
- * @param  {Transaction} transactionObject {transaction object}
- * @return {Transaction} {signed transaction}
- */
+
 Map<String, dynamic> SchnorrSign(
     String privateKey, Map<String, dynamic> txnDetails) {
   var pubKey = getPubKeyFromPrivateKey(privateKey);
@@ -352,7 +293,6 @@ Map<String, dynamic> SchnorrSign(
   };
 
   Uint8List encodedTx = encodeTransactionProto(txn);
-  // print(numbers.bytesToHex(encodedTx));
 
   SchnorrSignature signature = sign(
       encodedTx, numbers.hexToBytes(privateKey), numbers.hexToBytes(pubKey));

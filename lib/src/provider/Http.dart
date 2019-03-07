@@ -9,7 +9,6 @@ import 'Middleware.dart';
 typedef MiddleWareFn = dynamic Function(List<dynamic> list);
 
 class HttpProvider extends BaseProvider implements RPCRequest {
-  // TODO: implement the request timeout
   final int timeout = 120000;
   final String cache = 'no-cache';
   final String mode = 'cors';
@@ -40,7 +39,6 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     };
   }
 
-  // if scilla-runner calls
   Map<String, dynamic> buildEndpointPayload(dynamic params) {
     return {'payload': params};
   }
@@ -59,14 +57,14 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     Transformer reqMiddleware = this.composeMiddleware(middleware.first);
     Transformer resMiddleware = this.composeMiddleware(middleware.last);
 
-    // compact with scilla runner if endpoint appears
+    /// compact with scilla runner if endpoint appears
     var req = reqMiddleware(endpoint == null
         ? this.buildPayload(method, params)
         : this.buildEndpointPayload(params));
     var url = endpoint == null ? this.url : '${this.url}${endpoint}';
     var headers = this.headers;
 
-    // request to RPC
+    /// request to RPC
     RPCMiddleWare result = await performRPC(url, headers, req);
     return resMiddleware(result);
   }

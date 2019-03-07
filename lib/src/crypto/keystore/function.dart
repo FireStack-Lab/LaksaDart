@@ -77,7 +77,6 @@ Future<String> decrypt(Map<String, dynamic> keyStore, String passphrase) async {
   List<int> macBuffer =
       derivedKey.sublist(16, 32) + ciphertext + iv + ALGO_IDENTIFIER.codeUnits;
 
-  // use hmac
   String mac = numbers.bytesToHex(
       new HMAC(sha256, derivedKey).update(macBuffer).digest().bytes);
 
@@ -91,7 +90,6 @@ Future<String> decrypt(Map<String, dynamic> keyStore, String passphrase) async {
   var aesKey = derivedKey.sublist(0, 16);
   var encryptedPrivateKey =
       numbers.hexToBytes(keyStore["crypto"]["ciphertext"]);
-  // Decrypt the private key
 
   var aes = _initCipher(false, aesKey, iv);
 

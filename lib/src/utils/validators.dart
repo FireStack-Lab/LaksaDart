@@ -1,18 +1,5 @@
 import 'package:validators/validators.dart' as validators;
 
-// bool isByteString(String byStr, {int length}) {
-//   var byStrMap = {byStr: byStr};
-//   var regString = r"^(0x)?[0-9a-f]" + "{$length}";
-//   var validator = new angel.Validator({
-//     byStr: (data) {
-//       var reg = new RegExp(regString, caseSensitive: false);
-//       return reg.hasMatch(data);
-//     }
-//   });
-//   var result = validator.check(byStrMap);
-//   return result.errors.isNotEmpty ? false : true;
-// }
-
 bool isUrl(String url) {
   return validators.isURL(url);
 }

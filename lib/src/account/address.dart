@@ -4,7 +4,10 @@ import 'package:meta/meta.dart';
 
 import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
 import 'package:laksadart/src/crypto/isolates.dart';
+import 'package:laksadart/src/crypto/bech32.dart';
+import 'package:laksadart/src/crypto/checksum.dart';
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
+import 'package:laksadart/src/utils/validators.dart' as validator;
 
 @immutable
 class Address {
@@ -57,13 +60,18 @@ class Address {
   }
 }
 
-/// extends the Address to Zillia Standard
+enum AddressType { CheckSum, Bech32, Bytes20, Bytes20Hex, Invalid }
 
+/// extends the Address to Zillia Standard
+///
+///
 class ZilAddress extends Address {
   String get hexAddress => this._getHexAddress();
   BigInt get bnAddress => this._getBigIntAddress();
   List<int> get byteAddress => this.toByteAddress(this.address);
   String get checkSumAddress => this.toCheckSumAddress(this.address);
+  String get bech32 => toBech32Address(this.checkSumAddress);
+  String get bytes20Hex => this.toBytes20Hex(this.address);
   bool get isValid => this.isAddress(this.address);
 
   String get address => super.address;
@@ -94,30 +102,21 @@ class ZilAddress extends Address {
 
   /// convert address to checkSumAddress
   String toCheckSumAddress(String address) {
-    String stripAddress = numbers.strip0x(address.toLowerCase());
-    final hash = sha256.convert(numbers.hexToBytes(stripAddress)).toString();
-    String ret = '0x';
+    return toChecksum(address);
+  }
 
-    BigInt v = numbers.hexToInt(hash);
-
-    for (int i = 0; i < address.length; i++) {
-      if ('0123456789'.contains(address[i])) {
-        ret += address[i];
-      } else {
-        var checker = v & BigInt.from(2).pow(BigInt.from(255 - 6 * i).toInt());
-        ret += checker >= BigInt.from(1)
-            ? address[i].toUpperCase()
-            : address[i].toLowerCase();
-      }
-    }
-
-    return ret;
+  String toBytes20Hex(String address) {
+    return this.toCheckSumAddress(address).toLowerCase();
   }
 
   /// conver hex string to Byte
   List<int> toByteAddress(String address) {
     String stripAddress = numbers.strip0x(address.toLowerCase());
     return numbers.hexToBytes(stripAddress);
+  }
+
+  static String toCheckSum(String address) {
+    return toChecksum(address);
   }
 
   static ZilAddress fromPrivateKey(String privateKey) =>
@@ -139,4 +138,32 @@ class ZilAddress extends Address {
 
   static ZilAddress fromBigInt(BigInt number) =>
       new ZilAddress(new Address.fromNumber(number).address);
+
+  static AddressType getAddressType(String raw) {
+    if (validator.isAddress(raw) && validator.isValidChecksumAddress(raw)) {
+      return AddressType.CheckSum;
+    } else if (validator.isAddress(raw) &&
+        !validator.isValidChecksumAddress(raw) &&
+        raw.startsWith('0x')) {
+      return AddressType.Bytes20Hex;
+    } else if (validator.isAddress(raw) &&
+        !validator.isValidChecksumAddress(raw) &&
+        !raw.startsWith('0x')) {
+      return AddressType.Bytes20;
+    } else if (validator.isBech32(raw) &&
+        validator.isValidChecksumAddress(fromBech32Address(raw))) {
+      return AddressType.Bech32;
+    } else
+      return AddressType.Invalid;
+  }
+
+  static toValidAddress(String addr) {
+    if (getAddressType(addr) == AddressType.CheckSum) {
+      return addr;
+    } else if (getAddressType(addr) == AddressType.Bech32) {
+      return toChecksum(fromBech32Address(addr));
+    } else {
+      throw 'Invalid address';
+    }
+  }
 }

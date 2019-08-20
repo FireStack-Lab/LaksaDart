@@ -9,37 +9,42 @@ import 'package:laksadart/src/laksa.dart';
 
 void main() {
   test("Test Get Contract ABIs", () async {
-    File contract = new File('./contracts/helloworld.txt');
+    File contract = new File('./contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
-          nodeUrl: 'https://api.zilliqa.com',
+          nodeUrl: 'https://dev-api.zilliqa.com',
           scillaUrl: 'https://scilla-runner.zilliqa.com');
 
       var result = await laksa.blockchain.checkCode(code: contractString);
 
       if (result.result.toString() != 'error' && result.message != null) {
-        var abiObject = new ABI(json.decode(result.message));
-        expect(abiObject.name, equals('HelloWorld'));
+        var abi = json.decode(result.message)['contract_info'];
+        var abiObject = new ABI(abi);
+        expect(abiObject.vname, equals('HelloWorld'));
         expect(abiObject.params.toString(),
-            equals('[{name: owner, type: ByStr20}]'));
+            equals('[{vname: owner, type: ByStr20}]'));
         expect(abiObject.fields.toString(),
-            equals('[{name: welcome_msg, type: String}]'));
+            equals('[{vname: welcome_msg, type: String}]'));
         expect(
             abiObject.transitions.toString(),
             equals(
-                '[{name: setHello, params: [{name: msg, type: String}]}, {name: getHello, params: []}]'));
-        expect(abiObject.events.toString(), equals('[]'));
+                '[{vname: setHello, params: [{vname: msg, type: String}]}, {vname: getHello, params: []}]'));
+        expect(
+            abiObject.events.toString(),
+            equals(
+                '[{vname: getHello(), params: [{vname: msg, type: String}]}, {vname: setHello(), params: [{vname: code, type: Int32}]}]'));
       }
     });
   });
   test('Test call to scilla-runner', () async {
-    File contract = new File('./contracts/helloworld.txt');
+    File contract = new File('./contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
-          nodeUrl: 'https://api.zilliqa.com',
+          nodeUrl: 'https://dev-api.zilliqa.com',
           scillaUrl: 'https://scilla-runner.zilliqa.com');
       // laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
       var init = [
+        {'vname': "_scilla_version", 'type': "Uint32", 'value': "0"},
         {
           'value': '0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
           'vname': 'owner',
@@ -50,7 +55,7 @@ void main() {
           new Contracts(messenger: laksa.messenger, wallet: laksa.wallet);
       var testResult =
           await contracts.testContract(code: contractString, init: init);
-      //  print(testResult);
+
       expect(testResult, equals(true));
     });
   });

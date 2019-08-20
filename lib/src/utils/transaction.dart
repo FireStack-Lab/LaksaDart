@@ -9,7 +9,8 @@ Uint8List encodeTransactionProto(Map<String, dynamic> tx) {
   var txnBuffer = zMessage.ProtoTransactionCoreInfo.create();
   txnBuffer.version = tx['version'];
   txnBuffer.nonce = tx['nonce'] is int ? Int64(tx['nonce']) : Int64(0);
-  txnBuffer.toaddr = numbers.hexToBytes(tx['toAddr'].toLowerCase());
+  txnBuffer.toaddr =
+      numbers.hexToBytes(tx['toAddr'].replaceAll('0x', '').toLowerCase());
   txnBuffer.senderpubkey = zMessage.ByteArray.create();
   txnBuffer.senderpubkey.data =
       numbers.hexToBytes(tx['pubKey'] is String ? tx['pubKey'] : '00');

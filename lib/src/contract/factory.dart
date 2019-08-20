@@ -70,10 +70,15 @@ class Contracts implements ZilliqaModule<Messenger, void> {
         // now we change the status to wait for sign
         .then((state) => state.status == ContractStatus.TESTED
             ? {'abi': state.abi, 'init': state.init, 'status': state.status}
-            : false);
-    if (result['status'] == ContractStatus.TESTED)
+            : {
+                'abi': state.abi,
+                'init': state.init,
+                'status': ContractStatus.ERROR
+              });
+
+    if (result['status'] == ContractStatus.TESTED) {
       return true;
-    else
+    } else
       return false;
   }
 }

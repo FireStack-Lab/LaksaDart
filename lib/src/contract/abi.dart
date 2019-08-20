@@ -1,7 +1,7 @@
 abstract class ABIObject {
   List<Map> events;
   List<Map> fields;
-  String name;
+  String vname;
   List<Map> params;
   List<Map> transitions;
 }
@@ -18,7 +18,7 @@ abstract class ABIObject {
 class ABI implements ABIObject {
   List<Map> events;
   List<Map> fields;
-  String name;
+  String vname;
   List<Map> params;
   List<Map> transitions;
 
@@ -26,15 +26,16 @@ class ABI implements ABIObject {
     // because ABI is <String,dynamic>, to get the type annotation ready,
     // we need to use List.from(),which will get the correct list.
     // then we can extract the List<dynamic> type to List<Map>
+
     this.events = List.from(Abi['events']);
     this.fields = List.from(Abi['fields']);
-    this.name = Abi['name'];
+    this.vname = Abi['vname'];
     this.params = List.from(Abi['params']);
     this.transitions = List.from(Abi['transitions']);
   }
 
   String getName() {
-    return this.name;
+    return this.vname;
   }
 
   List<Map> getInitParams() {

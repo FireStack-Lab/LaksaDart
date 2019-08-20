@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:laksadart/src/account/account.dart';
 import 'package:laksadart/src/account/wallet.dart';
+import 'package:laksadart/src/account/address.dart';
 import 'package:laksadart/src/messenger/Messenger.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
 import 'util.dart';
@@ -65,7 +66,7 @@ class Contract implements BaseContract {
                 .setTransactionVersion(this.version, this.messenger.Network_ID)
             : this.version,
         'amount': BigInt.from(0),
-        'toAddr': '0' * 40,
+        'toAddr': ZilAddress.toValidAddress('0x' + '0' * 40),
         'code': this.code,
         'data': json.encode(this.init).replaceAll(r"/\\", '"')
       };
@@ -76,7 +77,7 @@ class Contract implements BaseContract {
                 .messenger
                 .setTransactionVersion(this.version, this.messenger.Network_ID)
             : this.version,
-        'toAddr': this.ContractAddress
+        'toAddr': ZilAddress.toCheckSum(this.ContractAddress)
       };
 
   void setStatus(ContractStatus status) {

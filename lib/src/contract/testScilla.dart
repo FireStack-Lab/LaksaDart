@@ -61,8 +61,10 @@ class TestScilla extends Contract {
     try {
       RPCMiddleWare res =
           await this.messenger.sendServer(Endpoint.ScillaCheck, {'code': code});
+
       if (res.result.toString() != 'error' && res.message != null) {
-        return json.decode(res.message);
+        var decoded = json.decode(res.message);
+        return decoded['contract_info'];
       } else
         throw res.message;
     } catch (error) {

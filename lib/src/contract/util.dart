@@ -13,10 +13,10 @@ List<Map> setParamValues(List<Map> rawParams, List<Map> newValues) {
 
   for (int i = 0; i < rawParams.length; i += 1) {
     var v = rawParams[i];
-    var newMap = {
-      'value': newValues[i]['value'],
-      'vname': v['name'] ?? v['vname']
-    };
+    var found = newValues.firstWhere((test) {
+      return test['vname'] == v['name'] || test['vname'] == v['vname'];
+    });
+    var newMap = {'value': found['value'], 'vname': v['name'] ?? v['vname']};
     Map newObj = Map.from(v);
     newObj.addAll(newMap);
     if (newObj['name'] != null) {

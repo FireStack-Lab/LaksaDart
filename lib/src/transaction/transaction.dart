@@ -33,7 +33,7 @@ class Transaction implements BaseTransaction {
   // getter txParmas
   Map<String, dynamic> get txParams => {
         'version': this.version,
-        'toAddr': new ZilAddress(this.toAddr).checkSumAddress.substring(2),
+        'toAddr': ZilAddress.toValidAddress(this.toAddr),
         'nonce': this.nonce,
         'pubKey': this.pubKey,
         'amount': this.amount,
@@ -48,7 +48,7 @@ class Transaction implements BaseTransaction {
   // getter toPayload
   Map<String, dynamic> get toPayload => {
         'version': this.version,
-        'toAddr': this.toAddr,
+        'toAddr': ZilAddress.toValidAddress(this.toAddr),
         'nonce': this.nonce,
         'pubKey': this.pubKey,
         'amount': this.amount.toString(),
@@ -77,7 +77,7 @@ class Transaction implements BaseTransaction {
     // params
     this.version = params['version'];
     this.TranID = params['TranID'];
-    this.toAddr = params['toAddr'];
+    this.toAddr = ZilAddress.toValidAddress(params['toAddr']);
     this.nonce = params['nonce'];
     this.pubKey = params['pubKey'];
     this.amount = params['amount'];
@@ -131,7 +131,7 @@ class Transaction implements BaseTransaction {
   void setParams(Map params) {
     this.version = params['version'];
     this.TranID = params['TranID'];
-    this.toAddr = params['toAddr'];
+    this.toAddr = ZilAddress.toValidAddress(params['toAddr']);
     this.nonce = params['nonce'];
     this.pubKey = params['pubKey'];
     this.amount = params['amount'];

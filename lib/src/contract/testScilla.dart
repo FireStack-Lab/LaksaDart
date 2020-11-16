@@ -65,8 +65,9 @@ class TestScilla extends Contract {
       if (res.result.toString() != 'error' && res.message != null) {
         var decoded = json.decode(res.message);
         return decoded['contract_info'];
-      } else
+      } else {
         throw res.message;
+      }
     } catch (error) {
       rethrow;
     }
@@ -109,10 +110,12 @@ class TestScilla extends Contract {
           this.setBlockchain(res.result.toMap()['header']['BlockNum']);
           this.setCreationBlock(res.result.toMap()['header']['BlockNum']);
           return this;
-        } else
+        } else {
           return this;
-      } else
+        }
+      } else {
         return this;
+      }
     } catch (error) {
       rethrow;
     }

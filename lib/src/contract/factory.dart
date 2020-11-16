@@ -78,7 +78,8 @@ class Contracts implements ZilliqaModule<Messenger, void> {
 
     if (result['status'] == ContractStatus.TESTED) {
       return true;
-    } else
+    } else {
       return false;
+    }
   }
 }

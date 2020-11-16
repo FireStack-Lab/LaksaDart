@@ -112,12 +112,13 @@ class Account
 
   /// import account from hex string
   Account import(dynamic prvHex) {
-    if (prvHex is String)
+    if (prvHex is String) {
       return Account._importFromString(prvHex);
-    else if (prvHex is BigInt)
+    } else if (prvHex is BigInt) {
       return Account._importFromBigInt(prvHex);
-    else
+    } else {
       return new Account();
+    }
   }
 
   /// to map method
@@ -142,8 +143,9 @@ class Account
       // this.privateKey = await encrypt(this.privateKey, passphrase, options);
       this.privateKey =
           await asyncEncrypt(this.privateKey, passphrase, options);
-    } else
+    } else {
       return null;
+    }
   }
 
   /// account decyption
@@ -189,10 +191,11 @@ class Account
   /// private key to big int
   static BigInt _privateKeyToBigInt(String prv) {
     try {
-      if (prv is String && Account.isPrivateKey.hasMatch(prv))
+      if (prv is String && Account.isPrivateKey.hasMatch(prv)) {
         return numbers.hexToInt(prv);
-      else
+      } else {
         return null;
+      }
     } catch (e) {
       rethrow;
     }
@@ -201,10 +204,11 @@ class Account
   /// privat key to bytes
   static List<int> _privateKeyToBytes(String prv) {
     try {
-      if (prv is String && Account.isPrivateKey.hasMatch(prv))
+      if (prv is String && Account.isPrivateKey.hasMatch(prv)) {
         return numbers.hexToBytes(prv);
-      else
+      } else {
         return null;
+      }
     } catch (e) {
       rethrow;
     }
@@ -215,8 +219,9 @@ class Account
     try {
       if (Account.isPrivateKey.hasMatch(prvHex)) {
         return new Account(prvHex);
-      } else
+      } else {
         throw ArgumentError('PrivateKey is not correct');
+      }
     } catch (e) {
       rethrow;
     }
@@ -234,32 +239,36 @@ class Account
 
   /// get publicKey from privatKey
   String getPublicKey(String privateKey) {
-    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
+    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return crypto.getPubKeyFromPrivateKey(privateKey);
-    else
+    } else {
       return null;
+    }
   }
 
   Future<String> asyncGetPublicKey(String privateKey) async {
-    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
+    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return await asyncGetPubKeyFromPrivateKey(privateKey);
-    else
+    } else {
       return null;
+    }
   }
 
   /// get address key from privateKey
   ZilAddress getAddress(String privateKey) {
-    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
+    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return ZilAddress.fromPrivateKey(privateKey);
-    else
+    } else {
       return null;
+    }
   }
 
   Future<ZilAddress> asyncGetAddress(String privateKey) async {
-    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey))
+    if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return await ZilAddress.asyncFromPrivateKey(privateKey);
-    else
+    } else {
       return null;
+    }
   }
 
   /// encryption checker

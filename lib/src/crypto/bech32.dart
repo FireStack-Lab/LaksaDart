@@ -138,7 +138,6 @@ class Bech32Encoder extends Converter<Bech32, String> with Bech32Validations {
     var checksummed = data + _createChecksum(hrp, data);
 
     if (hasOutOfBoundsChars(checksummed)) {
-      // TODO this could be more informative
       throw OutOfBoundChars('<unknown>');
     }
 

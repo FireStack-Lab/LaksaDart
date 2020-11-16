@@ -5,7 +5,7 @@ final String ALGO_IDENTIFIER = 'aes-128-ctr';
 Future<String> encrypt(String privateKey, String passphrase,
     [Map<String, dynamic> options]) async {
   Uint8List uuid = new Uint8List(16);
-  Uuid uuidParser = new Uuid()..v4(buffer: uuid);
+  Uuid uuidParser = new Uuid()..v4buffer(uuid);
 
   String salt = crypto.randomHex(64);
   List<int> iv = crypto.randomBytes(16);

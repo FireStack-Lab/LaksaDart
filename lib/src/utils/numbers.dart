@@ -17,8 +17,7 @@ String strip0x(String hex) {
 /// with zeroes. Note that [forcePadLen] refers to the string length, meaning
 /// that one byte has a length of 2. When [include0x] is set to true, the
 /// output wil have "0x" prepended to it after any padding is done.
-String toHex(dynamic number,
-    {bool pad = false, bool include0x = false, int forcePadLen}) {
+String toHex(dynamic number, {bool pad = false, bool include0x = false, int forcePadLen}) {
   String toHexSimple() {
     if (number is int)
       return number.toRadixString(16);
@@ -99,7 +98,6 @@ List<String> numberToHexArray(int number, int size) {
   String hexVal = number.toRadixString(16);
   List<String> hexRep = List.filled(hexVal.length, '0');
   List<String> hex = List.filled(size, '0');
-  // TODO: this really needs to be refactored.
   for (int i = 0; i < hexVal.length; i++) {
     hexRep[i] = hexVal.substring(i, i + 1);
   }

@@ -79,9 +79,6 @@ String getAddressFromPublicKey(String publicKey) {
   return sha256.convert(numbers.hexToBytes(publicKey)).toString().substring(24);
 }
 
-/// TODO: need to implementing this
-/// bool verifyPrivateKey(String privateKey) {}
-
 BigInt hash(BigInt q, List<int> pubkey, List<int> msg) {
   final totalLength = PUBKEY_COMPRESSED_SIZE_BYTES * 2 + msg.length;
 
@@ -237,7 +234,7 @@ bool verify(List<int> msg, BigInt sigR, BigInt sigS, List<int> key) {
 
   ECPoint kpub = params.curve.decodePoint(key);
 
-  ///   TODO: implementation with curve.validate
+  ///
   ///   if (!curve.validate(kpub)) {
   ///     throw new Error('Invalid public key')
   ///   }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:crypto/crypto.dart';
 import 'package:meta/meta.dart';
 
 import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
@@ -11,12 +10,10 @@ import 'package:laksadart/src/utils/validators.dart' as validator;
 
 @immutable
 class Address {
-  static final RegExp basicAddress =
-      new RegExp(r"^(0x)?[0-9a-f]{40}", caseSensitive: false);
+  static final RegExp basicAddress = new RegExp(r"^(0x)?[0-9a-f]{40}", caseSensitive: false);
 
   static const int _addLenBytes = 20;
-  static final BigInt biggestAddress =
-      (BigInt.one << (_addLenBytes * 8)) - BigInt.one;
+  static final BigInt biggestAddress = (BigInt.one << (_addLenBytes * 8)) - BigInt.one;
 
   /// The number associated with the address
   final BigInt number;
@@ -25,19 +22,21 @@ class Address {
 
   /// Creates an address from its number
   Address.fromNumber(this.number) {
-    if (number.isNegative)
+    if (number.isNegative) {
       throw new ArgumentError("Addresses must be positive");
-    if (number > biggestAddress)
+    }
+    if (number > biggestAddress) {
       throw new ArgumentError("Addresses must fit in $_addLenBytes bytes");
+    }
   }
 
   /// Returns this address in a hexadecimal representation, with 0x prefixed.
-  String get hex => numbers.toHex(number,
-      pad: true, forcePadLen: _addLenBytes * 2, include0x: true);
+  String get hex =>
+      numbers.toHex(number, pad: true, forcePadLen: _addLenBytes * 2, include0x: true);
 
   /// Returns this address in a hexadecimal representation, without any prefix
-  String get address => numbers.toHex(number,
-      pad: true, forcePadLen: _addLenBytes * 2, include0x: false);
+  String get address =>
+      numbers.toHex(number, pad: true, forcePadLen: _addLenBytes * 2, include0x: false);
 
   @override
   String toString() => hex;
@@ -133,8 +132,7 @@ class ZilAddress extends Address {
     return new ZilAddress(await asyncGetAddressFromPublicKey(publicKey));
   }
 
-  static ZilAddress fromAddress(String address) =>
-      new ZilAddress(address.toLowerCase());
+  static ZilAddress fromAddress(String address) => new ZilAddress(address.toLowerCase());
 
   static ZilAddress fromBigInt(BigInt number) =>
       new ZilAddress(new Address.fromNumber(number).address);
@@ -153,8 +151,9 @@ class ZilAddress extends Address {
     } else if (validator.isBech32(raw) &&
         validator.isValidChecksumAddress(fromBech32Address(raw))) {
       return AddressType.Bech32;
-    } else
+    } else {
       return AddressType.Invalid;
+    }
   }
 
   static toValidAddress(String addr) {

@@ -256,8 +256,6 @@ class Contract implements BaseContract {
       bool toDS = false}) {
     Map msg = {
       '_tag': transition,
-
-      // TODO: this should be string, but is not yet supported by lookup.
       'params': params,
     };
     Map txnParams = Map.from(this.callPayload);

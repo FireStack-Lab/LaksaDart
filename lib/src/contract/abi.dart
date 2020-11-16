@@ -45,8 +45,9 @@ class ABI implements ABIObject {
   List<String> getInitParamTypes() {
     if (this.params.isNotEmpty) {
       return getParamTypes(this.params);
-    } else
+    } else {
       return null;
+    }
   }
 
   List<Map<String, dynamic>> getFields() {
@@ -56,8 +57,9 @@ class ABI implements ABIObject {
   List<String> getFieldsTypes() {
     if (this.fields.isNotEmpty) {
       return getParamTypes(this.fields);
-    } else
+    } else {
       return null;
+    }
   }
 
   List<Map> getTransitions() {
@@ -73,8 +75,9 @@ class ABI implements ABIObject {
     }
     if (returnArray.isNotEmpty) {
       return returnArray;
-    } else
+    } else {
       return null;
+    }
   }
 
   List<Map> getEvents() {
@@ -90,6 +93,7 @@ List<String> getParamTypes(List<Map> list) {
   });
   if (boolList.isNotEmpty) {
     return keyList2;
-  } else
+  } else {
     return null;
+  }
 }

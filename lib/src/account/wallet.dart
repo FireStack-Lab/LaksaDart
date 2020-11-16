@@ -7,8 +7,7 @@ import 'package:bip32/bip32.dart' as bip32;
 import './api.dart' show BaseWallet;
 import './account.dart';
 
-class Wallet
-    implements BaseWallet<List<String>>, ZilliqaModule<Messenger, void> {
+class Wallet implements BaseWallet<List<String>>, ZilliqaModule<Messenger, void> {
   List<String> get accounts => List.from(this.toMap.keys);
   int get length => accounts.length;
   String defaultAccount;
@@ -25,8 +24,7 @@ class Wallet
   Account add(dynamic obj) {
     if (obj is Account) {
       obj.setMessenger(this.messenger);
-      MapEntry<String, Account> entry =
-          new MapEntry(obj.address.toString(), obj);
+      MapEntry<String, Account> entry = new MapEntry(obj.address.toString(), obj);
       this.toMap.addEntries([entry]);
       this.getDefaultAccount();
       return this.getAccount(obj.address.toString());
@@ -45,8 +43,9 @@ class Wallet
       this.toMap.addEntries([entryNew]);
       this.getDefaultAccount();
       return this.getAccount(address.toString());
-    } else
+    } else {
       return null;
+    }
   }
 
   Account create() {
@@ -63,7 +62,9 @@ class Wallet
 
   void remove(String addr) {
     this.toMap.remove(addr);
-    if (this.defaultAccount == addr) this.defaultAccount = null;
+    if (this.defaultAccount == addr) {
+      this.defaultAccount = null;
+    }
     this.getDefaultAccount();
   }
 
@@ -83,8 +84,9 @@ class Wallet
       await found.encryptAccount(passphrase, options);
       this.update(addr, found);
       return found;
-    } else
+    } else {
       return null;
+    }
   }
 
   Future<Account> decryptAccount(
@@ -96,12 +98,15 @@ class Wallet
       await found.decryptAccount(passphrase);
       this.update(addr, found);
       return found;
-    } else
+    } else {
       return null;
+    }
   }
 
   Account getDefaultAccount() {
-    if (this.length == 0) return null;
+    if (this.length == 0) {
+      return null;
+    }
     if (this.length == 1) {
       this.setDefaultAccount(this.accounts.first);
       return this.getAccount(this.defaultAccount);
@@ -127,7 +132,7 @@ class Wallet
     return bip39.validateMnemonic(phrase);
   }
 
-  Account importAccountFromMnemonic(phrase, index) {
+  Account importAccountFromMnemonic(String phrase, int index) {
     if (!this.isValidMnemonic(phrase)) {
       throw 'Invalid mnemonic phrase: ${phrase}';
     }

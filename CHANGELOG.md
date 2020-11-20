@@ -1,5 +1,6 @@
 # Change Log
-
+## [v0.1.20-dev.2] NOV-20-2020
+update protobuf to v1.1.0
 ## [v0.1.20-dev.1] NOV-16-2020
 fix typo and update uuid
 ## [v0.1.19] AUG-21-2019

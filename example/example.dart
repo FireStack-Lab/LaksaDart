@@ -24,17 +24,27 @@ main() async {
     });
 
     var signed = await acc.signTransaction(txn, passphrase: '111');
+    print("\n");
+    print("Transaction Payload is");
     print(json.encode(signed.toPayload));
+    print("\n");
+
     var sent = await signed.sendTransaction();
+    print("Transaction ID is");
     print(sent.transaction.TranID);
+    print("\n");
     var sendTime = DateTime.now();
+    print("Transaction is confirmed?");
     var result = await sent.transaction
         .confirm(txHash: sent.transaction.TranID, maxAttempts: 33, interval: 1000);
-    print(result.receipt['success']);
+    print(
+        "${result.receipt['success'] ? "Yes" : "No"}! Detail at: 'https://viewblock.io/zilliqa/tx/0x${sent.transaction.TranID}?network=${laksa.networkID == 'DevNet' ? 'testnet' : 'mainnet'}'");
+
     if (result != null) {
       var during = DateTime.now().difference(sendTime);
-      print('confirmed during:$during');
+      print('Transaction confirmed during:$during');
     }
+    print("\n");
   }
 
   void deploy() async {
@@ -124,8 +134,8 @@ main() async {
     var newAcc = laksa.wallet.create();
     await newAcc.encryptAccount('passphrase');
 
-    print(getAddressFromPublicKey(
-        '02526CC9198736761D9FFDAE0CA5E848667D31BFDB7754D8F7B2291D17A60CF63C'));
+    print(
+        "Sender Address is: ${ZilAddress(getAddressFromPublicKey('02526CC9198736761D9FFDAE0CA5E848667D31BFDB7754D8F7B2291D17A60CF63C')).bech32}");
 
     // print(newAcc.address);
     // await newAcc.updateBalance();
@@ -136,10 +146,10 @@ main() async {
 
   // await autoTransaction();
 
-  // await wallet();
-  // for (int i = 0; i < 10; i++) {
-  //   await autoTransaction();
-  // }
+  await wallet();
+  for (int i = 0; i < 1; i++) {
+    await autoTransaction();
+  }
 
-  await deploy();
+  //  await deploy();
 }

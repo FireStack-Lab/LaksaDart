@@ -59,7 +59,7 @@ class Contract implements BaseContract {
     return this.status == ContractStatus.REJECTED;
   }
 
-  Map get deployDayload => {
+  Map get deployPayload => {
         'version': this.version < 65536
             ? this
                 .messenger
@@ -238,7 +238,7 @@ class Contract implements BaseContract {
       'gasPrice': gasPrice,
       'gasLimit': gasLimit,
     };
-    Map params = Map.from(this.deployDayload);
+    Map params = Map.from(this.deployPayload);
     params.addAll(add);
 
     this.transaction = new Transaction(

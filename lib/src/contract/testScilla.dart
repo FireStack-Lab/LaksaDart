@@ -44,7 +44,6 @@ class TestScilla extends Contract {
       RPCMiddleWare res = await this
           .messenger
           .sendServer(Endpoint.ScillaCall, callContractJson);
-
       if (res.result.toString() != 'error') {
         this.setStatus(ContractStatus.TESTED);
       } else {
@@ -61,7 +60,6 @@ class TestScilla extends Contract {
     try {
       RPCMiddleWare res =
           await this.messenger.sendServer(Endpoint.ScillaCheck, {'code': code});
-
       if (res.result.toString() != 'error' && res.message != null) {
         var decoded = json.decode(res.message);
         return decoded['contract_info'];
@@ -76,7 +74,7 @@ class TestScilla extends Contract {
   get testPayload => this.getTestPayload();
 
   Map getTestPayload() {
-    var payload = this.deployDayload;
+    var payload = this.deployPayload;
     var newList = List.from(this.init);
     newList.addAll(this.blockchain);
     var newMap = {

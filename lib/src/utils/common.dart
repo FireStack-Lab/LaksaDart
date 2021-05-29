@@ -27,7 +27,7 @@ bool isSurrogatePair(String msg, i) {
 
 List<int> toArray(String msg, [String enc]) {
   if (enc == 'hex') {
-    List<int> hexRes = new List();
+    List<int> hexRes = [];
     msg = msg.replaceAll(new RegExp("[^a-z0-9]"), '');
     if (msg.length % 2 != 0) msg = '0' + msg;
     for (var i = 0; i < msg.length; i += 2) {
@@ -37,7 +37,7 @@ List<int> toArray(String msg, [String enc]) {
     }
     return hexRes;
   } else {
-    List<int> noHexRes = new List();
+    List<int> noHexRes = [];
     for (var i = 0; i < msg.length; i++) {
       var c = msg.codeUnitAt(i);
       var hi = c >> 8;

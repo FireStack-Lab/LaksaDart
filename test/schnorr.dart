@@ -8,7 +8,7 @@ import 'package:laksadart/src/crypto/schnorr.dart' as schnorr;
 
 void main() {
   test("Test Schnorr Signature with preset json", () async {
-    File schnorrVector = new File('./fixtures/schnorr.signature.json');
+    File schnorrVector = new File('test/fixtures/schnorr.signature.json');
     await schnorrVector
         .readAsString()
         .then((fileContents) => jsonDecode(fileContents))

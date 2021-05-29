@@ -9,7 +9,7 @@ import 'package:laksadart/src/laksa.dart';
 
 void main() {
   test("Test Get Contract ABIs", () async {
-    File contract = new File('./contracts/helloworldversion.txt');
+    File contract = new File('test/contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
           nodeUrl: 'https://dev-api.zilliqa.com',
@@ -37,7 +37,7 @@ void main() {
     });
   });
   test('Test call to scilla-runner', () async {
-    File contract = new File('./contracts/helloworldversion.txt');
+    File contract = new File('test/contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
           nodeUrl: 'https://dev-api.zilliqa.com',

@@ -11,16 +11,16 @@ import 'contract.dart';
 
 class TestScilla extends Contract {
   String code = '';
-  List<Map> init;
-  String ContractAddress;
-  int version;
-  Messenger messenger;
-  ContractStatus status;
-  Transaction transaction;
+  List<Map>? init;
+  String? ContractAddress;
+  int? version;
+  Messenger? messenger;
+  ContractStatus? status;
+  Transaction? transaction;
   List<Map> blockchain = [];
-  ABI abi;
+  ABI? abi;
 
-  TestScilla({Map params, Messenger messenger, ContractStatus status})
+  TestScilla({required Map params, Messenger? messenger, ContractStatus? status})
       : super(params: params, messenger: messenger, status: status) {
     this.code = params['code'] ?? '';
     this.init = params['init'] ?? [];
@@ -42,7 +42,7 @@ class TestScilla extends Contract {
 
       /// the endpoint for sendServer has been set to scillaProvider
       RPCMiddleWare res = await this
-          .messenger
+          .messenger!
           .sendServer(Endpoint.ScillaCall, callContractJson);
       if (res.result.toString() != 'error') {
         this.setStatus(ContractStatus.TESTED);
@@ -55,11 +55,11 @@ class TestScilla extends Contract {
     }
   }
 
-  Future<dynamic> getABI({String code}) async {
+  Future<dynamic> getABI({String? code}) async {
     /// the endpoint for sendServer has been set to scillaProvider
     try {
       RPCMiddleWare res =
-          await this.messenger.sendServer(Endpoint.ScillaCheck, {'code': code});
+          await this.messenger!.sendServer(Endpoint.ScillaCheck, {'code': code});
       if (res.result.toString() != 'error' && res.message != null) {
         var decoded = json.decode(res.message);
         return decoded['contract_info'];
@@ -75,7 +75,7 @@ class TestScilla extends Contract {
 
   Map getTestPayload() {
     var payload = this.deployPayload;
-    var newList = List.from(this.init);
+    var newList = List.from(this.init!);
     newList.addAll(this.blockchain);
     var newMap = {
       'code': this.code,
@@ -85,7 +85,7 @@ class TestScilla extends Contract {
     return payload;
   }
 
-  Future<TestScilla> decodeABI({String code}) async {
+  Future<TestScilla> decodeABI({String? code}) async {
     try {
       this.setCode(code);
       var abiObj = await this.getABI(code: code);
@@ -96,17 +96,17 @@ class TestScilla extends Contract {
     }
   }
 
-  Future<TestScilla> setBlockNumber(int number) async {
+  Future<TestScilla> setBlockNumber(int? number) async {
     try {
       if (number != null) {
         this.setBlockchain(number.toString());
         this.setCreationBlock(number.toString());
         return this;
       } else if (number == null) {
-        var res = await this.messenger.send(RPCMethod.GetLatestTxBlock);
+        var res = await this.messenger!.send(RPCMethod.GetLatestTxBlock);
         if (res.result != null) {
-          this.setBlockchain(res.result.toMap()['header']['BlockNum']);
-          this.setCreationBlock(res.result.toMap()['header']['BlockNum']);
+          this.setBlockchain(res.result!.toMap()!['header']['BlockNum']);
+          this.setCreationBlock(res.result!.toMap()!['header']['BlockNum']);
           return this;
         } else {
           return this;
@@ -120,17 +120,17 @@ class TestScilla extends Contract {
   }
 
   TestScilla setABI(Map abi) {
-    this.abi = new ABI(abi);
+    this.abi = new ABI(abi as Map<String, dynamic>);
     return this;
   }
 
-  TestScilla setCode(String code) {
+  TestScilla setCode(String? code) {
     this.code = code ?? '';
     return this;
   }
 
   TestScilla setInitParamsValues(
-      List<Map> initParams, List<Map> arrayOfValues) {
+      List<Map> initParams, List<Map>? arrayOfValues) {
     this.init = setParamValues(initParams, arrayOfValues);
     return this;
   }
@@ -146,7 +146,7 @@ class TestScilla extends Contract {
       }
     ]);
     var block = result[0];
-    List newList = List.from(this.init);
+    List newList = List.from(this.init!);
     newList.add(block);
     this.init = List.from(newList);
     return this;

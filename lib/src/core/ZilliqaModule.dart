@@ -1,11 +1,11 @@
 abstract class ZilliqaModule<M, F> {
-  M messenger;
+  M? messenger;
   F setMessenger(M data);
 }
 
 abstract class AccountState {
   bool get isEncrypted;
-  bool isFound;
+  bool? isFound;
   static void setEncrypt() {}
   static void setFound() {}
 }

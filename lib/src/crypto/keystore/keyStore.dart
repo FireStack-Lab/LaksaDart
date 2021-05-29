@@ -24,5 +24,5 @@ part 'function.dart';
 part 'util.dart';
 
 abstract class KeyStore {
-  Map get keyStoreMap;
+  Map? get keyStoreMap;
 }

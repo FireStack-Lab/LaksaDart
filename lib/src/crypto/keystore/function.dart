@@ -3,14 +3,14 @@ part of 'keyStore.dart';
 final String ALGO_IDENTIFIER = 'aes-128-ctr';
 
 Future<String> encrypt(String privateKey, String passphrase,
-    [Map<String, dynamic> options]) async {
+    [Map<String, dynamic>? options]) async {
   Uint8List uuid = new Uint8List(16);
 
   String salt = crypto.randomHex(64);
   List<int> iv = crypto.randomBytes(16);
-  String kdf = 'scrypt';
-  int level = 8192;
-  int n = kdf == 'pbkdf2' ? 262144 : level;
+  String? kdf = 'scrypt';
+  int? level = 8192;
+  int? n = kdf == 'pbkdf2' ? 262144 : level;
   if (options == null) {
     kdf = 'scrypt';
     level = 8192;
@@ -18,7 +18,7 @@ Future<String> encrypt(String privateKey, String passphrase,
   } else {
     kdf = options['kdf'] is String ? options['kdf'] : 'scrypt';
     level = options['level'] is int ? options['level'] : 8192;
-    n = kdf == 'pbkdf2' ? 262144 : level;
+    n = kdf == 'pbkdf2' ? 262144 : level!;
   }
 
   Map<String, dynamic> kdfParams = {
@@ -34,7 +34,7 @@ Future<String> encrypt(String privateKey, String passphrase,
   List<int> derivedKey = derivator.deriveKey(encodedPassword);
 
   List<int> ciphertextBytes =
-      await _encryptPrivateKey(derivator, encodedPassword, iv, privateKey);
+      await _encryptPrivateKey(derivator, encodedPassword as Uint8List, iv as Uint8List, privateKey);
 
   List<int> macBuffer = derivedKey.sublist(16, 32) +
       ciphertextBytes +
@@ -62,7 +62,7 @@ Future<String> encrypt(String privateKey, String passphrase,
 
 Future<String> decrypt(Map<String, dynamic> keyStore, String passphrase) async {
   List<int> ciphertext = numbers.hexToBytes(keyStore['crypto']['ciphertext']);
-  String kdf = keyStore['crypto']['kdf'];
+  String? kdf = keyStore['crypto']['kdf'];
 
   Map<String, dynamic> kdfparams = keyStore['crypto']['kdfparams'] is String
       ? json.decode(keyStore['crypto']['kdfparams'])
@@ -92,6 +92,6 @@ Future<String> decrypt(Map<String, dynamic> keyStore, String passphrase) async {
 
   var aes = _initCipher(false, aesKey, iv);
 
-  var privateKeyByte = await aes.process(encryptedPrivateKey);
+  var privateKeyByte = await aes.process(encryptedPrivateKey as Uint8List);
   return numbers.bytesToHex(privateKeyByte);
 }

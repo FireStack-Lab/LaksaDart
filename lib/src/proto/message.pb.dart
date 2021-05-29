@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: message.proto
 //
-// @dart = 2.3
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -28,7 +28,7 @@ class ByteArray extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ByteArray copyWith(void Function(ByteArray) updates) => super.copyWith((message) => updates(message as ByteArray)); // ignore: deprecated_member_use
+  ByteArray copyWith(void Function(ByteArray) updates) => super.copyWith((message) => updates(message as ByteArray)) as ByteArray; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ByteArray create() => ByteArray._();
@@ -36,7 +36,7 @@ class ByteArray extends $pb.GeneratedMessage {
   static $pb.PbList<ByteArray> createRepeated() => $pb.PbList<ByteArray>();
   @$core.pragma('dart2js:noInline')
   static ByteArray getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ByteArray>(create);
-  static ByteArray _defaultInstance;
+  static ByteArray? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get data => $_getN(0);
@@ -74,7 +74,7 @@ class ProtoTransactionCoreInfo extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ProtoTransactionCoreInfo copyWith(void Function(ProtoTransactionCoreInfo) updates) => super.copyWith((message) => updates(message as ProtoTransactionCoreInfo)); // ignore: deprecated_member_use
+  ProtoTransactionCoreInfo copyWith(void Function(ProtoTransactionCoreInfo) updates) => super.copyWith((message) => updates(message as ProtoTransactionCoreInfo)) as ProtoTransactionCoreInfo; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ProtoTransactionCoreInfo create() => ProtoTransactionCoreInfo._();
@@ -82,7 +82,7 @@ class ProtoTransactionCoreInfo extends $pb.GeneratedMessage {
   static $pb.PbList<ProtoTransactionCoreInfo> createRepeated() => $pb.PbList<ProtoTransactionCoreInfo>();
   @$core.pragma('dart2js:noInline')
   static ProtoTransactionCoreInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ProtoTransactionCoreInfo>(create);
-  static ProtoTransactionCoreInfo _defaultInstance;
+  static ProtoTransactionCoreInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get version => $_getIZ(0);
@@ -192,7 +192,7 @@ class ProtoTransaction extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ProtoTransaction copyWith(void Function(ProtoTransaction) updates) => super.copyWith((message) => updates(message as ProtoTransaction)); // ignore: deprecated_member_use
+  ProtoTransaction copyWith(void Function(ProtoTransaction) updates) => super.copyWith((message) => updates(message as ProtoTransaction)) as ProtoTransaction; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ProtoTransaction create() => ProtoTransaction._();
@@ -200,7 +200,7 @@ class ProtoTransaction extends $pb.GeneratedMessage {
   static $pb.PbList<ProtoTransaction> createRepeated() => $pb.PbList<ProtoTransaction>();
   @$core.pragma('dart2js:noInline')
   static ProtoTransaction getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ProtoTransaction>(create);
-  static ProtoTransaction _defaultInstance;
+  static ProtoTransaction? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get tranid => $_getN(0);
@@ -254,7 +254,7 @@ class ProtoTransactionReceipt extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ProtoTransactionReceipt copyWith(void Function(ProtoTransactionReceipt) updates) => super.copyWith((message) => updates(message as ProtoTransactionReceipt)); // ignore: deprecated_member_use
+  ProtoTransactionReceipt copyWith(void Function(ProtoTransactionReceipt) updates) => super.copyWith((message) => updates(message as ProtoTransactionReceipt)) as ProtoTransactionReceipt; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ProtoTransactionReceipt create() => ProtoTransactionReceipt._();
@@ -262,7 +262,7 @@ class ProtoTransactionReceipt extends $pb.GeneratedMessage {
   static $pb.PbList<ProtoTransactionReceipt> createRepeated() => $pb.PbList<ProtoTransactionReceipt>();
   @$core.pragma('dart2js:noInline')
   static ProtoTransactionReceipt getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ProtoTransactionReceipt>(create);
-  static ProtoTransactionReceipt _defaultInstance;
+  static ProtoTransactionReceipt? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get receipt => $_getN(0);
@@ -302,7 +302,7 @@ class ProtoTransactionWithReceipt extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ProtoTransactionWithReceipt copyWith(void Function(ProtoTransactionWithReceipt) updates) => super.copyWith((message) => updates(message as ProtoTransactionWithReceipt)); // ignore: deprecated_member_use
+  ProtoTransactionWithReceipt copyWith(void Function(ProtoTransactionWithReceipt) updates) => super.copyWith((message) => updates(message as ProtoTransactionWithReceipt)) as ProtoTransactionWithReceipt; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ProtoTransactionWithReceipt create() => ProtoTransactionWithReceipt._();
@@ -310,7 +310,7 @@ class ProtoTransactionWithReceipt extends $pb.GeneratedMessage {
   static $pb.PbList<ProtoTransactionWithReceipt> createRepeated() => $pb.PbList<ProtoTransactionWithReceipt>();
   @$core.pragma('dart2js:noInline')
   static ProtoTransactionWithReceipt getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ProtoTransactionWithReceipt>(create);
-  static ProtoTransactionWithReceipt _defaultInstance;
+  static ProtoTransactionWithReceipt? _defaultInstance;
 
   @$pb.TagNumber(1)
   ProtoTransaction get transaction => $_getN(0);

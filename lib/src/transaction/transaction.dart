@@ -13,27 +13,27 @@ class TransactionSent {
 }
 
 class Transaction implements BaseTransaction {
-  int version = 0;
-  String TranID;
-  String toAddr;
-  int nonce = 0;
-  String pubKey;
-  BigInt amount;
-  BigInt gasPrice;
-  int gasLimit;
-  String code;
-  String data;
-  Map<String, dynamic> receipt;
-  String signature;
+  int? version = 0;
+  String? TranID;
+  String? toAddr;
+  int? nonce = 0;
+  String? pubKey;
+  BigInt? amount;
+  BigInt? gasPrice;
+  int? gasLimit;
+  String? code;
+  String? data;
+  Map<String, dynamic>? receipt;
+  String? signature;
   String get senderAddress => this._senderAddress();
   // messenger
-  Messenger messenger;
+  Messenger? messenger;
   bool toDS = false;
 
   // getter txParmas
   Map<String, dynamic> get txParams => {
         'version': this.version,
-        'toAddr': ZilAddress.toValidAddress(this.toAddr),
+        'toAddr': ZilAddress.toValidAddress(this.toAddr!),
         'nonce': this.nonce,
         'pubKey': this.pubKey,
         'amount': this.amount,
@@ -48,7 +48,7 @@ class Transaction implements BaseTransaction {
   // getter toPayload
   Map<String, dynamic> get toPayload => {
         'version': this.version,
-        'toAddr': ZilAddress.toValidAddress(this.toAddr),
+        'toAddr': ZilAddress.toValidAddress(this.toAddr!),
         'nonce': this.nonce,
         'pubKey': this.pubKey,
         'amount': this.amount.toString(),
@@ -60,18 +60,18 @@ class Transaction implements BaseTransaction {
         'priority': this.toDS
       };
 
-  TxStatus status;
+  TxStatus? status;
 
   String _senderAddress() {
     if (this.pubKey != null) {
       return '0' * 40;
     }
-    return getAddressFromPublicKey(this.pubKey);
+    return getAddressFromPublicKey(this.pubKey!);
   }
 
   Transaction(
-      {Map params,
-      Messenger messenger,
+      {required Map params,
+      Messenger? messenger,
       TxStatus status = TxStatus.Initialised,
       bool toDS = false}) {
     // params
@@ -150,17 +150,17 @@ class Transaction implements BaseTransaction {
     return this;
   }
 
-  Future<TransactionSent> sendTransaction() async {
+  Future<TransactionSent?> sendTransaction() async {
     try {
       if (this.signature == null) {
         throw 'The Transaction has not been signed';
       }
       var res = await this
-          .messenger
+          .messenger!
           .send(RPCMethod.CreateTransaction, this.toPayload);
 
       if (res.result != null) {
-        var result = res.result.toMap();
+        var result = res.result!.toMap()!;
         var TranID = result['TranID'];
         if (TranID == null) {
           throw 'Transaction fail';
@@ -170,7 +170,7 @@ class Transaction implements BaseTransaction {
           return new TransactionSent(this, result);
         }
       } else if (res.error != null) {
-        throw res.error.message;
+        throw res.error!.message!;
       } else
         return null;
     } catch (error) {
@@ -178,16 +178,16 @@ class Transaction implements BaseTransaction {
     }
   }
 
-  Future<bool> trackTx(String txHash) async {
-    var res = await this.messenger.send(RPCMethod.GetTransaction, txHash);
+  Future<bool> trackTx(String? txHash) async {
+    var res = await this.messenger!.send(RPCMethod.GetTransaction, txHash);
 
     if (res.error != null) {
       return false;
     }
 
-    this.TranID = res.result.resultMap['ID'];
-    this.receipt = res.result.resultMap['receipt'];
-    this.status = this.receipt != null && this.receipt['success']
+    this.TranID = res.result!.resultMap!['ID'];
+    this.receipt = res.result!.resultMap!['receipt'];
+    this.status = this.receipt != null && this.receipt!['success']
         ? TxStatus.Confirmed
         : TxStatus.Rejected;
 
@@ -195,7 +195,7 @@ class Transaction implements BaseTransaction {
   }
 
   Future<Transaction> confirm(
-      {String txHash, int maxAttempts = 20, int interval = 1000}) async {
+      {String? txHash, int? maxAttempts = 20, int? interval = 1000}) async {
     this.status = TxStatus.Pending;
     int attempt = 0;
     do {
@@ -207,8 +207,8 @@ class Transaction implements BaseTransaction {
         this.status = TxStatus.Rejected;
         rethrow;
       }
-      if (attempt < maxAttempts - 1) {
-        sleep(ms: interval * attempt, callback: () => attempt += 1);
+      if (attempt < maxAttempts! - 1) {
+        sleep(ms: interval! * attempt, callback: () => attempt += 1);
       } else
         break;
     } while (attempt < maxAttempts);
@@ -219,7 +219,7 @@ class Transaction implements BaseTransaction {
 
   int getVersion() {
     var CHAIN_ID_BIT = 2 << 16;
-    var b = this.version;
+    var b = this.version!;
     return CHAIN_ID_BIT + b;
   }
 }

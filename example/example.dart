@@ -9,20 +9,20 @@ main() async {
       scillaUrl: 'https://scilla-runner.zilliqa.com',
       networkID: 'DevNet');
 
-  var acc = laksa.wallet
+  var acc = laksa.wallet!
       .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
 
   void autoTransaction() async {
-    await acc.encryptAccount('111');
+    await acc!.encryptAccount('111');
     await acc.updateBalance();
-    var nonce = acc.nonce;
+    var nonce = acc.nonce!;
     var txn = laksa.transactions.newTx({
       'toAddr': ZilAddress('2e3c9b415b19ae4035503a06192a0fad76e04243').bech32,
       'amount': unit.Unit.Li(nonce + 1).qa,
       'gasPrice': unit.Unit.Li(2000).qa,
       'gasLimit': 1,
       'version':
-          laksa.messenger.setTransactionVersion(1, laksa.messenger.Network_ID)
+          laksa.messenger!.setTransactionVersion(1, laksa.messenger!.Network_ID)
     });
 
     var signed = await acc.signTransaction(txn, passphrase: '111');
@@ -31,7 +31,7 @@ main() async {
     print(json.encode(signed.toPayload));
     print("\n");
 
-    var sent = await signed.sendTransaction();
+    var sent = await (signed.sendTransaction() as Future<TransactionSent>);
     print("Transaction ID is");
     print(sent.transaction.TranID);
     print("\n");
@@ -40,12 +40,9 @@ main() async {
     var result = await sent.transaction.confirm(
         txHash: sent.transaction.TranID, maxAttempts: 33, interval: 1000);
     print(
-        "${result.receipt['success'] ? "Yes" : "No"}! Detail at: 'https://viewblock.io/zilliqa/tx/0x${sent.transaction.TranID}?network=${laksa.networkID == 'DevNet' ? 'testnet' : 'mainnet'}'");
-
-    if (result != null) {
-      var during = DateTime.now().difference(sendTime);
-      print('Transaction confirmed during:$during');
-    }
+        "${result.receipt!['success'] ? "Yes" : "No"}! Detail at: 'https://viewblock.io/zilliqa/tx/0x${sent.transaction.TranID}?network=${laksa.networkID == 'DevNet' ? 'testnet' : 'mainnet'}'");
+    var during = DateTime.now().difference(sendTime);
+    print('Transaction confirmed during:$during');
     print("\n");
   }
 
@@ -86,7 +83,7 @@ main() async {
         {"vname": "symbol", "type": "String", "value": "\$\BOB"}
       ];
 
-      laksa.wallet.add(
+      laksa.wallet!.add(
           'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
 
       var newContract = laksa.contracts
@@ -94,16 +91,14 @@ main() async {
       newContract.setDeployPayload(
           gasLimit: 10000, gasPrice: BigInt.from(3000000000), toDS: true);
       var sent = await newContract.sendContract();
-      print(sent.transaction.toPayload);
+      print(sent.transaction!.toPayload);
       var sendTime = DateTime.now();
       print('sent contract at:$sendTime');
-      print(sent.transaction.TranID);
+      print(sent.transaction!.TranID);
       var deployed = await sent.confirmTx(maxAttempts: 33, interval: 1000);
       print(deployed.ContractAddress);
-      if (deployed != null) {
-        var during = DateTime.now().difference(sendTime);
-        print('deployed confirmed during:$during');
-      }
+      var during = DateTime.now().difference(sendTime);
+      print('deployed confirmed during:$during');
 
       // test call contract
 
@@ -139,7 +134,7 @@ main() async {
             'https://dev-api.zilliqa.com', //'https://staging-api.aws.z7a.xyz'
         scillaUrl: 'https://scilla-runner.zilliqa.com',
         networkID: 'DevNet');
-    var newAcc = laksa.wallet.create();
+    var newAcc = laksa.wallet!.create();
     await newAcc.encryptAccount('passphrase');
 
     print(
@@ -154,9 +149,9 @@ main() async {
 
   // await autoTransaction();
 
-  await wallet();
+  wallet();
   for (int i = 0; i < 1; i++) {
-    await autoTransaction();
+    autoTransaction();
   }
 
   //  await deploy();

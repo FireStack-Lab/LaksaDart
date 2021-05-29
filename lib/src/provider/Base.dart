@@ -1,7 +1,7 @@
 enum MiddlewareType { REQ, RES }
 
 class UseMiddleware {
-  dynamic use;
+  late dynamic use;
 }
 
 class Middleware {
@@ -10,11 +10,11 @@ class Middleware {
 }
 
 abstract class ReqMiddleware<I> {
-  I reqMiddleware;
+  I? reqMiddleware;
 }
 
 abstract class ResMiddleware<O> {
-  O resMiddleware;
+  O? resMiddleware;
 }
 
 typedef Transformer<I, O> = O Function(I payload);
@@ -25,15 +25,15 @@ class BaseProvider
     implements
         ReqMiddleware<Map<dynamic, List<Transformer>>>,
         ResMiddleware<Map<dynamic, List<Transformer>>> {
-  String url;
-  Map<dynamic, List<Transformer>> reqMiddleware;
-  Map<dynamic, List<Transformer>> resMiddleware;
+  String? url;
+  Map<dynamic, List<Transformer>>? reqMiddleware;
+  Map<dynamic, List<Transformer>>? resMiddleware;
 
   Middleware middleware = new Middleware();
 
-  BaseProvider(Map reqMiddleware, Map resMiddleware) {
-    this.reqMiddleware = reqMiddleware is Map ? reqMiddleware : {'*': []};
-    this.resMiddleware = resMiddleware is Map ? resMiddleware : {'*': []};
+  BaseProvider(Map? reqMiddleware, Map? resMiddleware) {
+    this.reqMiddleware = reqMiddleware is Map ? reqMiddleware as Map<dynamic, List<dynamic Function(dynamic)>>? : {'*': []};
+    this.resMiddleware = resMiddleware is Map ? resMiddleware as Map<dynamic, List<dynamic Function(dynamic)>>? : {'*': []};
     this.middleware.request.use = (Transformer fn, {String match = '*'}) =>
         this._pushMiddleware(fn, MiddlewareType.REQ, match);
     this.middleware.response.use = (Transformer fn, {String match = '*'}) =>
@@ -46,34 +46,34 @@ class BaseProvider
     }
 
     if (type == MiddlewareType.REQ) {
-      var current = this.reqMiddleware[match] ?? [];
+      var current = this.reqMiddleware![match] ?? [];
       List<Transformer> matchers = List.from(current);
       matchers.add(fn);
       this
-          .reqMiddleware
+          .reqMiddleware!
           .update(match, (found) => matchers, ifAbsent: () => matchers);
     } else {
-      var current = this.resMiddleware[match] ?? [];
+      var current = this.resMiddleware![match] ?? [];
       List<Transformer> matchers = List.from(current);
       matchers.add(fn);
       this
-          .resMiddleware
+          .resMiddleware!
           .update(match, (found) => matchers, ifAbsent: () => matchers);
     }
   }
 
-  List<List<Transformer>> getMiddleware(String method) {
+  List<List<Transformer>> getMiddleware(String? method) {
     List<Transformer> reqFns = [];
     List<Transformer> resFns = [];
 
-    for (var ent in this.reqMiddleware.entries) {
+    for (var ent in this.reqMiddleware!.entries) {
       var key = ent.key;
       var transformers = ent.value;
       if (key is String && key != '*' && key == method) {
         reqFns.addAll(transformers);
       }
 
-      if (key is RegExp && key.hasMatch(method)) {
+      if (key is RegExp && key.hasMatch(method!)) {
         reqFns.addAll(transformers);
       }
 
@@ -82,14 +82,14 @@ class BaseProvider
       }
     }
 
-    for (var ent in this.resMiddleware.entries) {
+    for (var ent in this.resMiddleware!.entries) {
       var key = ent.key;
       var transformers = ent.value;
       if (key is String && key != '*' && key == method) {
         resFns.addAll(transformers);
       }
 
-      if (key is RegExp && key.hasMatch(method)) {
+      if (key is RegExp && key.hasMatch(method!)) {
         resFns.addAll(transformers);
       }
 

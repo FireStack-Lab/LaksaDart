@@ -30,19 +30,19 @@ var DefaultConfig = new ZilliqaConfig({
 });
 
 class Laksa {
-  String nodeUrl;
-  String scillaUrl;
-  String networkID;
-  HttpProvider nodeProvider;
-  HttpProvider scillaProvider;
-  Messenger messenger;
-  Blockchain blockchain;
-  Wallet wallet;
-  Contracts contracts;
-  TransactionFactory transactions;
-  ZilliqaConfig config;
+  String? nodeUrl;
+  String? scillaUrl;
+  String? networkID;
+  HttpProvider? nodeProvider;
+  HttpProvider? scillaProvider;
+  Messenger? messenger;
+  Blockchain? blockchain;
+  Wallet? wallet;
+  late Contracts contracts;
+  late TransactionFactory transactions;
+  late ZilliqaConfig config;
 
-  Laksa({String nodeUrl, String scillaUrl, String networkID}) {
+  Laksa({String? nodeUrl, String? scillaUrl, String? networkID}) {
     if (scillaUrl == null) {
       this.scillaUrl = nodeUrl;
     } else {
@@ -50,7 +50,7 @@ class Laksa {
     }
     this.nodeUrl = nodeUrl;
     this.config = DefaultConfig;
-    this.networkID = networkID ?? this.config.Default.Network_ID;
+    this.networkID = networkID ?? this.config.Default!.Network_ID;
 
     if (validators.isUrl(this.nodeUrl) && validators.isUrl(this.scillaUrl)) {
       this.setNodeProvider(this.nodeUrl);
@@ -66,13 +66,13 @@ class Laksa {
     this.setNetworkID(this.networkID);
   }
 
-  void setNodeProvider(String url) {
+  void setNodeProvider(String? url) {
     this.nodeUrl = url;
     this.nodeProvider = new HttpProvider(url);
     this.setMessenger();
   }
 
-  void setScillaProvider(String url) {
+  void setScillaProvider(String? url) {
     this.scillaUrl = url;
     this.scillaProvider = new HttpProvider(url);
     this.setMessenger();
@@ -94,7 +94,7 @@ class Laksa {
 
   void setWallet() {
     this.wallet = new Wallet();
-    this.wallet.setMessenger(this.messenger);
+    this.wallet!.setMessenger(this.messenger);
   }
 
   void setTransactions() {
@@ -106,7 +106,7 @@ class Laksa {
         new Contracts(messenger: this.messenger, wallet: this.wallet);
   }
 
-  void setNetworkID(String id) {
-    this.messenger.setNetworkID(id);
+  void setNetworkID(String? id) {
+    this.messenger!.setNetworkID(id);
   }
 }

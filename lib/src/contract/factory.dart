@@ -11,18 +11,18 @@ import 'contract.dart';
 import 'testScilla.dart';
 
 class Contracts implements ZilliqaModule<Messenger, void> {
-  Messenger messenger;
-  Wallet wallet;
+  Messenger? messenger;
+  Wallet? wallet;
   void setMessenger(Messenger data) {
     this.messenger = data;
   }
 
-  Contracts({Messenger messenger, Wallet wallet}) {
+  Contracts({Messenger? messenger, Wallet? wallet}) {
     this.messenger = messenger;
     this.wallet = wallet;
   }
 
-  Contract newContract({String code, List init, int version, bool toDS}) {
+  Contract newContract({String? code, List? init, int? version, bool? toDS}) {
     return new Contract(
         params: {'code': code, 'init': init, 'version': version},
         messenger: this.messenger,
@@ -52,7 +52,7 @@ class Contracts implements ZilliqaModule<Messenger, void> {
     return newSha.substring(24);
   }
 
-  Future<bool> testContract({String code, List init, int version}) async {
+  Future<bool> testContract({String? code, List? init, int? version}) async {
     TestScilla contract = new TestScilla(
         params: {'code': code, 'init': init, 'version': version},
         messenger: this.messenger,
@@ -62,7 +62,7 @@ class Contracts implements ZilliqaModule<Messenger, void> {
         .decodeABI(code: code)
         // we set the init params to decoded ABI
         .then((decoded) =>
-            decoded.setInitParamsValues(decoded.abi.getInitParams(), init))
+            decoded.setInitParamsValues(decoded.abi!.getInitParams()!, init as List<Map<dynamic, dynamic>>?))
         // we get the current block number from node, and set it to params
         .then((inited) => inited.setBlockNumber(null))
         // but we have to give it a test

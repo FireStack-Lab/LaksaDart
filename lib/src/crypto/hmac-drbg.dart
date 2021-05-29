@@ -2,10 +2,10 @@ import 'package:crypto/crypto.dart';
 import '../utils/common.dart';
 
 class HMAC extends Hmac {
-  Hash hash;
+  late Hash hash;
 
-  dynamic key;
-  List<int> inner;
+  late dynamic key;
+  late List<int> inner;
   int get blockSize => hash.blockSize ~/ 8;
 
   HMAC(hash, key) : super(hash, key) {
@@ -28,24 +28,24 @@ class HMAC extends Hmac {
 }
 
 class DRBG<T> {
-  Hash hash;
-  List<int> entropy;
-  List<int> nonce;
-  List<int> pers;
-  int get outLen => hash.blockSize * 4;
-  dynamic K;
-  dynamic V;
+  Hash? hash;
+  late List<int> entropy;
+  late List<int> nonce;
+  late List<int> pers;
+  int get outLen => hash!.blockSize * 4;
+  late dynamic K;
+  late dynamic V;
   dynamic _reseed;
   dynamic reseedInterval;
 
   DRBG(
-      {Hash hash,
+      {Hash? hash,
       dynamic entropy,
       dynamic nonce,
       dynamic pers,
-      String entropyEnc,
-      String nonceEnc,
-      String persEnc}) {
+      String? entropyEnc,
+      String? nonceEnc,
+      String? persEnc}) {
     this.hash = hash;
     this.entropy = (entropy is List<int>)
         ? entropy

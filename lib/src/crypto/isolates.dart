@@ -3,8 +3,8 @@ import 'dart:async';
 import 'schnorr.dart';
 import 'keystore/api.dart';
 
-Future<dynamic> asyncEncrypt(String prvKey, String psw,
-    [Map<String, dynamic> options]) async {
+Future<dynamic> asyncEncrypt(String? prvKey, String? psw,
+    [Map<String, dynamic>? options]) async {
   final response = new ReceivePort();
 
   await Isolate.spawn(
@@ -41,7 +41,7 @@ void _isolate_encrypt(SendPort initialReplyTo) {
     try {
       final prvKey = message[0] as String;
       final psw = message[1] as String;
-      final options = message[2] as Map<String, dynamic>;
+      final options = message[2] as Map<String, dynamic>?;
       final send = message.last as SendPort;
       var encrypted;
       encrypted = await encrypt(prvKey, psw, options);
@@ -54,8 +54,8 @@ void _isolate_encrypt(SendPort initialReplyTo) {
 }
 
 Future<dynamic> asyncDecrypt(
-  Map<String, dynamic> keyStore,
-  String psw,
+  Map<String, dynamic>? keyStore,
+  String? psw,
 ) async {
   final response = new ReceivePort();
 
@@ -147,7 +147,7 @@ void _isolate_genratePrvKey(SendPort initialReplyTo) {
 }
 
 Future<dynamic> asyncSchnorrSign(
-  String privateKey,
+  String? privateKey,
   Map<String, dynamic> txnDetails,
 ) async {
   final response = new ReceivePort();
@@ -339,12 +339,12 @@ void _isolate_getAddressFromPublicKey(SendPort initialReplyTo) {
 }
 
 class IsolateFunction {
-  List<dynamic> params;
-  Function func;
+  List<dynamic>? params;
+  Function? func;
 
   final response = new ReceivePort();
   final receivePort = new ReceivePort();
-  Isolate _isolate_instance;
+  Isolate? _isolate_instance;
 
   IsolateFunction({this.params, this.func});
 
@@ -357,7 +357,7 @@ class IsolateFunction {
     sendPort.send([
       this.func,
       receivePort.sendPort,
-      this.params.iterator,
+      this.params!.iterator,
     ]);
     try {
       final result = await receivePort.first;
@@ -376,7 +376,7 @@ class IsolateFunction {
 
   void kill() {
     if (_isolate_instance != null) {
-      _isolate_instance.kill();
+      _isolate_instance!.kill();
       response.close();
       receivePort.close();
     }

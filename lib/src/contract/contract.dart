@@ -10,23 +10,23 @@ import 'api.dart';
 
 class Contract implements BaseContract {
   String code = '';
-  List<Map> init = [];
-  String ContractAddress;
-  ContractStatus status;
-  Transaction transaction;
-  int version;
-  bool toDS = false;
+  List<Map>? init = [];
+  String? ContractAddress;
+  ContractStatus? status;
+  Transaction? transaction;
+  int? version;
+  bool? toDS = false;
   //----- factory ---//
-  Messenger messenger;
-  Wallet wallet;
-  Account get signer => this.wallet.getAccount(this.wallet.defaultAccount);
+  Messenger? messenger;
+  Wallet? wallet;
+  Account? get signer => this.wallet!.getAccount(this.wallet!.defaultAccount);
 
   Contract(
-      {Map params,
-      Messenger messenger,
-      Wallet wallet,
-      ContractStatus status = ContractStatus.INITIALISED,
-      bool toDS = false}) {
+      {required Map params,
+      Messenger? messenger,
+      Wallet? wallet,
+      ContractStatus? status = ContractStatus.INITIALISED,
+      bool? toDS = false}) {
     this.code = params['code'] ?? '';
     this.init = params['init'] ?? [];
     this.version = params['version'] ?? 0;
@@ -60,10 +60,9 @@ class Contract implements BaseContract {
   }
 
   Map get deployPayload => {
-        'version': this.version < 65536
-            ? this
-                .messenger
-                .setTransactionVersion(this.version, this.messenger.Network_ID)
+        'version': this.version! < 65536
+            ? this.messenger!.setTransactionVersion(
+                this.version!, this.messenger!.Network_ID)
             : this.version,
         'amount': BigInt.from(0),
         'toAddr': ZilAddress.toValidAddress('0x' + '0' * 40),
@@ -72,12 +71,11 @@ class Contract implements BaseContract {
       };
 
   Map get callPayload => {
-        'version': this.version < 65536
-            ? this
-                .messenger
-                .setTransactionVersion(this.version, this.messenger.Network_ID)
+        'version': this.version! < 65536
+            ? this.messenger!.setTransactionVersion(
+                this.version!, this.messenger!.Network_ID)
             : this.version,
-        'toAddr': ZilAddress.toCheckSum(this.ContractAddress)
+        'toAddr': ZilAddress.toCheckSum(this.ContractAddress!)
       };
 
   void setStatus(ContractStatus status) {
@@ -85,17 +83,17 @@ class Contract implements BaseContract {
   }
 
   Future<Contract> deploy(
-      {int gasLimit,
-      BigInt gasPrice,
-      Account account,
-      String passphrase,
+      {int? gasLimit,
+      BigInt? gasPrice,
+      Account? account,
+      String? passphrase,
       int maxAttempts = 20,
       int interval = 1000,
       bool toDS = false}) async {
     var defaultGasLimit = 2500000000;
     var defaultGasPrice = BigInt.from(100000000);
 
-    if (this.code == null || this.init == null) {
+    if (this.init == null) {
       throw 'Cannot deploy without code or ABI.';
     }
 
@@ -103,7 +101,7 @@ class Contract implements BaseContract {
       this.setDeployPayload(
           gasLimit: gasLimit ?? defaultGasLimit,
           gasPrice: gasPrice ?? defaultGasPrice,
-          toDS: toDS ?? this.toDS);
+          toDS: toDS);
       await this.sendContract(
           account: account ?? this.signer, passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
@@ -114,13 +112,13 @@ class Contract implements BaseContract {
   }
 
   Future<Contract> call(
-      {String transition,
+      {String? transition,
       params,
-      BigInt amount,
+      BigInt? amount,
       int gasLimit = 1000,
-      BigInt gasPrice,
-      Account account,
-      String passphrase,
+      BigInt? gasPrice,
+      Account? account,
+      String? passphrase,
       int maxAttempts = 20,
       int interval = 1000,
       bool toDS = false}) async {
@@ -136,7 +134,7 @@ class Contract implements BaseContract {
           amount: amount ?? defaultAmount,
           gasLimit: gasLimit,
           gasPrice: gasPrice ?? defaultGasPrice,
-          toDS: toDS ?? this.toDS);
+          toDS: toDS);
       await this.sendContract(
           account: account ?? this.signer, passphrase: passphrase);
       await this.confirmTx(maxAttempts: maxAttempts, interval: interval);
@@ -149,12 +147,12 @@ class Contract implements BaseContract {
   Future<Contract> confirmTx(
       {int maxAttempts = 20, int interval = 1000}) async {
     try {
-      await this.transaction.confirm(
-          txHash: this.transaction.TranID,
+      await this.transaction!.confirm(
+          txHash: this.transaction!.TranID,
           maxAttempts: maxAttempts,
           interval: interval);
-      if (this.transaction.receipt != null ||
-          !this.transaction.receipt['success']) {
+      if (this.transaction!.receipt != null ||
+          !this.transaction!.receipt!['success']) {
         this.setStatus(ContractStatus.REJECTED);
         return this;
       }
@@ -165,16 +163,17 @@ class Contract implements BaseContract {
     }
   }
 
-  Future<Contract> sendContract({Account account, String passphrase}) async {
+  Future<Contract> sendContract({Account? account, String? passphrase}) async {
     try {
       await this.signTxn(account: account, passphrase: passphrase);
 
-      var txnSent = await this.transaction.sendTransaction();
+      var txnSent = await (this.transaction!.sendTransaction()
+          as FutureOr<TransactionSent>);
 
       var transaction = txnSent.transaction;
       var result = txnSent.result;
 
-      this.ContractAddress = this.ContractAddress.isNotEmpty
+      this.ContractAddress = this.ContractAddress!.isNotEmpty
           ? this.ContractAddress
           : result['ContractAddress'];
 
@@ -193,8 +192,8 @@ class Contract implements BaseContract {
     }
   }
 
-  Future<Contract> signTxn({Account account, String passphrase}) async {
-    Account signingAccount = account ?? this.signer;
+  Future<Contract> signTxn({Account? account, String? passphrase}) async {
+    Account signingAccount = account ?? this.signer!;
     try {
       this.transaction = await signingAccount.signTransaction(this.transaction,
           passphrase: passphrase);
@@ -210,18 +209,18 @@ class Contract implements BaseContract {
    * @function {getState}
    * @return {type} {description}
    */
-  Future<List> getState() async {
+  Future<List?> getState() async {
     if (this.status == ContractStatus.DEPLOYED) {
       return [];
     }
     var response = await this
-        .messenger
+        .messenger!
         .send('GetSmartContractState', this.ContractAddress);
     if (response.result != null) {
-      return response.result.resultList;
+      return response.result!.resultList;
     }
     if (response.error != null) {
-      throw response.error;
+      throw response.error!;
     }
     return null;
   }
@@ -233,7 +232,7 @@ class Contract implements BaseContract {
   }
 
   Contract setDeployPayload(
-      {BigInt gasPrice, int gasLimit, bool toDS = false}) {
+      {BigInt? gasPrice, int? gasLimit, bool toDS = false}) {
     Map add = {
       'gasPrice': gasPrice,
       'gasLimit': gasLimit,
@@ -241,18 +240,18 @@ class Contract implements BaseContract {
     Map params = Map.from(this.deployPayload);
     params.addAll(add);
 
-    this.transaction = new Transaction(
-        params: params, messenger: this.messenger, toDS: toDS ?? this.toDS);
+    this.transaction =
+        new Transaction(params: params, messenger: this.messenger, toDS: toDS);
 
     return this;
   }
 
   Contract setCallPayload(
-      {String transition,
-      List<Map> params,
-      BigInt amount,
-      int gasLimit,
-      BigInt gasPrice,
+      {String? transition,
+      List<Map>? params,
+      BigInt? amount,
+      int? gasLimit,
+      BigInt? gasPrice,
       bool toDS = false}) {
     Map msg = {
       '_tag': transition,
@@ -267,7 +266,7 @@ class Contract implements BaseContract {
     };
     txnParams.addAll(newMaps);
     this.transaction = new Transaction(
-        params: txnParams, messenger: this.messenger, toDS: toDS ?? this.toDS);
+        params: txnParams, messenger: this.messenger, toDS: toDS);
     return this;
   }
 }

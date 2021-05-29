@@ -3,7 +3,7 @@ import 'package:laksadart/src/messenger/Messenger.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
 
 class TransactionFactory implements ZilliqaModule<Messenger, void> {
-  Messenger messenger;
+  Messenger? messenger;
   void setMessenger(Messenger data) {
     this.messenger = data;
   }

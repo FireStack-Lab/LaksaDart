@@ -18,16 +18,16 @@ class HttpProvider extends BaseProvider implements RPCRequest {
   Map<String, String> headers = {'Content-Type': 'application/json'};
 
   @override
-  String url;
+  String? url;
 
-  RPCRequestPayload payload;
-  RPCRequestOptions options;
+  RPCRequestPayload? payload;
+  RPCRequestOptions? options;
 
   HttpProvider(url, [req, res]) : super(req, res) {
     this.url = url;
   }
 
-  Map<String, dynamic> buildPayload(String method, [dynamic params]) {
+  Map<String, dynamic> buildPayload(String? method, [dynamic params]) {
     return {
       'url': this.url,
       'payload': {
@@ -52,7 +52,7 @@ class HttpProvider extends BaseProvider implements RPCRequest {
   }
 
   Future<RPCMiddleWare> _requestFunc(
-      {String method, dynamic params, String endpoint}) async {
+      {String? method, dynamic params, String? endpoint}) async {
     List<List<Transformer>> middleware = this.getMiddleware(method);
     Transformer reqMiddleware = this.composeMiddleware(middleware.first);
     Transformer resMiddleware = this.composeMiddleware(middleware.last);
@@ -61,7 +61,7 @@ class HttpProvider extends BaseProvider implements RPCRequest {
     var req = reqMiddleware(endpoint == null
         ? this.buildPayload(method, params)
         : this.buildEndpointPayload(params));
-    var url = endpoint == null ? this.url : '${this.url}${endpoint}';
+    var url = endpoint == null ? this.url! : '${this.url}${endpoint}';
     var headers = this.headers;
 
     /// request to RPC
@@ -90,7 +90,7 @@ Future<RPCMiddleWare> performRPC(
 
   var response = await client
       .post(Uri.parse(url),
-          headers: headers, body: json.encode(request['payload']))
+          headers: headers as Map<String, String>?, body: json.encode(request['payload']))
       .whenComplete(client.close);
 
   Map<String, dynamic> body = json.decode(response.body);

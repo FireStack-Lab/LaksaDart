@@ -16,19 +16,19 @@ void main() {
       // error i=284
       for (int i = 285; i < 1000; i++) {
         String pub = testJson[i]['pub'];
-        String priv = testJson[i]['priv'];
+        String? priv = testJson[i]['priv'];
         String msg = testJson[i]['msg'];
-        String k = testJson[i]['k'];
+        String? k = testJson[i]['k'];
         String r = testJson[i]['r'];
         String s = testJson[i]['s'];
 
-        var sig = null;
+        dynamic sig = null;
 
         while (sig == null) {
           sig = await schnorr.trySign(
               numbers.hexToBytes(msg),
-              numbers.hexToInt(k),
-              numbers.hexToInt(priv),
+              numbers.hexToInt(k!),
+              numbers.hexToInt(priv!),
               numbers.hexToBytes(pub));
         }
 

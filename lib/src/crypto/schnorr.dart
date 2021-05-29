@@ -86,9 +86,7 @@ BigInt hash(BigInt q, List<int> pubkey, List<int> msg) {
 
   var Q = numbers.intToBytes(q);
 
-  List<int> B = new List(totalLength);
-
-  B.fillRange(0, totalLength, 0);
+  List<int> B = List.filled(totalLength, 0);
 
   B.setRange(0, Q.length, Q);
 
@@ -118,7 +116,7 @@ DRBG getDRBG(List<int> msg) {
     randomPers = randomPers.substring(0, (ENT_LEN) * 2);
   }
   var randomPerBytes = numbers.hexToBytes(randomPers);
-  var pers = new List<int>(ALG_LEN + ENT_LEN);
+  var pers = []..length = ALG_LEN + ENT_LEN;
   pers.fillRange(0, pers.length, 0);
 
   pers.setRange(0, randomPerBytes.length, randomPerBytes);

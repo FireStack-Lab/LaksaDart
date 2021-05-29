@@ -24,7 +24,7 @@ void main() {
         expect(abiObject.params.toString(),
             equals('[{vname: owner, type: ByStr20}]'));
         expect(abiObject.fields.toString(),
-            equals('[{vname: welcome_msg, type: String}]'));
+            equals('[{vname: welcome_msg, type: String, depth: 0}]'));
         expect(
             abiObject.transitions.toString(),
             equals(

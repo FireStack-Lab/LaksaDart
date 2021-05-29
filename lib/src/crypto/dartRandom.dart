@@ -18,16 +18,13 @@ class DartRandom implements SecureRandom {
   @override
   BigInt nextBigInteger(int bitLength) {
     int fullBytes = bitLength ~/ 8;
-
-    /// var remainingBits = bitLength % 8;
-
-    /// Generate a number from the full bytes. Then, prepend a smaller number
-    /// covering the remaining bits.
     BigInt main = numbers.bytesToInt(nextBytes(fullBytes));
 
     /// forcing remainingBits to be calculate with bitLength
-    int remainingBits = (bitLength - (main.bitLength + 1));
-    int additional = remainingBits < 4 ? pow(2, remainingBits) : remainingBits;
+    int remainingBits = (bitLength - main.bitLength);
+    int additional = remainingBits < 4
+        ? dartRandom.nextInt(pow(2, remainingBits))
+        : remainingBits;
     BigInt additionalBit = (new BigInt.from(additional) << (fullBytes * 8));
     BigInt result = main + additionalBit;
     return result;

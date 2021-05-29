@@ -89,7 +89,8 @@ Future<RPCMiddleWare> performRPC(
   Client client = new Client();
 
   var response = await client
-      .post(url, headers: headers, body: json.encode(request['payload']))
+      .post(Uri.parse(url),
+          headers: headers, body: json.encode(request['payload']))
       .whenComplete(client.close);
 
   Map<String, dynamic> body = json.decode(response.body);

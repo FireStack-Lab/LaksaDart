@@ -13,7 +13,7 @@ class HMAC extends Hmac {
     this.key = key;
     this.inner = List.from([]);
   }
-  HMAC _hmac() {
+  HMAC hmac() {
     return new HMAC(this.hash, this.key);
   }
 
@@ -60,16 +60,16 @@ class DRBG<T> {
   }
 
   void init() {
-    List<int> seed = new List<int>(
-        this.entropy.length + this.nonce.length + this.pers.length);
+    List<int> seed = []..length =
+        this.entropy.length + this.nonce.length + this.pers.length;
     seed.setRange(0, this.entropy.length, this.entropy);
     seed.setRange(this.entropy.length, this.entropy.length + this.nonce.length,
         this.nonce);
     seed.setRange(
         this.entropy.length + this.nonce.length, seed.length, this.pers);
 
-    this.K = new List<int>(this.outLen ~/ 8);
-    this.V = new List<int>(this.outLen ~/ 8);
+    this.K = []..length = this.outLen ~/ 8;
+    this.V = []..length = this.outLen ~/ 8;
 
     for (int i = 0; i < this.V.length; i++) {
       this.K[i] = 0x00;
@@ -102,7 +102,7 @@ class DRBG<T> {
   }
 
   String generate(int len, [dynamic add]) {
-    var temp = new List<T>();
+    var temp = [];
 
     while (temp.length < len) {
       this.V = this._hmac().update(this.V).digest().bytes;

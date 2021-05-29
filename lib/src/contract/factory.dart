@@ -73,13 +73,8 @@ class Contracts implements ZilliqaModule<Messenger, void> {
             : {
                 'abi': state.abi,
                 'init': state.init,
-                'status': ContractStatus.ERROR
+                'status': ContractStatus.ERROR,
               });
-
-    if (result['status'] == ContractStatus.TESTED) {
-      return true;
-    } else {
-      return false;
-    }
+    return result['status'] == ContractStatus.TESTED;
   }
 }

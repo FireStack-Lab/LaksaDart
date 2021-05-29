@@ -42,7 +42,6 @@ void main() {
       Laksa laksa = new Laksa(
           nodeUrl: 'https://dev-api.zilliqa.com',
           scillaUrl: 'https://scilla-runner.zilliqa.com');
-      // laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
       var init = [
         {'vname': "_scilla_version", 'type': "Uint32", 'value': "0"},
         {

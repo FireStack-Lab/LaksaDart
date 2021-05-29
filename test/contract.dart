@@ -36,7 +36,7 @@ void main() {
       }
     });
   });
-  test('Test call to scilla-runner', () async {
+/*  test('Test call to scilla-runner', () async {
     File contract = new File('test/contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
       Laksa laksa = new Laksa(
@@ -57,7 +57,7 @@ void main() {
 
       expect(testResult, equals(true));
     });
-  });
+  });*/
   // test("Test deploy", () async {
   //   File contract = new File('./contracts/helloworld.txt');
   //   await contract.readAsString().then((contractString) async {

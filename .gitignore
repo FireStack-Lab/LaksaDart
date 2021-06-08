@@ -4,3 +4,4 @@ _experimental.dart
 pedantic*.yaml
 .packages
 pubspec.lock
+build/*

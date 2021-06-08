@@ -2,3 +2,5 @@ node_modules
 .dart_tool
 _experimental.dart
 pedantic*.yaml
+.packages
+pubspec.lock

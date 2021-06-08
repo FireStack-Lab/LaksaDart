@@ -8,4 +8,3 @@ export 'signature.dart';
 export 'sha256digest.dart';
 export 'isolates.dart';
 export 'checksum.dart';
-export 'bech32.dart';

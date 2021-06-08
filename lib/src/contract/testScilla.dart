@@ -20,7 +20,8 @@ class TestScilla extends Contract {
   List<Map> blockchain = [];
   ABI? abi;
 
-  TestScilla({required Map params, Messenger? messenger, ContractStatus? status})
+  TestScilla(
+      {required Map params, Messenger? messenger, ContractStatus? status})
       : super(params: params, messenger: messenger, status: status) {
     this.code = params['code'] ?? '';
     this.init = params['init'] ?? [];
@@ -33,17 +34,14 @@ class TestScilla extends Contract {
 
   Future<TestScilla> testCall(gasLimit) async {
     try {
-      Map<String, dynamic> callContractJson = {
+      RPCMiddleWare res =
+          await this.messenger!.sendServer(Endpoint.ScillaCall, {
         'code': this.code,
         'init': json.encode(this.init),
         'blockchain': json.encode(this.blockchain),
         'gaslimit': gasLimit.toString()
-      };
-
-      /// the endpoint for sendServer has been set to scillaProvider
-      RPCMiddleWare res = await this
-          .messenger!
-          .sendServer(Endpoint.ScillaCall, callContractJson);
+      });
+      print(res.message);
       if (res.result.toString() != 'error') {
         this.setStatus(ContractStatus.TESTED);
       } else {
@@ -58,8 +56,9 @@ class TestScilla extends Contract {
   Future<dynamic> getABI({String? code}) async {
     /// the endpoint for sendServer has been set to scillaProvider
     try {
-      RPCMiddleWare res =
-          await this.messenger!.sendServer(Endpoint.ScillaCheck, {'code': code});
+      RPCMiddleWare res = await this
+          .messenger!
+          .sendServer(Endpoint.ScillaCheck, {'code': code});
       if (res.result.toString() != 'error' && res.message != null) {
         var decoded = json.decode(res.message);
         return decoded['contract_info'];
@@ -131,6 +130,7 @@ class TestScilla extends Contract {
 
   TestScilla setInitParamsValues(
       List<Map> initParams, List<Map>? arrayOfValues) {
+    print(arrayOfValues);
     this.init = setParamValues(initParams, arrayOfValues);
     return this;
   }

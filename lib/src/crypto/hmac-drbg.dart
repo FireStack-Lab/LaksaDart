@@ -13,6 +13,7 @@ class HMAC extends Hmac {
     this.key = key;
     this.inner = List.from([]);
   }
+
   HMAC hmac() {
     return new HMAC(this.hash, this.key);
   }
@@ -60,8 +61,8 @@ class DRBG<T> {
   }
 
   void init() {
-    List<int> seed = []..length =
-        this.entropy.length + this.nonce.length + this.pers.length;
+    List<int> seed = List.filled(
+        this.entropy.length + this.nonce.length + this.pers.length, 0);
     seed.setRange(0, this.entropy.length, this.entropy);
     seed.setRange(this.entropy.length, this.entropy.length + this.nonce.length,
         this.nonce);
@@ -70,7 +71,6 @@ class DRBG<T> {
 
     this.K = []..length = this.outLen ~/ 8;
     this.V = []..length = this.outLen ~/ 8;
-
     for (int i = 0; i < this.V.length; i++) {
       this.K[i] = 0x00;
       this.V[i] = 0x01;
@@ -83,22 +83,25 @@ class DRBG<T> {
   }
 
   HMAC _hmac() {
-    return new HMAC(this.hash, this.K);
+    return new HMAC(this.hash, this.K.cast<int>());
   }
 
   void _update(seed) {
-    var kmac = this._hmac().update(this.V).update([0x00]);
-
+    var kmac = this._hmac().update(this.V.cast<int>()).update([0x00]);
     if (seed != null) {
       kmac.update(seed);
     }
     this.K = kmac.digest().bytes;
-    this.V = this._hmac().update(this.V).digest().bytes;
+    this.V = this._hmac().update(this.V.cast<int>()).digest().bytes;
     if (seed == null) return;
-
-    this.K =
-        this._hmac().update(this.V).update([0x01]).update(seed).digest().bytes;
-    this.V = this._hmac().update(this.V).digest().bytes;
+    this.K = this
+        ._hmac()
+        .update(this.V.cast<int>())
+        .update([0x01])
+        .update(seed)
+        .digest()
+        .bytes;
+    this.V = this._hmac().update(this.V.cast<int>()).digest().bytes;
   }
 
   String generate(int len, [dynamic add]) {

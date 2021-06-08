@@ -20,7 +20,7 @@ main() async {
       'toAddr': ZilAddress('2e3c9b415b19ae4035503a06192a0fad76e04243').bech32,
       'amount': unit.Unit.Li(nonce + 1).qa,
       'gasPrice': unit.Unit.Li(2000).qa,
-      'gasLimit': 1,
+      'gasLimit': 50,
       'version':
           laksa.messenger!.setTransactionVersion(1, laksa.messenger!.Network_ID)
     });
@@ -31,7 +31,11 @@ main() async {
     print(json.encode(signed.toPayload));
     print("\n");
 
-    var sent = await (signed.sendTransaction() as Future<TransactionSent>);
+    var sent = await signed.sendTransaction();
+    if (sent == null) {
+      print("sent txn is null");
+      return;
+    }
     print("Transaction ID is");
     print(sent.transaction.TranID);
     print("\n");
@@ -136,7 +140,6 @@ main() async {
         networkID: 'DevNet');
     var newAcc = laksa.wallet!.create();
     await newAcc.encryptAccount('passphrase');
-
     print(
         "Sender Address is: ${ZilAddress(getAddressFromPublicKey('02526CC9198736761D9FFDAE0CA5E848667D31BFDB7754D8F7B2291D17A60CF63C')).bech32}");
 

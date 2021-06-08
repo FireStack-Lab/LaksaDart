@@ -188,7 +188,6 @@ void _isolate_SchnorrSign(SendPort initialReplyTo) {
       final prv = message[0] as String;
       final txn = message[1] as Map<String, dynamic>;
       final send = message.last as SendPort;
-
       send.send(SchnorrSign(prv, txn));
     } catch (e) {
       message.last.send('@@LaksaError@@$e');

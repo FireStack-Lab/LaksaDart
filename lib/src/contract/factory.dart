@@ -61,8 +61,9 @@ class Contracts implements ZilliqaModule<Messenger, void> {
         // decode ABI from code first
         .decodeABI(code: code)
         // we set the init params to decoded ABI
-        .then((decoded) =>
-            decoded.setInitParamsValues(decoded.abi!.getInitParams()!, init as List<Map<dynamic, dynamic>>?))
+        .then((decoded) => decoded.setInitParamsValues(
+            decoded.abi!.getInitParams()!,
+            init as List<Map<dynamic, dynamic>>?))
         // we get the current block number from node, and set it to params
         .then((inited) => inited.setBlockNumber(null))
         // but we have to give it a test

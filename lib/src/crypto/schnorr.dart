@@ -121,8 +121,8 @@ DRBG getDRBG(List<int> msg) {
 
   pers.setRange(0, randomPerBytes.length, randomPerBytes);
   pers.setRange(ENT_LEN, pers.length, ALG);
-
-  return new DRBG(hash: sha256, entropy: entropy, nonce: nonce, pers: pers);
+  return new DRBG(
+      hash: sha256, entropy: entropy, nonce: nonce, pers: pers.cast<int>());
 }
 
 SchnorrSignature toSignature(List<int> serialised) {
@@ -189,7 +189,6 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   BigInt prv = numbers.bytesToInt(privKey);
   DRBG drbg = getDRBG(msg);
   int len = numbers.intToBytes(params.n).length;
-
   var sig;
 
   while (sig == null) {
@@ -274,7 +273,6 @@ typedef SignedTransaction = Map<String, dynamic> Function(
 Map<String, dynamic> SchnorrSign(
     String privateKey, Map<String, dynamic> txnDetails) {
   var pubKey = getPubKeyFromPrivateKey(privateKey);
-
   Map<String, dynamic> txn = {
     'version': txnDetails['version'],
     'nonce': txnDetails['nonce'],

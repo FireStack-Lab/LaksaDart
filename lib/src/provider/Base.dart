@@ -32,8 +32,12 @@ class BaseProvider
   Middleware middleware = new Middleware();
 
   BaseProvider(Map? reqMiddleware, Map? resMiddleware) {
-    this.reqMiddleware = reqMiddleware is Map ? reqMiddleware as Map<dynamic, List<dynamic Function(dynamic)>>? : {'*': []};
-    this.resMiddleware = resMiddleware is Map ? resMiddleware as Map<dynamic, List<dynamic Function(dynamic)>>? : {'*': []};
+    this.reqMiddleware = reqMiddleware is Map
+        ? reqMiddleware as Map<dynamic, List<dynamic Function(dynamic)>>?
+        : {'*': []};
+    this.resMiddleware = resMiddleware is Map
+        ? resMiddleware as Map<dynamic, List<dynamic Function(dynamic)>>?
+        : {'*': []};
     this.middleware.request.use = (Transformer fn, {String match = '*'}) =>
         this._pushMiddleware(fn, MiddlewareType.REQ, match);
     this.middleware.response.use = (Transformer fn, {String match = '*'}) =>

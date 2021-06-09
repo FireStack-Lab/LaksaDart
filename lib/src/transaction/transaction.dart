@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:laksadart/src/provider/net.dart';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/account/address.dart';
 import 'package:laksadart/src/crypto/index.dart';
+import 'package:laksadart/src/utils/network.dart';
 import 'util.dart';
 import 'api.dart';
 
@@ -14,7 +15,7 @@ class TransactionSent {
 
 class Transaction implements BaseTransaction {
   int? version = 0;
-  String? TranID;
+  String? transactionID;
   String? toAddr;
   int? nonce = 0;
   String? pubKey;
@@ -29,6 +30,9 @@ class Transaction implements BaseTransaction {
   // messenger
   Messenger? messenger;
   bool toDS = false;
+
+  String get receiptInfo =>
+      "Result: ${receipt!['success'] ? "Success" : "Failure"}\nhttps://viewblock.io/zilliqa/tx/0x${this.transactionID}?network=${Network.current.blockExplorerNetwork}";
 
   // getter txParmas
   Map<String, dynamic> get txParams => {
@@ -76,7 +80,7 @@ class Transaction implements BaseTransaction {
       bool toDS = false}) {
     // params
     this.version = params['version'];
-    this.TranID = params['TranID'];
+    this.transactionID = params['TranID'];
     this.toAddr = ZilAddress.toValidAddress(params['toAddr']);
     this.nonce = params['nonce'];
     this.pubKey = params['pubKey'];
@@ -130,7 +134,7 @@ class Transaction implements BaseTransaction {
 
   void setParams(Map params) {
     this.version = params['version'];
-    this.TranID = params['TranID'];
+    this.transactionID = params['TranID'];
     this.toAddr = ZilAddress.toValidAddress(params['toAddr']);
     this.nonce = params['nonce'];
     this.pubKey = params['pubKey'];
@@ -165,7 +169,7 @@ class Transaction implements BaseTransaction {
         if (TranID == null) {
           throw 'Transaction fail';
         } else {
-          this.TranID = TranID;
+          this.transactionID = TranID;
           this.status = TxStatus.Pending;
           return new TransactionSent(this, result);
         }
@@ -180,12 +184,11 @@ class Transaction implements BaseTransaction {
 
   Future<bool> trackTx(String? txHash) async {
     var res = await this.messenger!.send(RPCMethod.GetTransaction, txHash);
-
     if (res.error != null) {
       return false;
     }
 
-    this.TranID = res.result!.resultMap!['ID'];
+    this.transactionID = res.result!.resultMap!['ID'];
     this.receipt = res.result!.resultMap!['receipt'];
     this.status = this.receipt != null && this.receipt!['success']
         ? TxStatus.Confirmed

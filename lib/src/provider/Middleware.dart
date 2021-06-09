@@ -50,7 +50,9 @@ class SuccessMiddleware implements RPCResult {
             ? resultMap.toString()
             : resultList != null
                 ? resultList.toString()
-                : raw != null ? raw.toString() : raw;
+                : raw != null
+                    ? raw.toString()
+                    : raw;
   }
 
   Map? toMap() {

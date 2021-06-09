@@ -1,6 +1,6 @@
 library crypto;
 
-export 'keystore/keyStore.dart';
+export 'keystore/key_store.dart';
 export 'dartRandom.dart';
 export 'hmac-drbg.dart';
 export 'schnorr.dart';

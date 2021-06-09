@@ -128,13 +128,11 @@ class ZilAddress extends Address {
       new ZilAddress(crypto.getAddressFromPublicKey(publicKey));
 
   static Future<ZilAddress> asyncFromPrivateKey(String privateKey) async {
-    return new ZilAddress(
-        await (asyncGetAddressFromPrivateKey(privateKey) as FutureOr<String>));
+    return new ZilAddress(await asyncGetAddressFromPrivateKey(privateKey));
   }
 
   static Future<ZilAddress> asyncFromPublicKey(String publicKey) async {
-    return new ZilAddress(
-        await (asyncGetAddressFromPublicKey(publicKey) as FutureOr<String>));
+    return new ZilAddress(await asyncGetAddressFromPublicKey(publicKey));
   }
 
   static ZilAddress fromAddress(String address) =>

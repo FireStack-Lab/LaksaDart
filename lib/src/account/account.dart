@@ -4,8 +4,8 @@ import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
 import 'package:laksadart/src/crypto/isolates.dart';
 import 'package:laksadart/src/crypto/keystore/api.dart';
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
-import 'package:laksadart/src/core/ZilliqaModule.dart';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/core/zilliqa_module.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/provider/Middleware.dart';
 import 'package:laksadart/src/provider/net.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
@@ -13,17 +13,12 @@ import './api.dart' show BaseAccount;
 import './address.dart';
 
 /// Account instance with keystore encrypt/decrypt
-class Account
-    implements
-        BaseAccount,
-        KeyStore,
-        ZilliqaModule<Messenger, void>,
-        AccountState {
+class Account implements BaseAccount, KeyStore, ZilliqaModule, AccountState {
   /// static privatekey checker
   static final RegExp isPrivateKey =
       new RegExp(r"^(0x)?[0-9a-f]{64}", caseSensitive: false);
 
-  Messenger? messenger;
+  Messenger? _messenger;
 
   String? privateKey;
   String? publicKey;
@@ -53,7 +48,7 @@ class Account
     this.privateKey = privateKey;
     this.publicKey = this.getPublicKey(privateKey);
     this.address = this.getAddress(privateKey);
-    this.setMessenger(messenger);
+    this.messenger = messenger;
   }
 
   static fromMap(Map<String, dynamic> accountMap) {
@@ -99,16 +94,18 @@ class Account
 
   Future<Account> asyncCreate() async {
     try {
-      String? prv = await (asyncGeneratePrivateKey() as FutureOr<String?>);
+      String? prv = await asyncGeneratePrivateKey();
       return new Account(prv, this.messenger);
     } catch (e) {
       rethrow;
     }
   }
 
-  void setMessenger(Messenger? messenger) {
-    this.messenger = messenger;
-  }
+  @override
+  set messenger(Messenger? messenger) => this._messenger = messenger;
+
+  @override
+  Messenger get messenger => this._messenger!;
 
   /// import account from hex string
   Account import(dynamic prvHex) {
@@ -163,7 +160,7 @@ class Account
 
   Future<void> updateBalance() async {
     RPCResponseBody<SuccessMiddleware, ErrorMiddleware> res = await this
-        .messenger!
+        .messenger
         .send(RPCMethod.GetBalance, this.address.toString());
     if (res.error == null && res.result != null) {
       var balanceMap = res.result!.toMap();
@@ -248,8 +245,7 @@ class Account
 
   Future<String?> asyncGetPublicKey(String? privateKey) async {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
-      return await (asyncGetPubKeyFromPrivateKey(privateKey)
-          as FutureOr<String?>);
+      return await asyncGetPubKeyFromPrivateKey(privateKey);
     } else {
       return null;
     }

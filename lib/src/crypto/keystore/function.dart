@@ -1,4 +1,4 @@
-part of 'keyStore.dart';
+part of 'key_store.dart';
 
 final String ALGO_IDENTIFIER = 'aes-128-ctr';
 
@@ -33,8 +33,8 @@ Future<String> encrypt(String privateKey, String passphrase,
   _KeyDerivator derivator = getDerivedKey(kdf, kdfParams);
   List<int> derivedKey = derivator.deriveKey(encodedPassword);
 
-  List<int> ciphertextBytes =
-      await _encryptPrivateKey(derivator, encodedPassword as Uint8List, iv as Uint8List, privateKey);
+  List<int> ciphertextBytes = await _encryptPrivateKey(
+      derivator, encodedPassword as Uint8List, iv as Uint8List, privateKey);
 
   List<int> macBuffer = derivedKey.sublist(16, 32) +
       ciphertextBytes +

@@ -1,30 +1,31 @@
 import 'dart:async';
-import 'package:laksadart/src/core/ZilliqaModule.dart';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/core/zilliqa_module.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bip32/bip32.dart' as bip32;
 import './api.dart' show BaseWallet;
 import './account.dart';
 
-class Wallet
-    implements BaseWallet<List<String>>, ZilliqaModule<Messenger, void> {
+class Wallet implements BaseWallet<List<String>>, ZilliqaModule {
   List<String> get accounts => List.from(this.toMap.keys);
   int get length => accounts.length;
   String? defaultAccount;
-  Messenger? messenger;
+  Messenger? _messenger;
   Map<String, Account?> toMap = new Map<String, Account?>();
 
-  // factory
-  Wallet();
-  void setMessenger(Messenger? messenger) {
-    this.messenger = messenger;
-  }
+  Wallet(this._messenger);
+
+  @override
+  void set messenger(Messenger? messenger) => this._messenger = messenger;
+
+  @override
+  Messenger get messenger => this._messenger!;
 
   // add to wallet
   Account? add(dynamic obj) {
     if (obj is Account) {
-      obj.setMessenger(this.messenger);
+      obj.messenger = this.messenger;
       MapEntry<String, Account> entry =
           new MapEntry(obj.address.toString(), obj);
       this.toMap.addEntries([entry]);
@@ -39,7 +40,7 @@ class Wallet
       return this.getAccount(address.toString());
     } else if (obj is Map) {
       Account acc = Account.fromMap(obj as Map<String, dynamic>);
-      acc.setMessenger(this.messenger);
+      acc.messenger = this.messenger;
       String address = acc.address.toString();
       MapEntry<String, Account> entryNew = new MapEntry(address, acc);
       this.toMap.addEntries([entryNew]);

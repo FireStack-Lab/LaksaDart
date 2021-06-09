@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
 import 'package:laksadart/src/provider/Middleware.dart';
 import 'package:laksadart/src/provider/net.dart';
@@ -12,7 +12,7 @@ import 'contract.dart';
 class TestScilla extends Contract {
   String code = '';
   List<Map>? init;
-  String? ContractAddress;
+  String? contractAddress;
   int? version;
   Messenger? messenger;
   ContractStatus? status;
@@ -26,7 +26,7 @@ class TestScilla extends Contract {
     this.code = params['code'] ?? '';
     this.init = params['init'] ?? [];
     this.version = params['version'] ?? 0;
-    this.ContractAddress = params['ContractAddress'] ?? '';
+    this.contractAddress = params['ContractAddress'] ?? '';
     this.status = status;
     this.messenger = messenger;
     this.transaction = null;

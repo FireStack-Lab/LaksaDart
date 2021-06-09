@@ -19,7 +19,7 @@ import 'package:laksadart/src/utils/numbers.dart' as numbers;
 import '../hmac-drbg.dart';
 import '../schnorr.dart' as crypto;
 
-part 'keyDerivator.dart';
+part 'key_derivator.dart';
 part 'function.dart';
 part 'util.dart';
 

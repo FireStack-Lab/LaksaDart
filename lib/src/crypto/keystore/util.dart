@@ -1,4 +1,4 @@
-part of 'keyStore.dart';
+part of 'key_store.dart';
 
 /// getDerivedKey by ``kdf`` type
 _KeyDerivator getDerivedKey(String? kdf, Map<String, dynamic> params) {
@@ -20,7 +20,10 @@ _KeyDerivator getDerivedKey(String? kdf, Map<String, dynamic> params) {
 
 CTRStreamCipher _initCipher(bool forEncryption, List<int> key, List<int> iv) {
   return new CTRStreamCipher(new AESFastEngine())
-    ..init(false, new ParametersWithIV(new KeyParameter(key as Uint8List), iv as Uint8List));
+    ..init(
+        false,
+        new ParametersWithIV(
+            new KeyParameter(key as Uint8List), iv as Uint8List));
 }
 
 List<int> _encryptPrivateKey(_KeyDerivator _derivator, Uint8List _password,

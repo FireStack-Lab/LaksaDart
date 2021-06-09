@@ -39,10 +39,10 @@ void _isolate_encrypt(SendPort initialReplyTo) {
 
   port.listen((message) async {
     try {
-      final prvKey = message[0] as String;
-      final psw = message[1] as String;
-      final options = message[2] as Map<String, dynamic>?;
-      final send = message.last as SendPort;
+      final prvKey = message[0];
+      final psw = message[1];
+      final options = message[2];
+      final send = message.last;
       var encrypted;
       encrypted = await encrypt(prvKey, psw, options);
 

@@ -5,17 +5,15 @@ import 'dart:io';
 import "package:test/test.dart";
 import "package:laksadart/src/contract/factory.dart";
 import 'package:laksadart/src/contract/abi.dart';
-import 'package:laksadart/src/laksa.dart';
+import 'package:laksadart/src/zilliqa.dart';
 
 void main() {
   test("Test Get Contract ABIs", () async {
-    File contract = new File('test/contracts/helloworldversion.txt');
+    File contract = new File('contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
-      Laksa laksa = new Laksa(
-          nodeUrl: 'https://dev-api.zilliqa.com',
-          scillaUrl: 'https://scilla-runner.zilliqa.com');
+      Zilliqa laksa = new Zilliqa(nodeUrl: 'https://dev-api.zilliqa.com');
 
-      var result = await laksa.blockchain!.checkCode(code: contractString);
+      var result = await laksa.blockchain.checkCode(code: contractString);
 
       if (result.result.toString() != 'error' && result.message != null) {
         var abi = json.decode(result.message)['contract_info'];
@@ -37,11 +35,9 @@ void main() {
     });
   });
   test('Test call to scilla-runner', () async {
-    File contract = new File('test/contracts/helloworldversion.txt');
+    File contract = new File('contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
-      Laksa laksa = new Laksa(
-          nodeUrl: 'https://dev-api.zilliqa.com',
-          scillaUrl: 'https://scilla-runner.zilliqa.com');
+      Zilliqa laksa = new Zilliqa(nodeUrl: 'https://dev-api.zilliqa.com');
       var init = [
         {'vname': "_scilla_version", 'type': "Uint32", 'value': "0"},
         {

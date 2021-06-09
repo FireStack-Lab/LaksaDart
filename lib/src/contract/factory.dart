@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:laksadart/src/core/ZilliqaModule.dart';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/core/zilliqa_module.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/account/wallet.dart';
 import 'package:laksadart/src/transaction/index.dart';
 import 'package:laksadart/src/crypto/index.dart';
@@ -10,12 +10,18 @@ import 'util.dart';
 import 'contract.dart';
 import 'testScilla.dart';
 
-class Contracts implements ZilliqaModule<Messenger, void> {
-  Messenger? messenger;
-  Wallet? wallet;
-  void setMessenger(Messenger data) {
-    this.messenger = data;
-  }
+class Contracts implements ZilliqaModule {
+  Messenger? _messenger;
+  Wallet? _wallet;
+
+  @override
+  Messenger get messenger => this._messenger!;
+
+  @override
+  void set messenger(Messenger? messenger) => this._messenger = messenger;
+
+  Wallet get wallet => this._wallet!;
+  void set wallet(Wallet? wallet) => this._wallet = wallet;
 
   Contracts({Messenger? messenger, Wallet? wallet}) {
     this.messenger = messenger;
@@ -36,7 +42,7 @@ class Contracts implements ZilliqaModule<Messenger, void> {
       'code': contract.code,
       'init': contract.init,
       'version': contract.version,
-      'ContractAddress': contract.ContractAddress,
+      'ContractAddress': contract.contractAddress,
       'status': contract.status,
       'transaction': contract.transaction,
     }, messenger: this.messenger, wallet: this.wallet, toDS: contract.toDS);

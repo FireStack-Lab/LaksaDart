@@ -1,6 +1,6 @@
 library laksadart;
 
-export './src/Laksa.dart';
+export 'src/zilliqa.dart';
 export './src/account/index.dart';
 export './src/contract/index.dart';
 export './src/transaction/index.dart';

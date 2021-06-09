@@ -1,6 +1,6 @@
 abstract class TxParams {
   int? version;
-  String? TranID;
+  String? transactionID;
   String? toAddr;
   int? nonce = 0;
   String? pubKey;

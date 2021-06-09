@@ -1,4 +1,4 @@
-part of 'keyStore.dart';
+part of 'key_store.dart';
 
 abstract class _KeyDerivator {
   Uint8List deriveKey(List<int> password);

@@ -1,17 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:laksadart/laksadart.dart';
 import 'package:laksadart/src/account/account.dart';
 import 'package:laksadart/src/account/wallet.dart';
 import 'package:laksadart/src/account/address.dart';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
+import 'package:laksadart/src/utils/network.dart';
 import 'util.dart';
 import 'api.dart';
+import 'package:laksadart/src/utils/numbers.dart' as numbers;
 
 class Contract implements BaseContract {
   String code = '';
   List<Map>? init = [];
-  String? ContractAddress;
+  String? contractAddress;
   ContractStatus? status;
   Transaction? transaction;
   int? version;
@@ -31,7 +34,7 @@ class Contract implements BaseContract {
     this.init = params['init'] ?? [];
     this.version = params['version'] ?? 0;
     this.transaction = params['transaction'] ?? null;
-    this.ContractAddress = params['ContractAddress'] ?? '';
+    this.contractAddress = params['ContractAddress'] ?? '';
     this.status = params['status'] ?? status;
     // factory
     this.messenger = messenger;
@@ -60,10 +63,7 @@ class Contract implements BaseContract {
   }
 
   Map get deployPayload => {
-        'version': this.version! < 65536
-            ? this.messenger!.setTransactionVersion(
-                this.version!, this.messenger!.Network_ID)
-            : this.version,
+        'version': numbers.pack(Network.current.chainID!, 1),
         'amount': BigInt.from(0),
         'toAddr': ZilAddress.toValidAddress('0x' + '0' * 40),
         'code': this.code,
@@ -71,11 +71,8 @@ class Contract implements BaseContract {
       };
 
   Map get callPayload => {
-        'version': this.version! < 65536
-            ? this.messenger!.setTransactionVersion(
-                this.version!, this.messenger!.Network_ID)
-            : this.version,
-        'toAddr': ZilAddress.toCheckSum(this.ContractAddress!)
+        'version': numbers.pack(Network.current.chainID!, 1),
+        'toAddr': ZilAddress.toCheckSum(this.contractAddress!)
       };
 
   void setStatus(ContractStatus status) {
@@ -122,7 +119,7 @@ class Contract implements BaseContract {
       int maxAttempts = 20,
       int interval = 1000,
       bool toDS = false}) async {
-    if (this.ContractAddress == null) {
+    if (this.contractAddress == null) {
       throw 'Contract has not been deployed!';
     }
     var defaultAmount = BigInt.from(10000);
@@ -148,10 +145,10 @@ class Contract implements BaseContract {
       {int maxAttempts = 20, int interval = 1000}) async {
     try {
       await this.transaction!.confirm(
-          txHash: this.transaction!.TranID,
+          txHash: this.transaction!.transactionID,
           maxAttempts: maxAttempts,
           interval: interval);
-      if (this.transaction!.receipt != null ||
+      if (this.transaction!.receipt == null ||
           !this.transaction!.receipt!['success']) {
         this.setStatus(ContractStatus.REJECTED);
         return this;
@@ -167,14 +164,13 @@ class Contract implements BaseContract {
     try {
       await this.signTxn(account: account, passphrase: passphrase);
 
-      var txnSent = await (this.transaction!.sendTransaction()
-          as FutureOr<TransactionSent>);
+      var txnSent = await this.transaction!.sendTransaction();
 
-      var transaction = txnSent.transaction;
+      var transaction = txnSent!.transaction;
       var result = txnSent.result;
 
-      this.ContractAddress = this.ContractAddress!.isNotEmpty
-          ? this.ContractAddress
+      this.contractAddress = this.contractAddress!.isNotEmpty
+          ? this.contractAddress
           : result['ContractAddress'];
 
       this.transaction = transaction.map((obj) {
@@ -205,24 +201,14 @@ class Contract implements BaseContract {
     }
   }
 
-  /**
-   * @function {getState}
-   * @return {type} {description}
-   */
   Future<List?> getState() async {
-    if (this.status == ContractStatus.DEPLOYED) {
-      return [];
+    if (this.status != ContractStatus.DEPLOYED) {
+      return null;
     }
     var response = await this
         .messenger!
-        .send('GetSmartContractState', this.ContractAddress);
-    if (response.result != null) {
-      return response.result!.resultList;
-    }
-    if (response.error != null) {
-      throw response.error!;
-    }
-    return null;
+        .send(RPCMethod.GetSmartContractState, this.contractAddress);
+    return response.result!.resultList;
   }
 
   Contract setInitParamsValues(List<Map> initParams, List<Map> arrayOfValues) {

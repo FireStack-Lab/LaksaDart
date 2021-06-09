@@ -201,14 +201,14 @@ class Contract implements BaseContract {
     }
   }
 
-  Future<List?> getState() async {
+  Future<SuccessMiddleware?> getState() async {
     if (this.status != ContractStatus.DEPLOYED) {
       return null;
     }
     var response = await this
         .messenger!
         .send(RPCMethod.GetSmartContractState, this.contractAddress);
-    return response.result!.resultList;
+    return response.result;
   }
 
   Contract setInitParamsValues(List<Map> initParams, List<Map> arrayOfValues) {

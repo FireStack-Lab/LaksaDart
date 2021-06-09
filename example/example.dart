@@ -8,18 +8,17 @@ import 'package:laksadart/src/utils/numbers.dart' as numbers;
 main() async {
   Network.current = zilliqaNetworks["dev"]!;
   var zilliqa = new Zilliqa(nodeUrl: Network.current.nodeProviderUrl!);
-
+  //wallet(zilliqa);
   var account = zilliqa.wallet
       .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
-  //wallet();
+
   //autoTransaction(account, zilliqa);
   deploy();
 }
 
-void wallet() async {
+void wallet(Zilliqa zilliqa) async {
   print("Creating a New Wallet");
-  Zilliqa laksa = new Zilliqa(nodeUrl: 'https://dev-api.zilliqa.com');
-  var newAcc = laksa.wallet.create();
+  var newAcc = zilliqa.wallet.create();
   await newAcc.encryptAccount('passphrase');
   print("New Wallet Bech32 Address: ${newAcc.address!.bech32}");
   await newAcc.updateBalance();
@@ -94,24 +93,25 @@ void deploy() async {
     deployed.setCallPayload(
         transition: 'setHello',
         params: [
-          {'vname': "msg", 'type': "String", 'value': "Test World"}
+          {'vname': "msg", 'type': "String", 'value': "Hello Worldz!"}
         ],
         gasLimit: 10000,
         gasPrice: unit.Unit.Li(2000).qa,
         amount: unit.Unit.Qa(0).qa,
         toDS: false);
     var sentCall = await deployed.sendContract();
-    print("Call Transaction Payload: ${sentCall.transaction!.toPayload}");
+    print("Sent Call Transaction Payload: ${sentCall.transaction!.toPayload}");
     var calledTime = DateTime.now();
-    print('Sent Called Time: $calledTime');
-    print("Transaction ID: ${sentCall.transaction!.transactionID}");
+    print('Sent Call Time: $calledTime');
+    print("Sent Call Transaction ID: ${sentCall.transaction!.transactionID}");
 
     var result = await sentCall.confirmTx();
     print("Called Contract Status: ${result.status}");
     print("Called Contract Address: ${sentCall.contractAddress}");
     var during2 = DateTime.now().difference(calledTime);
     var state = await sentCall.getState();
-    print("Called Contract State: $state");
+    var message = state!.resultMap!["welcome_msg"];
+    print("Called Contract State: $message");
     print('Called Confirmed: $during2');
     //'https://scilla-runner.zilliqa.com'
   });

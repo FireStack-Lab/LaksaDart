@@ -1,10 +1,6 @@
 //https://dev.zilliqa.com/docs/apis/api-introduction/
 import 'package:laksadart/src/data/network/network_info.dart';
 
-class Network {
-  static late NetworkInfo current;
-}
-
 var zilliqaNetworks = {
   "mainnet": NetworkInfo(
       chainID: 1,

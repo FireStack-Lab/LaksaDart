@@ -6,13 +6,12 @@ import 'package:laksadart/laksadart.dart';
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
 
 main() async {
-  Network.current = zilliqaNetworks["dev"]!;
-  var zilliqa = new Zilliqa(nodeUrl: Network.current.nodeProviderUrl!);
-  //wallet(zilliqa);
+  var zilliqa = new Zilliqa(network: zilliqaNetworks["dev"]);
+  wallet(zilliqa);
   var account = zilliqa.wallet
       .add('e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
 
-  //autoTransaction(account, zilliqa);
+  autoTransaction(account, zilliqa);
   deploy();
 }
 
@@ -35,7 +34,7 @@ void autoTransaction(Account? acc, Zilliqa zilliqa) async {
     'amount': unit.Unit.Li(nonce + 1).qa,
     'gasPrice': unit.Unit.Li(2000).qa,
     'gasLimit': 50,
-    'version': numbers.pack(Network.current.chainID!, 1),
+    'version': numbers.pack(zilliqa.network!.chainID!, 1),
   });
 
   var signed = await acc.signTransaction(txn, passphrase: '111');
@@ -50,7 +49,7 @@ void autoTransaction(Account? acc, Zilliqa zilliqa) async {
   print("Transaction is confirmed?");
   var result =
       await sent.transaction.confirm(txHash: sent.transaction.transactionID);
-  print(result.receiptInfo);
+  print(result.getReceiptInfo(zilliqa.network!.blockExplorerNetwork!));
   var during = DateTime.now().difference(sendTime);
   print('Transaction Confirmed: $during');
 }
@@ -73,8 +72,10 @@ void deploy() async {
     zilliqa.wallet.add(
         'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
 
-    var newContract = zilliqa.contracts
-        .newContract(code: contractString, init: init, version: 0);
+    var newContract = zilliqa.contracts.newContract(
+        code: contractString,
+        init: init,
+        version: numbers.pack(zilliqa.network!.chainID!, 1));
     newContract.setDeployPayload(
         gasLimit: 1225, gasPrice: BigInt.from(3000000000), toDS: false);
     var sent = await newContract.sendContract();

@@ -6,10 +6,8 @@ import 'package:laksadart/src/account/wallet.dart';
 import 'package:laksadart/src/account/address.dart';
 import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
-import 'package:laksadart/src/utils/network.dart';
 import 'util.dart';
 import 'api.dart';
-import 'package:laksadart/src/utils/numbers.dart' as numbers;
 
 class Contract implements BaseContract {
   String code = '';
@@ -63,7 +61,7 @@ class Contract implements BaseContract {
   }
 
   Map get deployPayload => {
-        'version': numbers.pack(Network.current.chainID!, 1),
+        'version': this.version,
         'amount': BigInt.from(0),
         'toAddr': ZilAddress.toValidAddress('0x' + '0' * 40),
         'code': this.code,
@@ -71,7 +69,7 @@ class Contract implements BaseContract {
       };
 
   Map get callPayload => {
-        'version': numbers.pack(Network.current.chainID!, 1),
+        'version': this.version,
         'toAddr': ZilAddress.toCheckSum(this.contractAddress!)
       };
 

@@ -5,7 +5,10 @@ import 'package:laksadart/src/transaction/index.dart';
 import 'package:laksadart/src/contract/index.dart';
 import 'package:laksadart/src/utils/validators.dart' as validators;
 
+import 'data/network/network_info.dart';
+
 class Zilliqa {
+  NetworkInfo? network;
   String? nodeUrl;
   HttpProvider? nodeProvider;
   Messenger? _messenger;
@@ -14,8 +17,12 @@ class Zilliqa {
   Contracts? _contracts;
   TransactionFactory? _transactions;
 
-  Zilliqa({required String nodeUrl, HttpProvider? nodeProvider}) {
-    this.nodeUrl = nodeUrl;
+  Zilliqa({NetworkInfo? network, String? nodeUrl, HttpProvider? nodeProvider}) {
+    if (network != null) {
+      this.nodeUrl = network.nodeProviderUrl;
+    } else {
+      this.nodeUrl = nodeUrl;
+    }
     this.nodeProvider =
         nodeProvider != null ? nodeProvider : HttpProvider(this.nodeUrl);
     this._messenger = Messenger(nodeProvider: this.nodeProvider);

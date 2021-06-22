@@ -3,7 +3,6 @@ import 'package:laksadart/src/provider/net.dart';
 import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/account/address.dart';
 import 'package:laksadart/src/crypto/index.dart';
-import 'package:laksadart/src/utils/network.dart';
 import 'util.dart';
 import 'api.dart';
 
@@ -31,8 +30,8 @@ class Transaction implements BaseTransaction {
   Messenger? messenger;
   bool toDS = false;
 
-  String get receiptInfo =>
-      "Result: ${receipt!['success'] ? "Success" : "Failure"}\nhttps://viewblock.io/zilliqa/tx/0x${this.transactionID}?network=${Network.current.blockExplorerNetwork}";
+  String getReceiptInfo(String blockExplorer) =>
+      "Result: ${receipt!['success'] ? "Success" : "Failure"}\nhttps://viewblock.io/zilliqa/tx/0x${this.transactionID}?network=${blockExplorer}";
 
   // getter txParmas
   Map<String, dynamic> get txParams => {

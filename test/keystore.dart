@@ -7,7 +7,7 @@ import "package:laksadart/src/account/account.dart";
 
 main() {
   test("Test decrypt KeyStores", () async {
-    File schnorrVector = new File('./fixtures/keystores.json');
+    File schnorrVector = new File('test/fixtures/keystores.json');
 
     await schnorrVector
         .readAsString()
@@ -23,7 +23,7 @@ main() {
     });
   });
   test("Test encrypt KeyStores", () async {
-    File schnorrVector = new File('./fixtures/keystores.json');
+    File schnorrVector = new File('test/fixtures/keystores.json');
 
     await schnorrVector
         .readAsString()

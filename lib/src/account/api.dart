@@ -1,11 +1,11 @@
 abstract class BaseAccount {
-  String privateKey;
+  String? privateKey;
 }
 
 abstract class BaseWallet<E> {
   E get accounts;
   int get length;
-  String defaultAccount;
+  String? defaultAccount;
 }
 
 abstract class Signer {}

@@ -26,7 +26,7 @@ final ENT_LEN = 32;
 
 /// Generates a new private key using the random instance provided. Please make
 /// sure you're using a cryptographically secure generator.
-BigInt generateNewPrivateKey(Random random) {
+BigInt? generateNewPrivateKey(Random random) {
   var generator = new ECKeyGenerator();
 
   var keyParams = new ECKeyGeneratorParameters(params);
@@ -35,7 +35,7 @@ BigInt generateNewPrivateKey(Random random) {
 
   AsymmetricKeyPair key = generator.generateKeyPair();
 
-  ECPrivateKey privateKey = key.privateKey;
+  ECPrivateKey privateKey = key.privateKey as ECPrivateKey;
   return privateKey.d;
 }
 
@@ -44,7 +44,7 @@ BigInt generateNewPrivateKey(Random random) {
 String privateKeyToPublic(Uint8List privateKey) {
   BigInt privateKeyNum = numbers.bytesToInt(privateKey);
 
-  ECPoint p = params.G * privateKeyNum;
+  ECPoint p = (params.G * privateKeyNum)!;
   Uint8List result = p.getEncoded(true);
 
   return numbers.bytesToHex(result);
@@ -52,13 +52,13 @@ String privateKeyToPublic(Uint8List privateKey) {
 
 String getPublic(BigInt private) {
   List<dynamic> privateKeyBytes = numbers.numberToBytes(private);
-  return privateKeyToPublic(privateKeyBytes);
+  return privateKeyToPublic(privateKeyBytes as Uint8List);
 }
 
 //  privateKey generation
 String generatePrivateKey() {
   Random rng = new Random.secure();
-  BigInt prvKeyBigInt = generateNewPrivateKey(rng);
+  BigInt prvKeyBigInt = generateNewPrivateKey(rng)!;
   return prvKeyBigInt.toRadixString(16);
 }
 
@@ -86,9 +86,7 @@ BigInt hash(BigInt q, List<int> pubkey, List<int> msg) {
 
   var Q = numbers.intToBytes(q);
 
-  List<int> B = new List(totalLength);
-
-  B.fillRange(0, totalLength, 0);
+  List<int> B = List.filled(totalLength, 0);
 
   B.setRange(0, Q.length, Q);
 
@@ -118,13 +116,13 @@ DRBG getDRBG(List<int> msg) {
     randomPers = randomPers.substring(0, (ENT_LEN) * 2);
   }
   var randomPerBytes = numbers.hexToBytes(randomPers);
-  var pers = new List<int>(ALG_LEN + ENT_LEN);
+  var pers = []..length = ALG_LEN + ENT_LEN;
   pers.fillRange(0, pers.length, 0);
 
   pers.setRange(0, randomPerBytes.length, randomPerBytes);
   pers.setRange(ENT_LEN, pers.length, ALG);
-
-  return new DRBG(hash: sha256, entropy: entropy, nonce: nonce, pers: pers);
+  return new DRBG(
+      hash: sha256, entropy: entropy, nonce: nonce, pers: pers.cast<int>());
 }
 
 SchnorrSignature toSignature(List<int> serialised) {
@@ -133,7 +131,7 @@ SchnorrSignature toSignature(List<int> serialised) {
   return new SchnorrSignature(r, s);
 }
 
-SchnorrSignature trySign(
+SchnorrSignature? trySign(
     List<int> msg, BigInt k, BigInt privKey, List<int> pubKey) {
   bool isZero(BigInt test) =>
       test.compareTo(BigInt.from(0)) != 0 ? false : true;
@@ -157,7 +155,7 @@ SchnorrSignature trySign(
   }
 
   /// 2. Compute commitment Q = kG, where g is the base point
-  ECPoint Q = params.G * k;
+  ECPoint Q = (params.G * k)!;
 
   /// convert the commitment to octets first
   BigInt compressedQ = numbers.bytesToInt(Q.getEncoded());
@@ -191,13 +189,12 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   BigInt prv = numbers.bytesToInt(privKey);
   DRBG drbg = getDRBG(msg);
   int len = numbers.intToBytes(params.n).length;
-
   var sig;
 
   while (sig == null) {
     var k = numbers.hexToInt(drbg.generate(len));
 
-    var trySig = trySign(msg, k, prv, pubKey);
+    var trySig = trySign(msg, k, prv, pubKey)!;
     bool res = verify(
       msg,
       trySig.r,
@@ -213,26 +210,26 @@ SchnorrSignature sign(List<int> msg, List<int> privKey, List<int> pubKey) {
   return sig;
 }
 
-bool verify(List<int> msg, BigInt sigR, BigInt sigS, List<int> key) {
+bool verify(List<int> msg, BigInt? sigR, BigInt? sigS, List<int> key) {
   bool isZero(BigInt test) =>
       test.compareTo(BigInt.from(0)) != 0 ? false : true;
   bool isGteCurve(BigInt test) => test.compareTo(params.n) > 1 ? true : false;
 
   var sig = new SchnorrSignature(sigR, sigS);
 
-  if (isZero(sig.s) || isZero(sig.r)) {
+  if (isZero(sig.s!) || isZero(sig.r!)) {
     throw 'Invalid signature';
   }
 
-  if (sig.s.isNegative || sig.r.isNegative) {
+  if (sig.s!.isNegative || sig.r!.isNegative) {
     throw 'Invalid signature';
   }
 
-  if (isGteCurve(sig.s) || isGteCurve(sig.r)) {
+  if (isGteCurve(sig.s!) || isGteCurve(sig.r!)) {
     throw 'Invalid signature';
   }
 
-  ECPoint kpub = params.curve.decodePoint(key);
+  ECPoint kpub = params.curve.decodePoint(key)!;
 
   ///
   ///   if (!curve.validate(kpub)) {
@@ -240,11 +237,11 @@ bool verify(List<int> msg, BigInt sigR, BigInt sigS, List<int> key) {
   ///   }
   ///
 
-  ECPoint l = kpub * (sig.r);
+  ECPoint l = (kpub * (sig.r))!;
 
-  ECPoint r = params.G * (sig.s);
+  ECPoint? r = params.G * (sig.s);
 
-  ECPoint Q = l + r;
+  ECPoint Q = (l + r)!;
 
   if (Q.isInfinity) {
     throw 'Invalid intermediate point.';
@@ -276,7 +273,6 @@ typedef SignedTransaction = Map<String, dynamic> Function(
 Map<String, dynamic> SchnorrSign(
     String privateKey, Map<String, dynamic> txnDetails) {
   var pubKey = getPubKeyFromPrivateKey(privateKey);
-
   Map<String, dynamic> txn = {
     'version': txnDetails['version'],
     'nonce': txnDetails['nonce'],

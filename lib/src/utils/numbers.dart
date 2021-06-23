@@ -17,7 +17,8 @@ String strip0x(String hex) {
 /// with zeroes. Note that [forcePadLen] refers to the string length, meaning
 /// that one byte has a length of 2. When [include0x] is set to true, the
 /// output wil have "0x" prepended to it after any padding is done.
-String toHex(dynamic number, {bool pad = false, bool include0x = false, int forcePadLen}) {
+String toHex(dynamic number,
+    {bool pad = false, bool include0x = false, int? forcePadLen}) {
   String toHexSimple() {
     if (number is int)
       return number.toRadixString(16);
@@ -63,12 +64,12 @@ List<int> hexToBytes(String hexStr) {
 
 ///Converts the bytes from that list (big endian) to a BigInt.
 // BigInt bytesToInt(List<int> bytes) => p_utils.decodeBigInt(bytes);
-BigInt bytesToInt(List<int> bytes) => p_utils.decodeBigInt(bytes);
+BigInt bytesToInt(List<int> bytes) => p_utils.decodeBigIntWithSign(1, bytes);
 
 // List<int> intToBytes(BigInt number) => p_utils.encodeBigInt(number);
 
 /// big int to bytes
-List<int> intToBytes(BigInt number, {int length}) {
+List<int> intToBytes(BigInt? number, {int? length}) {
   Uint8List bigIntList = p_utils.encodeBigInt(number);
   if (length != null && length > bigIntList.length) {
     var newList = new Int8List(length);

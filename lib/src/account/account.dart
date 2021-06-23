@@ -4,8 +4,8 @@ import 'package:laksadart/src/crypto/schnorr.dart' as crypto;
 import 'package:laksadart/src/crypto/isolates.dart';
 import 'package:laksadart/src/crypto/keystore/api.dart';
 import 'package:laksadart/src/utils/numbers.dart' as numbers;
-import 'package:laksadart/src/core/ZilliqaModule.dart';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/core/zilliqa_module.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/provider/Middleware.dart';
 import 'package:laksadart/src/provider/net.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
@@ -13,47 +13,42 @@ import './api.dart' show BaseAccount;
 import './address.dart';
 
 /// Account instance with keystore encrypt/decrypt
-class Account
-    implements
-        BaseAccount,
-        KeyStore,
-        ZilliqaModule<Messenger, void>,
-        AccountState {
+class Account implements BaseAccount, KeyStore, ZilliqaModule, AccountState {
   /// static privatekey checker
   static final RegExp isPrivateKey =
       new RegExp(r"^(0x)?[0-9a-f]{64}", caseSensitive: false);
 
-  Messenger messenger;
+  Messenger? _messenger;
 
-  String privateKey;
-  String publicKey;
-  ZilAddress address;
-  String balance = '0';
-  int nonce = 0;
+  String? privateKey;
+  String? publicKey;
+  ZilAddress? address;
+  String? balance = '0';
+  int? nonce = 0;
 
-  bool isFound;
+  bool? isFound;
 
   /// transalte privateKey to Big Int
-  BigInt get privateKeyBigInt => Account._privateKeyToBigInt(this.privateKey);
+  BigInt? get privateKeyBigInt => Account._privateKeyToBigInt(this.privateKey);
 
   /// transate privatekey to Bytes
-  List<int> get privateKeyBytes => Account._privateKeyToBytes(this.privateKey);
+  List<int>? get privateKeyBytes => Account._privateKeyToBytes(this.privateKey);
 
   /// get account Map
   Map<String, dynamic> get accountMap => this.toMap();
 
   /// get keystore Map
-  Map<String, dynamic> get keyStoreMap => this.getKeyStore();
+  Map<String, dynamic>? get keyStoreMap => this.getKeyStore();
 
   /// account encryption checker
   bool get isEncrypted => this.checkEncrypted();
 
   /// constructor
-  Account([String privateKey, Messenger messenger]) {
+  Account([String? privateKey, Messenger? messenger]) {
     this.privateKey = privateKey;
     this.publicKey = this.getPublicKey(privateKey);
     this.address = this.getAddress(privateKey);
-    this.setMessenger(messenger);
+    this.messenger = messenger;
   }
 
   static fromMap(Map<String, dynamic> accountMap) {
@@ -67,18 +62,18 @@ class Account
     return newAcc;
   }
 
-  static fromFile(String keyStore, String passphrase) async {
+  static fromFile(String keyStore, String? passphrase) async {
     // String newPrvKey = await decrypt(json.decode(keyStore), passphrase);
     try {
-      String newPrvKey = await asyncDecrypt(json.decode(keyStore), passphrase);
+      String? newPrvKey = await asyncDecrypt(json.decode(keyStore), passphrase);
       return new Account(newPrvKey);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<String> toFile(String passphrase,
-      [Map<String, dynamic> options]) async {
+  Future<String> toFile(String? passphrase,
+      [Map<String, dynamic>? options]) async {
     try {
       await this.encryptAccount(passphrase, options);
       return json.encode(this.keyStoreMap);
@@ -99,16 +94,18 @@ class Account
 
   Future<Account> asyncCreate() async {
     try {
-      String prv = await asyncGeneratePrivateKey();
+      String? prv = await asyncGeneratePrivateKey();
       return new Account(prv, this.messenger);
     } catch (e) {
       rethrow;
     }
   }
 
-  void setMessenger(Messenger messenger) {
-    this.messenger = messenger;
-  }
+  @override
+  set messenger(Messenger? messenger) => this._messenger = messenger;
+
+  @override
+  Messenger get messenger => this._messenger!;
 
   /// import account from hex string
   Account import(dynamic prvHex) {
@@ -126,7 +123,7 @@ class Account
     return {
       'privateKey': this.privateKey,
       'publicKey': this.publicKey,
-      'address': this.address.checkSumAddress.toString()
+      'address': this.address!.checkSumAddress.toString()
     };
   }
 
@@ -136,10 +133,10 @@ class Account
   }
 
   /// account encryption
-  Future encryptAccount(String passphrase,
-      [Map<String, dynamic> options]) async {
+  Future encryptAccount(String? passphrase,
+      [Map<String, dynamic>? options]) async {
     if (this.privateKey is String &&
-        Account.isPrivateKey.hasMatch(this.privateKey)) {
+        Account.isPrivateKey.hasMatch(this.privateKey!)) {
       // this.privateKey = await encrypt(this.privateKey, passphrase, options);
       this.privateKey =
           await asyncEncrypt(this.privateKey, passphrase, options);
@@ -149,14 +146,14 @@ class Account
   }
 
   /// account decyption
-  Future decryptAccount(String passphrase) async {
+  Future decryptAccount(String? passphrase) async {
     if (this.privateKey is String &&
-        Account.isPrivateKey.hasMatch(this.privateKey)) {
+        Account.isPrivateKey.hasMatch(this.privateKey!)) {
       return null;
     }
     // this.privateKey = await decrypt(json.decode(this.privateKey), passphrase);
     this.privateKey =
-        await asyncDecrypt(json.decode(this.privateKey), passphrase);
+        await asyncDecrypt(json.decode(this.privateKey!), passphrase);
 
     // return this;
   }
@@ -166,7 +163,7 @@ class Account
         .messenger
         .send(RPCMethod.GetBalance, this.address.toString());
     if (res.error == null && res.result != null) {
-      var balanceMap = res.result.toMap();
+      var balanceMap = res.result!.toMap();
       if (balanceMap != null) {
         this.balance = balanceMap['balance'];
         this.nonce = balanceMap['nonce'];
@@ -180,16 +177,16 @@ class Account
   }
 
   /// keystore getter
-  Map<String, dynamic> getKeyStore() {
+  Map<String, dynamic>? getKeyStore() {
     if (this.privateKey is String &&
-        Account.isPrivateKey.hasMatch(this.privateKey)) {
+        Account.isPrivateKey.hasMatch(this.privateKey!)) {
       return null;
     }
-    return json.decode(this.privateKey);
+    return json.decode(this.privateKey!);
   }
 
   /// private key to big int
-  static BigInt _privateKeyToBigInt(String prv) {
+  static BigInt? _privateKeyToBigInt(String? prv) {
     try {
       if (prv is String && Account.isPrivateKey.hasMatch(prv)) {
         return numbers.hexToInt(prv);
@@ -202,7 +199,7 @@ class Account
   }
 
   /// privat key to bytes
-  static List<int> _privateKeyToBytes(String prv) {
+  static List<int>? _privateKeyToBytes(String? prv) {
     try {
       if (prv is String && Account.isPrivateKey.hasMatch(prv)) {
         return numbers.hexToBytes(prv);
@@ -238,7 +235,7 @@ class Account
   }
 
   /// get publicKey from privatKey
-  String getPublicKey(String privateKey) {
+  String? getPublicKey(String? privateKey) {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return crypto.getPubKeyFromPrivateKey(privateKey);
     } else {
@@ -246,7 +243,7 @@ class Account
     }
   }
 
-  Future<String> asyncGetPublicKey(String privateKey) async {
+  Future<String?> asyncGetPublicKey(String? privateKey) async {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return await asyncGetPubKeyFromPrivateKey(privateKey);
     } else {
@@ -255,7 +252,7 @@ class Account
   }
 
   /// get address key from privateKey
-  ZilAddress getAddress(String privateKey) {
+  ZilAddress? getAddress(String? privateKey) {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return ZilAddress.fromPrivateKey(privateKey);
     } else {
@@ -263,7 +260,7 @@ class Account
     }
   }
 
-  Future<ZilAddress> asyncGetAddress(String privateKey) async {
+  Future<ZilAddress?> asyncGetAddress(String? privateKey) async {
     if (privateKey != null && Account.isPrivateKey.hasMatch(privateKey)) {
       return await ZilAddress.asyncFromPrivateKey(privateKey);
     } else {
@@ -276,7 +273,7 @@ class Account
     if (this.privateKey == null) {
       throw 'Account is corrupted';
     }
-    Map store = this.getKeyStore();
+    Map? store = this.getKeyStore();
     if (store is Map && store['crypto'] != null) {
       return true;
     } else
@@ -284,14 +281,14 @@ class Account
   }
 
   /// sign transasction
-  Future<Transaction> signTransaction(Transaction txnObj,
-      {String passphrase, Map<String, dynamic> options}) async {
+  Future<Transaction> signTransaction(Transaction? txnObj,
+      {String? passphrase, Map<String, dynamic>? options}) async {
     if (this.isEncrypted) {
       await this.decryptAccount(passphrase);
       await this.updateBalance();
-      Map<String, dynamic> newTxMap = Map.from(txnObj.txParams);
-      newTxMap.update('nonce', (found) => this.nonce + 1,
-          ifAbsent: () => this.nonce + 1);
+      Map<String, dynamic> newTxMap = Map.from(txnObj!.txParams);
+      newTxMap.update('nonce', (found) => this.nonce! + 1,
+          ifAbsent: () => this.nonce! + 1);
       // var signed = crypto.SchnorrSign(this.privateKey, txnObj.txParams);
       var signed = await asyncSchnorrSign(this.privateKey, newTxMap);
       await this.encryptAccount(passphrase, options ?? {'level': 1024});
@@ -302,10 +299,10 @@ class Account
     } else {
       await this.updateBalance();
 
-      Map<String, dynamic> newTxMap = Map.from(txnObj.txParams);
+      Map<String, dynamic> newTxMap = Map.from(txnObj!.txParams);
 
-      newTxMap.update('nonce', (found) => this.nonce + 1,
-          ifAbsent: () => this.nonce + 1);
+      newTxMap.update('nonce', (found) => this.nonce! + 1,
+          ifAbsent: () => this.nonce! + 1);
       // var signed = crypto.SchnorrSign(this.privateKey, newTxMap);
       var signed = await asyncSchnorrSign(this.privateKey, newTxMap);
       return txnObj.map((Map obj) {

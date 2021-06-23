@@ -1,16 +1,16 @@
 import 'package:validators/validators.dart' as validators;
 import 'package:laksadart/src/crypto/checksum.dart';
 
-bool isUrl(String url) {
+bool isUrl(String? url) {
   return validators.isURL(url);
 }
 
-bool isByteString(String byStr, {int length}) {
+bool isByteString(String byStr, {int? length}) {
   var str = byStr.startsWith(new RegExp(r'0x', caseSensitive: false))
       ? byStr.substring(2)
       : byStr;
   return validators.matches(str, '^[0-9a-fA-F]{${length}}') &&
-      validators.isLength(str, length, length);
+      validators.isLength(str, length!, length);
 }
 
 bool isAddress(String str) {

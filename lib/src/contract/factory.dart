@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:laksadart/src/core/ZilliqaModule.dart';
-import 'package:laksadart/src/messenger/Messenger.dart';
+import 'package:laksadart/src/core/zilliqa_module.dart';
+import 'package:laksadart/src/messenger/messenger.dart';
 import 'package:laksadart/src/account/wallet.dart';
 import 'package:laksadart/src/transaction/index.dart';
 import 'package:laksadart/src/crypto/index.dart';
@@ -10,19 +10,25 @@ import 'util.dart';
 import 'contract.dart';
 import 'testScilla.dart';
 
-class Contracts implements ZilliqaModule<Messenger, void> {
-  Messenger messenger;
-  Wallet wallet;
-  void setMessenger(Messenger data) {
-    this.messenger = data;
-  }
+class Contracts implements ZilliqaModule {
+  Messenger? _messenger;
+  Wallet? _wallet;
 
-  Contracts({Messenger messenger, Wallet wallet}) {
+  @override
+  Messenger get messenger => this._messenger!;
+
+  @override
+  void set messenger(Messenger? messenger) => this._messenger = messenger;
+
+  Wallet get wallet => this._wallet!;
+  void set wallet(Wallet? wallet) => this._wallet = wallet;
+
+  Contracts({Messenger? messenger, Wallet? wallet}) {
     this.messenger = messenger;
     this.wallet = wallet;
   }
 
-  Contract newContract({String code, List init, int version, bool toDS}) {
+  Contract newContract({String? code, List? init, int? version, bool? toDS}) {
     return new Contract(
         params: {'code': code, 'init': init, 'version': version},
         messenger: this.messenger,
@@ -36,7 +42,7 @@ class Contracts implements ZilliqaModule<Messenger, void> {
       'code': contract.code,
       'init': contract.init,
       'version': contract.version,
-      'ContractAddress': contract.ContractAddress,
+      'ContractAddress': contract.contractAddress,
       'status': contract.status,
       'transaction': contract.transaction,
     }, messenger: this.messenger, wallet: this.wallet, toDS: contract.toDS);
@@ -52,7 +58,7 @@ class Contracts implements ZilliqaModule<Messenger, void> {
     return newSha.substring(24);
   }
 
-  Future<bool> testContract({String code, List init, int version}) async {
+  Future<bool> testContract({String? code, List? init, int? version}) async {
     TestScilla contract = new TestScilla(
         params: {'code': code, 'init': init, 'version': version},
         messenger: this.messenger,
@@ -61,8 +67,9 @@ class Contracts implements ZilliqaModule<Messenger, void> {
         // decode ABI from code first
         .decodeABI(code: code)
         // we set the init params to decoded ABI
-        .then((decoded) =>
-            decoded.setInitParamsValues(decoded.abi.getInitParams(), init))
+        .then((decoded) => decoded.setInitParamsValues(
+            decoded.abi!.getInitParams()!,
+            init as List<Map<dynamic, dynamic>>?))
         // we get the current block number from node, and set it to params
         .then((inited) => inited.setBlockNumber(null))
         // but we have to give it a test
@@ -73,13 +80,8 @@ class Contracts implements ZilliqaModule<Messenger, void> {
             : {
                 'abi': state.abi,
                 'init': state.init,
-                'status': ContractStatus.ERROR
+                'status': ContractStatus.ERROR,
               });
-
-    if (result['status'] == ContractStatus.TESTED) {
-      return true;
-    } else {
-      return false;
-    }
+    return result['status'] == ContractStatus.TESTED;
   }
 }

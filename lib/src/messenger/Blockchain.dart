@@ -1,20 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:laksadart/src/provider/net.dart';
-import 'package:laksadart/src/core/ZilliqaModule.dart';
+import 'package:laksadart/src/core/zilliqa_module.dart';
 import 'package:laksadart/src/provider/Middleware.dart';
 import 'package:laksadart/src/transaction/transaction.dart';
 import 'package:laksadart/src/transaction/api.dart';
-import 'Messenger.dart';
+import 'messenger.dart';
 
-class Blockchain implements ZilliqaModule<Messenger, void> {
-  Messenger messenger;
-  Blockchain(this.messenger);
-  void setMessenger(Messenger messenger) {
-    this.messenger = messenger;
-  }
+class Blockchain implements ZilliqaModule {
+  Messenger? _messenger;
+  Blockchain(this._messenger);
 
-  Future<RPCMiddleWare> getBalance({String address}) async {
+  @override
+  void set messenger(Messenger? messenger) => this._messenger = messenger;
+
+  @override
+  Messenger get messenger => this._messenger!;
+
+  Future<RPCMiddleWare> getBalance({String? address}) async {
     this.messenger.setMiddleware((data) => new RPCMiddleWare(data).raw,
         match: RPCMethod.GetBalance);
     return await this.messenger.send(RPCMethod.GetBalance, address);
@@ -24,7 +27,7 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     return await this.messenger.send(RPCMethod.GetBlockchainInfo);
   }
 
-  Future<RPCMiddleWare> getDSBlock({int blockNum}) async {
+  Future<RPCMiddleWare> getDSBlock({int? blockNum}) async {
     return await this.messenger.send(RPCMethod.GetDSBlock, blockNum.toString());
   }
 
@@ -40,11 +43,11 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     return await this.messenger.send(RPCMethod.GetDSBlockRate);
   }
 
-  Future<RPCMiddleWare> getDSBlockListing({int max}) async {
+  Future<RPCMiddleWare> getDSBlockListing({int? max}) async {
     return await this.messenger.send(RPCMethod.DSBlockListing, max);
   }
 
-  Future<RPCMiddleWare> getTxBlock({int blockNum}) async {
+  Future<RPCMiddleWare> getTxBlock({int? blockNum}) async {
     return await this.messenger.send(RPCMethod.GetTxBlock, blockNum.toString());
   }
 
@@ -60,7 +63,7 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     return await this.messenger.send(RPCMethod.GetTxBlockRate);
   }
 
-  Future<RPCMiddleWare> getTxBlockListing({int max}) async {
+  Future<RPCMiddleWare> getTxBlockListing({int? max}) async {
     return await this.messenger.send(RPCMethod.TxBlockListing, max);
   }
 
@@ -92,11 +95,11 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     return await this.messenger.send(RPCMethod.GetRecentTransactions);
   }
 
-  Future<RPCMiddleWare> getNumTxnsTxEpoch({int epoch}) async {
+  Future<RPCMiddleWare> getNumTxnsTxEpoch({int? epoch}) async {
     return await this.messenger.send(RPCMethod.GetNumTxnsTxEpoch, epoch);
   }
 
-  Future<RPCMiddleWare> getNumTxnsDSEpoch({int epoch}) async {
+  Future<RPCMiddleWare> getNumTxnsDSEpoch({int? epoch}) async {
     return await this.messenger.send(RPCMethod.GetNumTxnsDSEpoch, epoch);
   }
 
@@ -104,29 +107,29 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     return await this.messenger.send(RPCMethod.GetMinimumGasPrice);
   }
 
-  Future<RPCMiddleWare> getTransactionsForTxBlock({int txBlock}) async {
+  Future<RPCMiddleWare> getTransactionsForTxBlock({int? txBlock}) async {
     return await this
         .messenger
         .send(RPCMethod.GetTransactionsForTxBlock, txBlock);
   }
 
-  Future<TransactionSent> createTransaction(Transaction transaction) async {
+  Future<TransactionSent?> createTransaction(Transaction transaction) async {
     try {
       var res = await this
           .messenger
           .send(RPCMethod.CreateTransaction, transaction.toPayload);
       if (res.result != null) {
-        var result = res.result.toMap();
-        var TranID = result['TranID'];
-        if (TranID == null) {
+        var result = res.result!.toMap()!;
+        var transactionID = result['TranID'];
+        if (transactionID == null) {
           throw 'Transaction fail';
         } else {
-          transaction.TranID = TranID;
+          transaction.transactionID = transactionID;
           transaction.status = TxStatus.Pending;
           return new TransactionSent(transaction, result);
         }
       } else if (res.error != null) {
-        throw res.error.message;
+        throw res.error!.message!;
       }
       return null;
     } catch (error) {
@@ -135,11 +138,13 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
   }
 
   Future<Transaction> completeTransaction(
-      {Transaction transaction, int maxAttempts, int interval}) async {
+      {required Transaction transaction,
+      int? maxAttempts,
+      int? interval}) async {
     try {
-      TransactionSent result = await createTransaction(transaction);
-      Transaction confirmed = await result.transaction.confirm(
-          txHash: result.transaction.TranID,
+      TransactionSent? result = await createTransaction(transaction);
+      Transaction confirmed = await result!.transaction.confirm(
+          txHash: result.transaction.transactionID,
           maxAttempts: maxAttempts,
           interval: interval);
       return confirmed;
@@ -148,12 +153,12 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
     }
   }
 
-  Future<RPCMiddleWare> getTransaction({String txHash}) async {
+  Future<RPCMiddleWare> getTransaction({String? txHash}) async {
     return await this.messenger.send(RPCMethod.GetTransaction, txHash);
   }
 
   // scilla-runner checker
-  Future<RPCMiddleWare> checkCode({String code}) async {
+  Future<RPCMiddleWare> checkCode({String? code}) async {
     return await this
         .messenger
         .sendServer(Endpoint.ScillaCheck, {'code': code});
@@ -169,4 +174,13 @@ class Blockchain implements ZilliqaModule<Messenger, void> {
       'gaslimit': json.encode(callJson['gasLimit'])
     });
   }
+
+  Future<RPCMiddleWare> get clientVersion async =>
+      await this.messenger.send(RPCMethod.GetClientVersion);
+
+  Future<RPCMiddleWare> get networkID async =>
+      await this.messenger.send(RPCMethod.GetNetworkId);
+
+  Future<RPCMiddleWare> get protocolVersion async =>
+      await this.messenger.send(RPCMethod.GetProtocolVersion);
 }

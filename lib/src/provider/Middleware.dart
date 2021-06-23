@@ -2,10 +2,10 @@ import 'net.dart';
 import 'dart:convert';
 
 class ErrorMiddleware implements RPCError {
-  RPCErrorCode code;
-  String message;
+  RPCErrorCode? code;
+  String? message;
   dynamic data;
-  Map raw;
+  Map? raw;
 
   Map get toMap => {
         'code': this.code.toString(),
@@ -27,9 +27,9 @@ class ErrorMiddleware implements RPCError {
 }
 
 class SuccessMiddleware implements RPCResult {
-  String resultString;
-  Map<String, dynamic> resultMap;
-  List<dynamic> resultList;
+  String? resultString;
+  Map<String, dynamic>? resultMap;
+  List<dynamic>? resultList;
   dynamic raw;
   SuccessMiddleware(dynamic data) {
     if (data is String) {
@@ -50,14 +50,16 @@ class SuccessMiddleware implements RPCResult {
             ? resultMap.toString()
             : resultList != null
                 ? resultList.toString()
-                : raw != null ? raw.toString() : raw;
+                : raw != null
+                    ? raw.toString()
+                    : raw;
   }
 
-  Map toMap() {
+  Map? toMap() {
     return resultMap;
   }
 
-  List toList() {
+  List? toList() {
     return resultList;
   }
 }
@@ -66,8 +68,8 @@ class RPCMiddleWare
     implements RPCResponseBody<SuccessMiddleware, ErrorMiddleware> {
   final jsonrpc = '2.0';
   final id = '1';
-  SuccessMiddleware result;
-  ErrorMiddleware error;
+  SuccessMiddleware? result;
+  ErrorMiddleware? error;
   var message;
   var req;
 
@@ -95,9 +97,9 @@ class RPCMiddleWare
   Map get raw => {
         'jsonrpc': jsonrpc,
         'id': id,
-        'result': result != null ? result.raw : null,
-        'error': error != null ? error.raw : null,
-        'message': message ?? error != null ? error.message : null,
+        'result': result != null ? result!.raw : null,
+        'error': error != null ? error!.raw : null,
+        'message': message ?? error != null ? error!.message : null,
         'req': req
       };
 }

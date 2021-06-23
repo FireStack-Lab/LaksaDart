@@ -4,8 +4,8 @@ import 'package:crypto/src/digest_sink.dart';
 import 'package:laksadart/src/utils/numbers.dart';
 
 class SHA256 {
-  DigestSink ds;
-  ByteConversionSink sha;
+  late DigestSink ds;
+  late ByteConversionSink sha;
 
   SHA256() {
     this.ds = new DigestSink();

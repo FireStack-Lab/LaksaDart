@@ -1,9 +1,9 @@
 abstract class ABIObject {
-  List<Map> events;
-  List<Map> fields;
-  String vname;
-  List<Map> params;
-  List<Map> transitions;
+  List<Map>? events;
+  List<Map>? fields;
+  String? vname;
+  List<Map>? params;
+  List<Map>? transitions;
 }
 
 /*
@@ -16,11 +16,11 @@ abstract class ABIObject {
  * In laksa, we use remote endpont call to get ABI, however you can set scillaProvider using your own local address.
  */
 class ABI implements ABIObject {
-  List<Map> events;
-  List<Map> fields;
-  String vname;
-  List<Map> params;
-  List<Map> transitions;
+  List<Map>? events;
+  List<Map>? fields;
+  String? vname;
+  List<Map>? params;
+  List<Map>? transitions;
 
   ABI(Map<String, dynamic> Abi) {
     // because ABI is <String,dynamic>, to get the type annotation ready,
@@ -34,61 +34,61 @@ class ABI implements ABIObject {
     this.transitions = List.from(Abi['transitions']);
   }
 
-  String getName() {
+  String? getName() {
     return this.vname;
   }
 
-  List<Map> getInitParams() {
+  List<Map>? getInitParams() {
     return this.params;
   }
 
-  List<String> getInitParamTypes() {
-    if (this.params.isNotEmpty) {
-      return getParamTypes(this.params);
+  List<String>? getInitParamTypes() {
+    if (this.params!.isNotEmpty) {
+      return getParamTypes(this.params!);
     } else {
       return null;
     }
   }
 
-  List<Map<String, dynamic>> getFields() {
-    return this.fields;
+  List<Map<String, dynamic>>? getFields() {
+    return this.fields as List<Map<String, dynamic>>?;
   }
 
-  List<String> getFieldsTypes() {
-    if (this.fields.isNotEmpty) {
-      return getParamTypes(this.fields);
+  List<String>? getFieldsTypes() {
+    if (this.fields!.isNotEmpty) {
+      return getParamTypes(this.fields!);
     } else {
       return null;
     }
   }
 
-  List<Map> getTransitions() {
+  List<Map>? getTransitions() {
     return this.transitions;
   }
 
-  List<Map> getTransitionsParamTypes() {
+  List<Map?>? getTransitionsParamTypes() {
     List returnArray = [];
-    if (this.transitions.isNotEmpty) {
-      for (int i = 0; i < this.transitions.length; i += 1) {
-        returnArray[i] = getParamTypes(this.transitions[i]['params']);
+    if (this.transitions!.isNotEmpty) {
+      for (int i = 0; i < this.transitions!.length; i += 1) {
+        returnArray[i] = getParamTypes(this.transitions![i]['params']);
       }
     }
     if (returnArray.isNotEmpty) {
-      return returnArray;
+      return returnArray as List<Map<dynamic, dynamic>?>?;
     } else {
       return null;
     }
   }
 
-  List<Map> getEvents() {
+  List<Map>? getEvents() {
     return this.events;
   }
 }
 
-List<String> getParamTypes(List<Map> list) {
+List<String>? getParamTypes(List<Map> list) {
   List<String> keyList2 = [];
   var boolList = list.map<bool>((obj) {
-    keyList2.addAll(obj.keys);
+    keyList2.addAll(obj.keys as Iterable<String>);
     return false;
   });
   if (boolList.isNotEmpty) {

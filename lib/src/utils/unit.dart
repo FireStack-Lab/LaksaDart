@@ -6,11 +6,11 @@ Map<Units, String> unitMap = {
   Units.Zil: '1000000000000'
 };
 
-String fromQaFunc(BigInt qa, Units unit, {pad = false}) {
+String fromQaFunc(BigInt? qa, Units unit, {pad = false}) {
   if (unit.toString() == 'qa') {
     return qa.toString();
   }
-  String baseStr = unitMap[unit];
+  String? baseStr = unitMap[unit];
 
   if (baseStr == null) {
     throw 'No unit of type ${unit} exists.';
@@ -19,7 +19,7 @@ String fromQaFunc(BigInt qa, Units unit, {pad = false}) {
   BigInt base = BigInt.parse(baseStr);
   int baseNumDecimals = baseStr.length - 1;
 
-  String fraction = ((qa.abs()) % base).toString();
+  String fraction = ((qa!.abs()) % base).toString();
 
   while (fraction.length < baseNumDecimals) {
     fraction = '0${fraction}';
@@ -37,7 +37,7 @@ String fromQaFunc(BigInt qa, Units unit, {pad = false}) {
 
 BigInt toQaFunc(String input, Units unit) {
   String inputStr = num.parse(input).toString();
-  String baseStr = unitMap[unit];
+  String? baseStr = unitMap[unit];
 
   if (baseStr == null) {
     throw 'No unit of type ${unit} exists.';
@@ -63,12 +63,14 @@ BigInt toQaFunc(String input, Units unit) {
   if (comps.length > 2) {
     throw 'too long: Cannot convert ${inputStr} to Qa.';
   }
-  String whole = comps.first;
-  String fraction = comps.length == 2 ? comps.last : null;
-
-  if (whole == null) {
+  String? whole;
+  try {
+    whole = comps.first;
+  } on StateError {
     whole = '0';
   }
+  String? fraction = comps.length == 2 ? comps.last : null;
+
   if (fraction == null) {
     fraction = '0';
   }
@@ -76,7 +78,7 @@ BigInt toQaFunc(String input, Units unit) {
     throw 'fraction is too long :Cannot convert ${inputStr} to Qa.';
   }
 
-  while (fraction.length < baseNumDecimals) {
+  while (fraction!.length < baseNumDecimals) {
     fraction += '0';
   }
 
@@ -92,8 +94,8 @@ BigInt toQaFunc(String input, Units unit) {
 }
 
 class Unit {
-  String unit;
-  BigInt qa;
+  late String unit;
+  BigInt? qa;
   static from(dynamic str) {
     return new Unit(str);
   }
@@ -113,7 +115,11 @@ class Unit {
   Unit(dynamic str) {
     this.unit = str is String
         ? num.parse(str).toString()
-        : str is int ? str.toString() : str is BigInt ? str.toString() : '';
+        : str is int
+            ? str.toString()
+            : str is BigInt
+                ? str.toString()
+                : '';
   }
 
   asZil() {

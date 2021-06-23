@@ -5,15 +5,13 @@ import 'dart:io';
 import "package:test/test.dart";
 import "package:laksadart/src/contract/factory.dart";
 import 'package:laksadart/src/contract/abi.dart';
-import 'package:laksadart/src/laksa.dart';
+import 'package:laksadart/src/zilliqa.dart';
 
 void main() {
   test("Test Get Contract ABIs", () async {
-    File contract = new File('./contracts/helloworldversion.txt');
+    File contract = new File('contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
-      Laksa laksa = new Laksa(
-          nodeUrl: 'https://dev-api.zilliqa.com',
-          scillaUrl: 'https://scilla-runner.zilliqa.com');
+      Zilliqa laksa = new Zilliqa(nodeUrl: 'https://dev-api.zilliqa.com');
 
       var result = await laksa.blockchain.checkCode(code: contractString);
 
@@ -24,7 +22,7 @@ void main() {
         expect(abiObject.params.toString(),
             equals('[{vname: owner, type: ByStr20}]'));
         expect(abiObject.fields.toString(),
-            equals('[{vname: welcome_msg, type: String}]'));
+            equals('[{vname: welcome_msg, type: String, depth: 0}]'));
         expect(
             abiObject.transitions.toString(),
             equals(
@@ -37,12 +35,9 @@ void main() {
     });
   });
   test('Test call to scilla-runner', () async {
-    File contract = new File('./contracts/helloworldversion.txt');
+    File contract = new File('contracts/helloworldversion.txt');
     await contract.readAsString().then((contractString) async {
-      Laksa laksa = new Laksa(
-          nodeUrl: 'https://dev-api.zilliqa.com',
-          scillaUrl: 'https://scilla-runner.zilliqa.com');
-      // laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
+      Zilliqa laksa = new Zilliqa(nodeUrl: 'https://dev-api.zilliqa.com');
       var init = [
         {'vname': "_scilla_version", 'type': "Uint32", 'value': "0"},
         {
@@ -59,30 +54,31 @@ void main() {
       expect(testResult, equals(true));
     });
   });
-  // test("Test deploy", () async {
-  //   File contract = new File('./contracts/helloworld.txt');
-  //   await contract.readAsString().then((contractString) async {
-  //     Laksa laksa = new Laksa(nodeUrl: 'https://api.zilliqa.com');
-  //     // laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
-  //     var init = [
-  //       {
-  //         'value': '0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
-  //         'vname': 'owner',
-  //         'type': 'ByStr20'
-  //       }
-  //     ];
+/*
+  test("Test deploy", () async {
+    File contract = new File('./contracts/helloworld.txt');
+    await contract.readAsString().then((contractString) async {
+      Laksa laksa = new Laksa(nodeUrl: 'https://api.zilliqa.com');
+      laksa.setScillaProvider('https://scilla-runner.zilliqa.com');
+      var init = [
+        {
+          'value': '0x9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a',
+          'vname': 'owner',
+          'type': 'ByStr20'
+        }
+      ];
 
-  //     laksa.wallet.add(
-  //         'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
+      laksa.wallet!.add(
+          'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
 
-  //     var newContract = new Contract(
-  //         params: {'code': contractString, 'init': init},
-  //         messenger: laksa.messenger,
-  //         wallet: laksa.wallet);
+      var newContract = new Contracts(
+          params: {'code': contractString, 'init': init},
+          messenger: laksa.messenger,
+          wallet: laksa.wallet);
 
-  //     var deployed = await newContract.deploy(
-  //         gasLimit: 2500000000, gasPrice: BigInt.from(1000000000));
-  //     print(deployed.ContractAddress);
-  //   });
-  // });
+      var deployed = await newContract.deploy(
+          gasLimit: 2500000000, gasPrice: BigInt.from(1000000000));
+      print(deployed.ContractAddress);
+    });
+  }); */
 }

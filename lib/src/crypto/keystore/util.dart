@@ -1,12 +1,12 @@
-part of 'keyStore.dart';
+part of 'key_store.dart';
 
 /// getDerivedKey by ``kdf`` type
-_KeyDerivator getDerivedKey(String kdf, Map<String, dynamic> params) {
+_KeyDerivator getDerivedKey(String? kdf, Map<String, dynamic> params) {
   var salt = numbers.hexToBytes(params['salt']);
   if (kdf == 'pbkdf2') {
     var c = params['c'];
     var dklen = params['dklen'];
-    return new _PBDKDF2KeyDerivator(c, salt, dklen);
+    return new _PBDKDF2KeyDerivator(c, salt as Uint8List, dklen);
   } else if (kdf == 'scrypt') {
     var n = params['n'];
     var r = params['r'];
@@ -20,7 +20,10 @@ _KeyDerivator getDerivedKey(String kdf, Map<String, dynamic> params) {
 
 CTRStreamCipher _initCipher(bool forEncryption, List<int> key, List<int> iv) {
   return new CTRStreamCipher(new AESFastEngine())
-    ..init(false, new ParametersWithIV(new KeyParameter(key), iv));
+    ..init(
+        false,
+        new ParametersWithIV(
+            new KeyParameter(key as Uint8List), iv as Uint8List));
 }
 
 List<int> _encryptPrivateKey(_KeyDerivator _derivator, Uint8List _password,
@@ -28,5 +31,5 @@ List<int> _encryptPrivateKey(_KeyDerivator _derivator, Uint8List _password,
   var derived = _derivator.deriveKey(_password);
   var aesKey = derived.sublist(0, 16);
   var aes = _initCipher(true, aesKey, _iv);
-  return aes.process(numbers.hexToBytes(privateKey));
+  return aes.process(numbers.hexToBytes(privateKey) as Uint8List);
 }

@@ -10,10 +10,12 @@ import 'package:laksadart/src/utils/validators.dart' as validator;
 
 @immutable
 class Address {
-  static final RegExp basicAddress = new RegExp(r"^(0x)?[0-9a-f]{40}", caseSensitive: false);
+  static final RegExp basicAddress =
+      new RegExp(r"^(0x)?[0-9a-f]{40}", caseSensitive: false);
 
   static const int _addLenBytes = 20;
-  static final BigInt biggestAddress = (BigInt.one << (_addLenBytes * 8)) - BigInt.one;
+  static final BigInt biggestAddress =
+      (BigInt.one << (_addLenBytes * 8)) - BigInt.one;
 
   /// The number associated with the address
   final BigInt number;
@@ -31,12 +33,12 @@ class Address {
   }
 
   /// Returns this address in a hexadecimal representation, with 0x prefixed.
-  String get hex =>
-      numbers.toHex(number, pad: true, forcePadLen: _addLenBytes * 2, include0x: true);
+  String get hex => numbers.toHex(number,
+      pad: true, forcePadLen: _addLenBytes * 2, include0x: true);
 
   /// Returns this address in a hexadecimal representation, without any prefix
-  String get address =>
-      numbers.toHex(number, pad: true, forcePadLen: _addLenBytes * 2, include0x: false);
+  String get address => numbers.toHex(number,
+      pad: true, forcePadLen: _addLenBytes * 2, include0x: false);
 
   @override
   String toString() => hex;
@@ -70,6 +72,7 @@ class ZilAddress extends Address {
   List<int> get byteAddress => this.toByteAddress(this.address);
   String get checkSumAddress => this.toCheckSumAddress(this.address);
   String get bech32 => toBech32Address(this.checkSumAddress);
+
   String get bytes20Hex => this.toBytes20Hex(this.address);
   bool get isValid => this.isAddress(this.address);
 
@@ -132,7 +135,8 @@ class ZilAddress extends Address {
     return new ZilAddress(await asyncGetAddressFromPublicKey(publicKey));
   }
 
-  static ZilAddress fromAddress(String address) => new ZilAddress(address.toLowerCase());
+  static ZilAddress fromAddress(String address) =>
+      new ZilAddress(address.toLowerCase());
 
   static ZilAddress fromBigInt(BigInt number) =>
       new ZilAddress(new Address.fromNumber(number).address);

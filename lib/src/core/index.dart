@@ -1,4 +1,3 @@
 library core;
 
-export 'ZilliqaConfig.dart';
-export 'ZilliqaModule.dart';
+export 'zilliqa_module.dart';

@@ -1,4 +1,4 @@
 library messenger;
 
-export 'Blockchain.dart';
-export 'Messenger.dart';
+export 'blockchain.dart';
+export 'messenger.dart';

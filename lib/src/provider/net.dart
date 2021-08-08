@@ -149,8 +149,8 @@ class RPCErrorCode {
   // RPC method is deprecated
   static final RPC_METHOD_DEPRECATED = -32;
 
-  String CodeString;
-  int CodeNumber;
+  String? CodeString;
+  int? CodeNumber;
 
   Map get Mapping => {
         RPC_INVALID_REQUEST: 'RPC_INVALID_REQUEST',
@@ -165,37 +165,37 @@ class RPCErrorCode {
         RPC_DATABASE_ERROR: 'RPC_DATABASE_ERROR',
         RPC_DESERIALIZATION_ERROR: 'RPC_DESERIALIZATION_ERROR'
       };
-  RPCErrorCode(int code) {
+  RPCErrorCode(int? code) {
     this.CodeNumber = code;
     this.CodeString = this.Mapping[code];
   }
 
   Error throwError() {
-    throw this.CodeString;
+    throw this.CodeString!;
   }
 
   @override
   toString() {
-    return this.CodeString;
+    return this.CodeString!;
   }
 }
 
 abstract class RPCRequestPayload<T> {
   static final id = 1;
   static final jsonrpc = '2.0';
-  RPCMethod method;
-  T params;
+  RPCMethod? method;
+  T? params;
 }
 
 abstract class RPCRequestOptions {
-  List headers;
-  String method;
+  List? headers;
+  String? method;
 }
 
 abstract class RPCRequest<T> {
-  String url;
-  RPCRequestPayload<T> payload;
-  RPCRequestOptions options;
+  String? url;
+  RPCRequestPayload<T>? payload;
+  RPCRequestOptions? options;
 }
 
 abstract class RPCResponseBase {
@@ -204,19 +204,19 @@ abstract class RPCResponseBase {
 }
 
 abstract class RPCResponseBody<R, E> extends RPCResponseBase {
-  R result;
-  E error;
+  R? result;
+  E? error;
 }
 
 abstract class RPCError {
-  RPCErrorCode code;
-  String message;
+  RPCErrorCode? code;
+  String? message;
   dynamic data;
 }
 
 abstract class RPCResult {
-  String resultString;
-  Map<String, dynamic> resultMap;
-  List<dynamic> resultList;
+  String? resultString;
+  Map<String, dynamic>? resultMap;
+  List<dynamic>? resultList;
   dynamic raw;
 }

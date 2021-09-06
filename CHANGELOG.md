@@ -1,4 +1,7 @@
 # Change Log
+## [v0.2.1] SEP-05-2021
+Merge and publish
+
 ## [v0.2.0] JUNE-04-2021
 updated to null safety
 

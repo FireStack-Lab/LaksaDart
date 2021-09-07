@@ -1,6 +1,6 @@
 name: laksadart
 description: Dart library for Zilliqa's Blockchain, including Schnorr, wallet/account/keys manager, RPCMethod, Transactions and Contracts deploy/call.
-version: 0.2.1
+version: 0.2.1+1
 homepage: 'https://github.com/firestack-lab/laksaDart'
 
 environment:

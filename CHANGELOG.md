@@ -1,6 +1,6 @@
 # Change Log
 
-## [v0.2.1] SEPT-06-2021
+## [v0.2.1+1] SEPT-06-2021
 updated libraries to support latest Flutter version
 Applied Fix to Zilliqa Class since it was not receiving Network object
 

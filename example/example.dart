@@ -58,7 +58,7 @@ void deploy() async {
   print("Deploy Contract");
   File contract = new File('contracts/hello_world.scilla');
 
-  await contract.readAsString().then((contractString) async {
+  await contract.readAsString().then((String? contractString) async {
     Zilliqa zilliqa = new Zilliqa(nodeUrl: 'https://dev-api.zilliqa.com');
     var init = [
       {"vname": "_scilla_version", "type": "Uint32", "value": "0"},
@@ -71,9 +71,11 @@ void deploy() async {
 
     zilliqa.wallet.add(
         'e19d05c5452598e24caad4a0d85a49146f7be089515c905ae6a19e8a578a6930');
-
+    if (contractString != null) {
+      return;
+    }
     var newContract = zilliqa.contracts.newContract(
-        code: contractString,
+        code: contractString!,
         init: init,
         version: numbers.pack(zilliqa.network!.chainID!, 1));
     newContract.setDeployPayload(

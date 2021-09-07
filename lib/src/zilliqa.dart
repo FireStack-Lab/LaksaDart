@@ -20,8 +20,13 @@ class Zilliqa {
   Zilliqa({NetworkInfo? network, String? nodeUrl, HttpProvider? nodeProvider}) {
     if (network != null) {
       this.nodeUrl = network.nodeProviderUrl;
-    } else {
+      this.network = network;
+    } else if (nodeUrl != null) {
       this.nodeUrl = nodeUrl;
+    } else if (nodeProvider != null) {
+      this.nodeUrl = nodeProvider.url;
+    } else {
+      throw Exception("Please provide network provider details");
     }
     this.nodeProvider =
         nodeProvider != null ? nodeProvider : HttpProvider(this.nodeUrl);
